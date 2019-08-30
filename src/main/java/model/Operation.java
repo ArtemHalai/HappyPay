@@ -6,7 +6,7 @@ import java.util.Objects;
 public abstract class Operation {
 
     protected int userId;
-    protected Date operationDate;
+    protected Date date;
 
     public int getUserId() {
         return userId;
@@ -16,12 +16,12 @@ public abstract class Operation {
         this.userId = userId;
     }
 
-    public Date getOperationDate() {
-        return operationDate;
+    public Date getDate() {
+        return date;
     }
 
-    public void setOperationDate(Date operationDate) {
-        this.operationDate = operationDate;
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     @Override
@@ -30,11 +30,11 @@ public abstract class Operation {
         if (!(o instanceof Operation)) return false;
         Operation operation = (Operation) o;
         return userId == operation.userId &&
-                operationDate.equals(operation.operationDate);
+                date.equals(operation.date);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, operationDate);
+        return Objects.hash(userId, date);
     }
 }

@@ -2,18 +2,17 @@ package model;
 
 import java.util.Objects;
 
-public class CreditApprovementOperation extends Operation {
-
-    private int managerId;
+public class CreditRequest {
+    private int userId;
     private double amount;
     private boolean decision;
 
-    public int getManagerId() {
-        return managerId;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setManagerId(int managerId) {
-        this.managerId = managerId;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public double getAmount() {
@@ -36,15 +35,14 @@ public class CreditApprovementOperation extends Operation {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        CreditApprovementOperation creditApprovement = (CreditApprovementOperation) o;
-        return managerId == creditApprovement.managerId &&
-                Double.compare(creditApprovement.amount, amount) == 0 &&
-                decision == creditApprovement.decision;
+        CreditRequest that = (CreditRequest) o;
+        return userId == that.userId &&
+                Double.compare(that.amount, amount) == 0 &&
+                decision == that.decision;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), managerId, amount, decision);
+        return Objects.hash(userId, amount, decision);
     }
 }
