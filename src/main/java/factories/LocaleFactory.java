@@ -1,11 +1,10 @@
 package factories;
 
-import enums.LocaleEnum;
-
-import static enums.LocaleEnum.*;
-
 public class LocaleFactory {
     private static volatile LocaleFactory factory = null;
+    private static final String UA = "ua";
+    private static final String RU = "ru";
+    private static final String EN = "en";
 
     private LocaleFactory() {
 
@@ -22,7 +21,7 @@ public class LocaleFactory {
         return factory;
     }
 
-    public LocaleEnum getLocale(LocaleEnum locale) {
+    public String getLocale(String locale) {
         switch (locale) {
             case UA:
                 return UA;
