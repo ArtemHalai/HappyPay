@@ -2,6 +2,8 @@ package model;
 
 import java.util.Objects;
 
+import static enums.Role.CLIENT;
+
 public class User {
 
     private int userId;
@@ -10,7 +12,7 @@ public class User {
     private int role;
 
     public User() {
-        this.role = 1;
+        this.role = CLIENT.getRoleId();
     }
 
     public int getUserId() {

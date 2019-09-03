@@ -1,19 +1,17 @@
 package factories;
 
-import enums.ServiceEnum;
-
 public class ServiceFactory {
     private static volatile ServiceFactory factory = null;
 
-    private static Service billPaymentService = null;
-    private static Service clientDetailsService = null;
-    private static Service creditAccountService = null;
-    private static Service creditApprovementService = null;
-    private static Service depositAccountService = null;
-    private static Service refillService = null;
-    private static Service transferService = null;
-    private static Service userAccountService = null;
-    private static Service userService = null;
+    private static BillPaymentService billPaymentService = null;
+    private static ClientDetailsService clientDetailsService = null;
+    private static CreditAccountService creditAccountService = null;
+    private static CreditApprovementService creditApprovementService = null;
+    private static DepositAccountService depositAccountService = null;
+    private static RefillService refillService = null;
+    private static TransferService transferService = null;
+    private static UserAccountService userAccountService = null;
+    private static UserService userService = null;
 
     private ServiceFactory() {
 
@@ -30,59 +28,59 @@ public class ServiceFactory {
         return factory;
     }
 
-    public Service getDAO(ServiceEnum serviceEnum) {
-
-        if (serviceEnum == null)
-            return null;
-        Service service = null;
-        switch (serviceEnum) {
-            case BILL_PAYMENT_SERVICE:
-                if (billPaymentService == null)
-                    billPaymentService = new BillPaymentService();
-                service = billPaymentService;
-                break;
-            case CLIENT_DETAILS_SERVICE:
-                if (clientDetailsService == null)
-                    clientDetailsService = new ClientDetailsService();
-                service = clientDetailsService;
-                break;
-            case CREDIT_ACCOUNT_SERVICE:
-                if (creditAccountService == null)
-                    creditAccountService = new CreditAccountService();
-                service = creditAccountService;
-                break;
-            case CREDIT_APPROVEMENT_SERVICE:
-                if (creditApprovementService == null)
-                    creditApprovementService = new CreditApprovementService();
-                service = creditApprovementService;
-                break;
-            case DEPOSIT_ACCOUNT_SERVICE:
-                if (depositAccountService == null)
-                    depositAccountService = new DepositAccountService();
-                service = depositAccountService;
-                break;
-            case REFILL_SERVICE:
-                if (refillService == null)
-                    refillService = new RefillService();
-                service = refillService;
-                break;
-            case TRANSFER_SERVICE:
-                if (transferService == null)
-                    transferService = new TransferService();
-                service = transferService;
-                break;
-            case USER_ACCOUNT_SERVICE:
-                if (userAccountService == null)
-                    userAccountService = new UserAccountService();
-                service = userAccountService;
-                break;
-            case USER_SERVICE:
-                if (userService == null)
-                    userService = new UserService();
-                service = userService;
-                break;
-        }
-        return service;
+    public BillPaymentService getBillPaymentService() {
+        if (billPaymentService == null)
+            billPaymentService = new BillPaymentService();
+        return billPaymentService;
     }
 
+    public ClientDetailsService getClientDetailsService() {
+        if (clientDetailsService == null)
+            clientDetailsService = new ClientDetailsService();
+        return clientDetailsService;
+    }
+
+    public CreditAccountService getCreditAccountService() {
+        if (creditAccountService == null)
+            creditAccountService = new CreditAccountService();
+        return creditAccountService;
+    }
+
+    public CreditApprovementService getCreditApprovementService() {
+        if (creditApprovementService == null)
+            creditApprovementService = new CreditApprovementService();
+        return creditApprovementService;
+    }
+
+    public DepositAccountService getDepositAccountService() {
+        if (depositAccountService == null)
+            depositAccountService = new DepositAccountService();
+        return depositAccountService;
+    }
+
+    public RefillService getRefillService() {
+        if (refillService == null)
+            refillService = new RefillService();
+        return refillService;
+    }
+
+    public TransferService getTransferService() {
+
+        if (transferService == null)
+            transferService = new TransferService();
+        return transferService;
+    }
+
+    public UserAccountService getUserAccountService() {
+
+        if (userAccountService == null)
+            userAccountService = new UserAccountService();
+        return userAccountService;
+    }
+
+    public UserService getUserService() {
+        if (userService == null)
+            userService = new UserService();
+        return userService;
+    }
 }
