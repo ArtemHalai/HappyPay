@@ -4,7 +4,7 @@ public enum Fields {
 
     USER_ID("user_id"),
     NAME("name"),
-    LAST_NAME("last_name"),
+    SURNAME("surname"),
     MOBILE_PHONE("mobile_phone"),
     MANAGER_ID("manager_id"),
     USERNAME("username"),

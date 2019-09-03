@@ -2,12 +2,18 @@ package model;
 
 import java.util.Objects;
 
+import static enums.Currency.USD;
+
 public class CreditAccount extends Account {
 
     private double limit;
     private double rate;
     private double arrears;
     private double interestCharges;
+
+    public CreditAccount() {
+        this.currency = USD.getName();
+    }
 
     public double getLimit() {
         return limit;
@@ -21,11 +27,11 @@ public class CreditAccount extends Account {
         return rate;
     }
 
-    public double getArrear() {
+    public double getArrears() {
         return arrears;
     }
 
-    public void setArrear(double arrears) {
+    public void setArrears(double arrears) {
         this.arrears = arrears;
     }
 

@@ -1,16 +1,36 @@
 package model;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class ClientDetails {
 
     private int userId;
     private String name;
-    private String lastName;
+    private String surname;
     private String mobilePhone;
     private String username;
+    private String password;
     private Date birthday;
+    private List<Account> list = new ArrayList<>();
+
+    public List<Account> getList() {
+        return list;
+    }
+
+    public void setList(List<Account> list) {
+        this.list = list;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     public int getUserId() {
         return userId;
@@ -28,12 +48,12 @@ public class ClientDetails {
         this.name = name;
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getSurname() {
+        return surname;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setSurname(String surname) {
+        this.surname = surname;
     }
 
     public String getMobilePhone() {
@@ -63,18 +83,20 @@ public class ClientDetails {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ClientDetails)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         ClientDetails client = (ClientDetails) o;
         return userId == client.userId &&
-                name.equals(client.name) &&
-                lastName.equals(client.lastName) &&
-                mobilePhone.equals(client.mobilePhone) &&
-                username.equals(client.username) &&
-                birthday.equals(client.birthday);
+                Objects.equals(name, client.name) &&
+                Objects.equals(surname, client.surname) &&
+                Objects.equals(mobilePhone, client.mobilePhone) &&
+                Objects.equals(username, client.username) &&
+                Objects.equals(birthday, client.birthday) &&
+                Objects.equals(list, client.list) &&
+                Objects.equals(password, client.password);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, name, lastName, mobilePhone, username, birthday);
+        return Objects.hash(userId, name, surname, mobilePhone, username, birthday, list, password);
     }
 }

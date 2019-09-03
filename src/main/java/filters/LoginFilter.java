@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
+import static enums.Fields.ROLE;
 import static enums.Mappings.LOGGED_IN;
 import static enums.Role.*;
 
@@ -23,9 +24,9 @@ public class LoginFilter implements Filter {
 
         HttpSession session = req.getSession(false);
 
-        if (session.getAttribute(String.valueOf(CLIENT.getRoleId())) != null ||
-                session.getAttribute(String.valueOf(ADMIN.getRoleId())) != null ||
-                session.getAttribute(String.valueOf(MANAGER.getRoleId())) != null) {
+        int role = (int) req.getSession().getAttribute(ROLE.getName());
+        if (role == CLIENT.getRoleId() ||
+                role == ADMIN.getRoleId()) {
             resp.sendRedirect(LOGGED_IN.getName());
         } else {
             filterChain.doFilter(req, resp);

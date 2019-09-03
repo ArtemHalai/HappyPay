@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
+import static enums.Fields.ROLE;
 import static enums.Role.CLIENT;
 
 public class LogFilter implements Filter {
@@ -23,9 +24,9 @@ public class LogFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpSession session = request.getSession();
 
-        String user = (String) session.getAttribute(String.valueOf(CLIENT.getRoleId()));
-        if (user != null && ((HttpServletRequest) servletRequest).getMethod().equalsIgnoreCase("GET")) {
-            logger.info("Client with username: " + user+" is visiting "+((HttpServletRequest) servletRequest).getServletPath());
+        int role = (int) session.getAttribute(ROLE.getName());
+        if (role == CLIENT.getRoleId() && ((HttpServletRequest) servletRequest).getMethod().equalsIgnoreCase("GET")) {
+            logger.info("Client is visiting "+((HttpServletRequest) servletRequest).getServletPath());
         }
         filterChain.doFilter(servletRequest, servletResponse);
     }
