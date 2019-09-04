@@ -1,6 +1,6 @@
 package controller.servlets;
 
-import controller.ActionHandler;
+import util.ActionHandler;
 import enums.Mappings;
 
 import javax.servlet.ServletException;
@@ -32,7 +32,7 @@ public class BillPaymentServlet extends HttpServlet {
         Mappings page = ActionHandler.getPage(req, resp);
 
         switch (page) {
-            case ERRORS:
+            case ERROR:
                 req.getRequestDispatcher(BILL_PAYMENT_PAGE.getName()).forward(req, resp);
                 break;
             case SUCCESSFUL:

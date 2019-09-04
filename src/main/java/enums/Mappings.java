@@ -38,7 +38,7 @@ public enum Mappings {
     LOGOUT("logout"),
     REGISTRATION_VIEW("registration"),
     LOGGED_IN("logged_in"),
-    ERRORS("errors");
+    ERROR("errors");
 
     private String name;
 

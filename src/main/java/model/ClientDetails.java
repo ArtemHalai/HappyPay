@@ -10,17 +10,17 @@ public class ClientDetails {
     private int userId;
     private String name;
     private String surname;
-    private String mobilePhone;
+    private String phoneNumber;
     private String username;
     private String password;
     private Date birthday;
-    private List<Account> list = new ArrayList<>();
+    private List<UserAccount> list = new ArrayList<>();
 
-    public List<Account> getList() {
+    public List<UserAccount> getList() {
         return list;
     }
 
-    public void setList(List<Account> list) {
+    public void setList(List<UserAccount> list) {
         this.list = list;
     }
 
@@ -56,12 +56,12 @@ public class ClientDetails {
         this.surname = surname;
     }
 
-    public String getMobilePhone() {
-        return mobilePhone;
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
-    public void setMobilePhone(String mobilePhone) {
-        this.mobilePhone = mobilePhone;
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public String getUsername() {
@@ -88,7 +88,7 @@ public class ClientDetails {
         return userId == client.userId &&
                 Objects.equals(name, client.name) &&
                 Objects.equals(surname, client.surname) &&
-                Objects.equals(mobilePhone, client.mobilePhone) &&
+                Objects.equals(phoneNumber, client.phoneNumber) &&
                 Objects.equals(username, client.username) &&
                 Objects.equals(birthday, client.birthday) &&
                 Objects.equals(list, client.list) &&
@@ -97,6 +97,6 @@ public class ClientDetails {
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, name, surname, mobilePhone, username, birthday, list, password);
+        return Objects.hash(userId, name, surname, phoneNumber, username, birthday, list, password);
     }
 }

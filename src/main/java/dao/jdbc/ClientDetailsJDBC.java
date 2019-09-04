@@ -28,8 +28,8 @@ public class ClientDetailsJDBC implements ClientDetailsDAO {
         try (PreparedStatement statement = connection.prepareStatement(add, Statement.RETURN_GENERATED_KEYS)) {
             statement.setInt(1, clientDetails.getUserId());
             statement.setString(2, clientDetails.getName());
-            statement.setString(3, clientDetails.getLastName());
-            statement.setString(4, clientDetails.getMobilePhone());
+            statement.setString(3, clientDetails.getSurname());
+            statement.setString(4, clientDetails.getPhoneNumber());
             statement.setString(5, clientDetails.getUsername());
             statement.setDate(6, clientDetails.getBirthday());
             statement.executeUpdate();

@@ -4,12 +4,15 @@ import java.util.Objects;
 
 import static enums.Currency.USD;
 
-public class CreditAccount extends Account {
+public class CreditAccount extends UserAccount {
 
     private double limit;
     private double rate;
     private double arrears;
+    private double balance;
     private double interestCharges;
+    private long accountNumber;
+    private String currency;
 
     public CreditAccount() {
         this.currency = USD.getName();
@@ -27,6 +30,10 @@ public class CreditAccount extends Account {
         return rate;
     }
 
+    public void setRate(double rate) {
+        this.rate = rate;
+    }
+
     public double getArrears() {
         return arrears;
     }
@@ -35,8 +42,12 @@ public class CreditAccount extends Account {
         this.arrears = arrears;
     }
 
-    public void setRate(double rate) {
-        this.rate = rate;
+    public double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(double balance) {
+        this.balance = balance;
     }
 
     public double getInterestCharges() {
@@ -47,20 +58,39 @@ public class CreditAccount extends Account {
         this.interestCharges = interestCharges;
     }
 
+    public long getAccountNumber() {
+        return accountNumber;
+    }
+
+    public void setAccountNumber(long accountNumber) {
+        this.accountNumber = accountNumber;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof CreditAccount)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        CreditAccount creditAccount = (CreditAccount) o;
-        return Double.compare(creditAccount.limit, limit) == 0 &&
-                Double.compare(creditAccount.rate, rate) == 0 &&
-                Double.compare(creditAccount.interestCharges, interestCharges) == 0 &&
-                Double.compare(creditAccount.arrears, arrears) == 0;
+        CreditAccount that = (CreditAccount) o;
+        return Double.compare(that.limit, limit) == 0 &&
+                Double.compare(that.rate, rate) == 0 &&
+                Double.compare(that.arrears, arrears) == 0 &&
+                Double.compare(that.balance, balance) == 0 &&
+                Double.compare(that.interestCharges, interestCharges) == 0 &&
+                Objects.equals(accountNumber, that.accountNumber) &&
+                Objects.equals(currency, that.currency);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), limit, rate, interestCharges, arrears);
+        return Objects.hash(super.hashCode(), limit, rate, arrears, balance, interestCharges, accountNumber, currency);
     }
 }

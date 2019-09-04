@@ -4,9 +4,11 @@ import model.User;
 
 public interface UserDAO extends DAO<User> {
 
+    int add(User user);
+
     boolean isUserExist(String username);
 
-    User getUserByUsernameAndPassword(String username, String password);
+    User getUserByUsernameAndPassword(User user);
 
     int getUserIdByUsername(String username);
 }

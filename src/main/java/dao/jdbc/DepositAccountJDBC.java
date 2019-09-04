@@ -41,6 +41,23 @@ public class DepositAccountJDBC implements DepositAccountDAO {
     }
 
     @Override
+    public boolean updateAmount(double amount, int userId) {
+        String update = "UPDATE deposit_accounts SET amount = ? WHERE user_id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(update, Statement.RETURN_GENERATED_KEYS)) {
+            statement.setDouble(1, amount);
+            statement.setInt(2, userId);
+            statement.executeUpdate();
+
+            ResultSet rs = statement.getGeneratedKeys();
+            if (rs.next())
+                return true;
+        } catch (SQLException e) {
+            LOG.error("SQLException occurred in DepositAccountJDBC.class at updateAmount() method");
+        }
+        return false;
+    }
+
+    @Override
     public DepositAccount getById(int id) {
         Mapper<DepositAccount> depositAccountMapper = new DepositAccountMapper();
         DepositAccount depositAccount = new DepositAccount();

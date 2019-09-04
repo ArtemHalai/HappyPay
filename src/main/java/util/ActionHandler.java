@@ -1,5 +1,6 @@
-package controller;
+package util;
 
+import command.Command;
 import enums.Mappings;
 import factories.CommandFactory;
 

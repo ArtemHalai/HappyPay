@@ -31,7 +31,7 @@ public class CreditAccountJDBC implements CreditAccountDAO {
             statement.setString(3, creditAccount.getCurrency());
             statement.setDouble(4, creditAccount.getLimit());
             statement.setDouble(5, creditAccount.getRate());
-            statement.setDouble(6, creditAccount.getArrear());
+            statement.setDouble(6, creditAccount.getArrears());
             statement.setDouble(7, creditAccount.getInterestCharges());
             statement.executeUpdate();
             ResultSet rs = statement.getGeneratedKeys();

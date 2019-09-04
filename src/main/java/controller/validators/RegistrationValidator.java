@@ -48,7 +48,7 @@ public class RegistrationValidator extends LoginValidator {
     }
 
     private void validatePhoneNumber() {
-        String phoneNumber = clientDetails.getMobilePhone();
+        String phoneNumber = clientDetails.getPhoneNumber();
 
         if (!phoneNumber.matches(PHONE_NUMBER_REGEX.getName())) {
             errors.put(PHONE_NUMBER.getName(), PHONE_NUMBER_DOES_NOT_MATCH.getName());

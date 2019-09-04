@@ -4,15 +4,15 @@ import java.util.Objects;
 
 public class BillPaymentOperation extends Operation {
 
-    private String billNumber;
+    private long billNumber;
     private String purpose;
     private double amount;
 
-    public String getBillNumber() {
+    public long getBillNumber() {
         return billNumber;
     }
 
-    public void setBillNumber(String billNumber) {
+    public void setBillNumber(long billNumber) {
         this.billNumber = billNumber;
     }
 
@@ -39,7 +39,7 @@ public class BillPaymentOperation extends Operation {
         if (!super.equals(o)) return false;
         BillPaymentOperation billPayment = (BillPaymentOperation) o;
         return Double.compare(billPayment.amount, amount) == 0 &&
-                billNumber.equals(billPayment.billNumber) &&
+                billNumber == billPayment.billNumber &&
                 purpose.equals(billPayment.purpose);
     }
 

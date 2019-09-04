@@ -25,11 +25,9 @@ public class UserAccountJDBC implements UserAccountDAO {
                 "VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(addUserAccount, Statement.RETURN_GENERATED_KEYS)) {
             statement.setInt(1, userAccount.getUserId());
-            statement.setString(2, userAccount.getCurrency());
-            statement.setDate(3, userAccount.getValidity());
-            statement.setDouble(4, userAccount.getBalance());
-            statement.setBoolean(5, userAccount.getDeposit());
-            statement.setBoolean(6, userAccount.getCredit());
+            statement.setDate(2, userAccount.getValidity());
+            statement.setBoolean(3, userAccount.getDeposit());
+            statement.setBoolean(4, userAccount.getCredit());
             statement.executeUpdate();
             ResultSet rs = statement.getGeneratedKeys();
             if (rs.next())

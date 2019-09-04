@@ -1,6 +1,6 @@
 package controller.servlets;
 
-import controller.ActionHandler;
+import util.ActionHandler;
 import enums.Mappings;
 
 import javax.servlet.ServletException;
@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import static enums.Mappings.*;
-import static enums.Mappings.UNSUCCESSFUL_PAGE;
 
 public class CreditServlet extends HttpServlet {
 
@@ -33,7 +32,7 @@ public class CreditServlet extends HttpServlet {
         Mappings page = ActionHandler.getPage(req, resp);
 
         switch (page) {
-            case ERRORS:
+            case ERROR:
                 req.getRequestDispatcher(CREDIT_PAGE.getName()).forward(req, resp);
                 break;
             case SUCCESSFUL:

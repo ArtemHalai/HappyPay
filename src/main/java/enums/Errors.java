@@ -8,8 +8,9 @@ public enum Errors {
     PASSWORD_DOES_NOT_MATCH("Password should contains at least 8 characters."),
     USER_ALREADY_EXISTS("User with such username already exists."),
     USER_DOES_NOT_EXIST("User with such username doesn't exist."),
-    CARD_NUMBER_ERROR("Card number should contains 16 digits."),
+    ACCOUNT_NUMBER_ERROR("Account number should contains 16 - 30 digits."),
     SOMETHING_WRONG("Something was wrong."),
+    AMOUNT_ERROR("Amount should be more than 0."),
     BIRTHDAY_DOES_NOT_MATCH("You can register if you are over 18 years old only.");
 
     private String name;

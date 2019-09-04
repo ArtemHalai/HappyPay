@@ -1,6 +1,6 @@
 package controller.servlets;
 
-import controller.ActionHandler;
+import util.ActionHandler;
 import enums.Mappings;
 
 import javax.servlet.ServletException;

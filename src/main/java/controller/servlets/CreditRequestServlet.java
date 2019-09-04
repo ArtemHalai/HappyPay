@@ -1,6 +1,6 @@
 package controller.servlets;
 
-import controller.ActionHandler;
+import util.ActionHandler;
 import enums.Mappings;
 
 import javax.servlet.ServletException;
@@ -18,25 +18,14 @@ public class CreditRequestServlet extends HttpServlet {
         Mappings page = ActionHandler.getPage(req, resp);
 
         switch (page) {
-            case CREDIT_REQUEST:
-                req.getRequestDispatcher(CREDIT_REQUEST_PAGE.getName()).forward(req, resp);
+            case SUCCESSFUL:
+                resp.sendRedirect(req.getServletPath() + "/" + SUCCESSFUL.getName());
+                break;
+            case UNSUCCESSFUL:
+                resp.sendRedirect(req.getServletPath() + "/" + UNSUCCESSFUL.getName());
                 break;
             case LOGIN_VIEW:
                 resp.sendRedirect(LOGIN_VIEW.getName());
-                break;
-        }
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Mappings page = ActionHandler.getPage(req, resp);
-
-        switch (page) {
-            case ERRORS:
-                req.getRequestDispatcher(CLIENT_ACCOUNTS_PAGE.getName()).forward(req, resp);
-                break;
-            case HOME:
-                req.getRequestDispatcher(HOME.getName()).forward(req, resp);
                 break;
         }
     }

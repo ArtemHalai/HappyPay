@@ -5,7 +5,7 @@ import java.util.Objects;
 public class RefillOperation extends Operation {
 
     private double amount;
-    private String accountNumber;
+    private long accountNumber;
 
     public double getAmount() {
         return amount;
@@ -15,11 +15,11 @@ public class RefillOperation extends Operation {
         this.amount = amount;
     }
 
-    public String getAccountNumber() {
+    public long getAccountNumber() {
         return accountNumber;
     }
 
-    public void setAccountNumber(String accountNumber) {
+    public void setAccountNumber(long accountNumber) {
         this.accountNumber = accountNumber;
     }
 
@@ -30,7 +30,7 @@ public class RefillOperation extends Operation {
         if (!super.equals(o)) return false;
         RefillOperation refill = (RefillOperation) o;
         return Double.compare(refill.amount, amount) == 0 &&
-                accountNumber.equals(refill.accountNumber);
+                accountNumber == refill.accountNumber;
     }
 
     @Override

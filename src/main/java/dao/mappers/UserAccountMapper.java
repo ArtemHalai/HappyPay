@@ -15,8 +15,7 @@ public class UserAccountMapper implements Mapper<UserAccount> {
 
         UserAccount userAccount = new UserAccount();
         userAccount.setUserId(resultSet.getInt(USER_ID.getName()));
-        userAccount.setBalance(resultSet.getFloat(BALANCE.getName()));
-        userAccount.setCurrency(resultSet.getString(CURRENCY.getName()));
+        userAccount.setAccountNumber(resultSet.getString(ACCOUNT_NUMBER.getName()));
         userAccount.setValidity(resultSet.getDate(VALIDITY.getName()));
         userAccount.setDeposit(resultSet.getBoolean(DEPOSIT.getName()));
         userAccount.setCredit(resultSet.getBoolean(CREDIT.getName()));

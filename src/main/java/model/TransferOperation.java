@@ -4,14 +4,14 @@ import java.util.Objects;
 
 public class TransferOperation extends Operation {
 
-    private String recipientAccountNumber;
+    private long recipientAccountNumber;
     private double amount;
 
-    public String getRecipientAccountNumber() {
+    public long getRecipientAccountNumber() {
         return recipientAccountNumber;
     }
 
-    public void setRecipientAccountNumber(String recipientAccountNumber) {
+    public void setRecipientAccountNumber(long recipientAccountNumber) {
         this.recipientAccountNumber = recipientAccountNumber;
     }
 
@@ -30,7 +30,7 @@ public class TransferOperation extends Operation {
         if (!super.equals(o)) return false;
         TransferOperation transfer = (TransferOperation) o;
         return Double.compare(transfer.amount, amount) == 0 &&
-                recipientAccountNumber.equals(transfer.recipientAccountNumber);
+                recipientAccountNumber == transfer.recipientAccountNumber;
     }
 
     @Override

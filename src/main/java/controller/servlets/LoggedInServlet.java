@@ -1,8 +1,7 @@
 package controller.servlets;
 
-import controller.ActionHandler;
+import util.ActionHandler;
 import enums.Mappings;
-import factories.CommandFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -10,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static enums.Mappings.LOGGED_IN;
 import static enums.Mappings.LOGGED_IN_PAGE;
 
 public class LoggedInServlet extends HttpServlet {

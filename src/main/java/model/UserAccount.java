@@ -5,27 +5,33 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class UserAccount extends Account {
+public class UserAccount {
 
+    protected int userId;
     private Date validity;
     private boolean deposit;
     private boolean credit;
-    private List<Operation> list;
+    private long accountNumber;
 
     public UserAccount() {
-        this.balance = 0.0;
-        this.currency = "$";
         this.deposit = false;
         this.credit = false;
-        this.list = new ArrayList<>();
     }
 
-    public List<Operation> getList() {
-        return list;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setList(List<Operation> list) {
-        this.list = list;
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public long getAccountNumber() {
+        return accountNumber;
+    }
+
+    public void setAccountNumber(long accountNumber) {
+        this.accountNumber = accountNumber;
     }
 
     public Date getValidity() {
@@ -55,16 +61,17 @@ public class UserAccount extends Account {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof UserAccount)) return false;
-        if (!super.equals(o)) return false;
-        UserAccount userAccount = (UserAccount) o;
-        return Objects.equals(validity, userAccount.validity) &&
-                deposit == userAccount.deposit &&
-                credit == userAccount.credit && list.equals(userAccount.list);
+        if (o == null || getClass() != o.getClass()) return false;
+        UserAccount that = (UserAccount) o;
+        return userId == that.userId &&
+                deposit == that.deposit &&
+                credit == that.credit &&
+                Objects.equals(validity, that.validity) &&
+                Objects.equals(accountNumber, that.accountNumber);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), validity, deposit, credit, list);
+        return Objects.hash(userId, validity, deposit, credit, accountNumber);
     }
 }

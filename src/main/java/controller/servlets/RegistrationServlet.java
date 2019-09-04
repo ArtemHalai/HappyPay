@@ -1,8 +1,7 @@
 package controller.servlets;
 
-import controller.ActionHandler;
+import util.ActionHandler;
 import enums.Mappings;
-import factories.CommandFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -32,7 +31,7 @@ public class RegistrationServlet extends HttpServlet {
         Mappings page = ActionHandler.getPage(req, resp);
 
         switch (page) {
-            case ERRORS:
+            case ERROR:
                 req.getRequestDispatcher(REGISTRATION_PAGE.getName()).forward(req, resp);
                 break;
             case HOME:

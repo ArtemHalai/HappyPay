@@ -56,33 +56,30 @@ public class UserJDBC implements UserDAO {
     }
 
     @Override
-    public User getUserByUsernameAndPassword(String username, String password) {
+    public User getUserByUsernameAndPassword(User user) {
 
         String getByUsernameAndPassword = "SELECT * FROM users WHERE username = ? AND password = ?";
         Mapper<User> userMapper = new UserMapper();
-        User user = null;
+        User obj = null;
 
         try (PreparedStatement statement = connection.prepareStatement(getByUsernameAndPassword)) {
-            statement.setString(1, username);
-            statement.setString(2, password);
+            statement.setString(1, user.getUsername());
+            statement.setString(2, user.getPassword());
             ResultSet rs = statement.executeQuery();
 
             if (rs.next())
-                user = userMapper.getEntity(rs);
+                obj = userMapper.getEntity(rs);
         } catch (SQLException e) {
             LOG.error("SQLException occurred in UserJDBC.class at getUserByUsernameAndPassword() method");
         }
-        if (user == null) {
-            LOG.error("Access denied to username = " + username + ", wrong username or password");
-            throw new WrongUsernameOrPasswordException("Wrong username or password");
-        } else
-            return user;
+        return obj;
     }
 
     @Override
-    public boolean add(User user) {
+    public int add(User user) {
 
         String addUser = "INSERT INTO users (username, password, role) VALUES (?, ?, ?)";
+        int userId = -1;
         try (PreparedStatement statement = connection.prepareStatement(addUser, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, user.getUsername());
             statement.setString(2, user.getPassword());
@@ -90,13 +87,12 @@ public class UserJDBC implements UserDAO {
             statement.executeUpdate();
 
             ResultSet rs = statement.getGeneratedKeys();
-
             if (rs.next())
-                return true;
+                userId = rs.getInt(1);
         } catch (SQLException e) {
             LOG.error("SQLException occurred in UserJDBC.class from add() method");
         }
-        return false;
+        return userId;
     }
 
     @Override

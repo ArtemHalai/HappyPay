@@ -7,10 +7,13 @@ import java.util.Objects;
 
 import static enums.Currency.USD;
 
-public class DepositAccount extends Account {
+public class DepositAccount extends UserAccount {
 
     private double rate;
     private Date term;
+    private String currency;
+    private double balance;
+    private long accountNumber;
     private List<RefillOperation> refillList = new ArrayList<>();
 
     public DepositAccount() {
@@ -33,19 +36,54 @@ public class DepositAccount extends Account {
         this.term = term;
     }
 
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(double balance) {
+        this.balance = balance;
+    }
+
+    public long getAccountNumber() {
+        return accountNumber;
+    }
+
+    public void setAccountNumber(long accountNumber) {
+        this.accountNumber = accountNumber;
+    }
+
+    public List<RefillOperation> getRefillList() {
+        return refillList;
+    }
+
+    public void setRefillList(List<RefillOperation> refillList) {
+        this.refillList = refillList;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        DepositAccount account = (DepositAccount) o;
-        return Double.compare(account.rate, rate) == 0 &&
-                Objects.equals(term, account.term) &&
-                Objects.equals(refillList, account.refillList);
+        DepositAccount that = (DepositAccount) o;
+        return Double.compare(that.rate, rate) == 0 &&
+                Double.compare(that.balance, balance) == 0 &&
+                Objects.equals(term, that.term) &&
+                Objects.equals(currency, that.currency) &&
+                Objects.equals(accountNumber, that.accountNumber) &&
+                Objects.equals(refillList, that.refillList);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), rate, term, refillList);
+        return Objects.hash(super.hashCode(), rate, term, currency, balance, accountNumber, refillList);
     }
 }
