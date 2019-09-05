@@ -6,5 +6,5 @@ public interface DepositAccountDAO extends DAO<DepositAccount> {
 
     boolean add(DepositAccount depositAccount);
 
-    boolean updateAmount(double amount, int userId);
+    boolean updateBalanceById(double amount, int userId);
 }

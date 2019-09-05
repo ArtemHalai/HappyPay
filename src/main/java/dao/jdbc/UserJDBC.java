@@ -136,12 +136,4 @@ public class UserJDBC implements UserDAO {
         return list;
     }
 
-    @Override
-    public void close() {
-        try {
-            connection.close();
-        } catch (SQLException e) {
-            LOG.error("SQLException occurred in UserJDBC.class at close() method");
-        }
-    }
 }

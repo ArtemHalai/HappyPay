@@ -45,7 +45,7 @@ public class TransferJDBC implements TransferDAO {
         String addOperation = "INSERT INTO transfer_operation (user_id, recipient_account_number, amount) VALUES (?, ?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(addOperation, Statement.RETURN_GENERATED_KEYS)) {
             statement.setInt(1, transferOperation.getUserId());
-            statement.setString(2, transferOperation.getRecipientAccountNumber());
+            statement.setLong(2, transferOperation.getRecipientAccountNumber());
             statement.setDouble(3, transferOperation.getAmount());
             statement.executeUpdate();
             ResultSet rs = statement.getGeneratedKeys();
@@ -95,14 +95,5 @@ public class TransferJDBC implements TransferDAO {
             LOG.error("SQLException occurred in UserAccountJDBC.class at findAll() method");
         }
         return list;
-    }
-
-    @Override
-    public void close() {
-        try {
-            connection.close();
-        } catch (SQLException e) {
-            LOG.error("SQLException occurred in TransferJDBC.class at close() method");
-        }
     }
 }

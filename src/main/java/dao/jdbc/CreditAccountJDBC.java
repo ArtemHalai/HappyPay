@@ -44,6 +44,22 @@ public class CreditAccountJDBC implements CreditAccountDAO {
     }
 
     @Override
+    public boolean updateBalanceById(double amount, int userId) {
+        String updateBalance = "UPDATE credit_accounts SET balance = ? WHERE user_id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(updateBalance, Statement.RETURN_GENERATED_KEYS)) {
+            statement.setDouble(1, amount);
+            statement.setInt(2, userId);
+            statement.executeUpdate();
+            ResultSet rs = statement.getGeneratedKeys();
+            if (rs.next())
+                return true;
+        } catch (SQLException e) {
+            LOG.error("SQLException occurred in DepositAccountJDBC.class at updateBalanceById() method");
+        }
+        return false;
+    }
+
+    @Override
     public CreditAccount getById(int id) {
         Mapper<CreditAccount> creditAccountMapper = new CreditAccountMapper();
         CreditAccount creditAccount = new CreditAccount();
@@ -80,14 +96,5 @@ public class CreditAccountJDBC implements CreditAccountDAO {
             LOG.error("SQLException occurred in CreditAccountJDBC.class at findAll() method");
         }
         return list;
-    }
-
-    @Override
-    public void close() {
-        try {
-            connection.close();
-        } catch (SQLException e) {
-            LOG.error("SQLException occurred in CreditAccountJDBC.class at close() method");
-        }
     }
 }

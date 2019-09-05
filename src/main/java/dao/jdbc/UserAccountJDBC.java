@@ -112,30 +112,4 @@ public class UserAccountJDBC implements UserAccountDAO {
         }
         return false;
     }
-
-    @Override
-    public boolean updateBalanceById(int id, double amount) {
-
-        String updateBalance = "UPDATE user_account SET balance = ? WHERE user_id = ?";
-        try (PreparedStatement statement = connection.prepareStatement(updateBalance, Statement.RETURN_GENERATED_KEYS)) {
-            statement.setDouble(1, amount);
-            statement.setInt(2, id);
-            statement.executeUpdate();
-            ResultSet rs = statement.getGeneratedKeys();
-            if (rs.next())
-                return true;
-        } catch (SQLException e) {
-            LOG.error("SQLException occurred in UserAccountJDBC.class at updateBalanceById() method");
-        }
-        return false;
-    }
-
-    @Override
-    public void close() {
-        try {
-            connection.close();
-        } catch (SQLException e) {
-            LOG.error("SQLException occurred in UserAccountJDBC.class at close() method");
-        }
-    }
 }

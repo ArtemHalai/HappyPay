@@ -1,5 +1,8 @@
 package factories;
 
+import dao.intefaces.UserDAO;
+import service.*;
+
 public class ServiceFactory {
     private static volatile ServiceFactory factory = null;
 

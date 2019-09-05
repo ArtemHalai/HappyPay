@@ -41,18 +41,17 @@ public class DepositAccountJDBC implements DepositAccountDAO {
     }
 
     @Override
-    public boolean updateAmount(double amount, int userId) {
-        String update = "UPDATE deposit_accounts SET amount = ? WHERE user_id = ?";
-        try (PreparedStatement statement = connection.prepareStatement(update, Statement.RETURN_GENERATED_KEYS)) {
+    public boolean updateBalanceById(double amount, int userId) {
+        String updateBalance = "UPDATE deposit_accounts SET balance = ? WHERE user_id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(updateBalance, Statement.RETURN_GENERATED_KEYS)) {
             statement.setDouble(1, amount);
             statement.setInt(2, userId);
             statement.executeUpdate();
-
             ResultSet rs = statement.getGeneratedKeys();
             if (rs.next())
                 return true;
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in DepositAccountJDBC.class at updateAmount() method");
+            LOG.error("SQLException occurred in DepositAccountJDBC.class at updateBalanceById() method");
         }
         return false;
     }
@@ -94,14 +93,5 @@ public class DepositAccountJDBC implements DepositAccountDAO {
             LOG.error("SQLException occurred in DepositAccountJDBC.class at findAll() method");
         }
         return list;
-    }
-
-    @Override
-    public void close() {
-        try {
-            connection.close();
-        } catch (SQLException e) {
-            LOG.error("SQLException occurred in DepositAccountJDBC.class at close() method");
-        }
     }
 }

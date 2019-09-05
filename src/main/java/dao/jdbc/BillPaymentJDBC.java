@@ -47,7 +47,7 @@ public class BillPaymentJDBC implements BillPaymentDAO {
                 "VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(add, Statement.RETURN_GENERATED_KEYS)) {
             statement.setInt(1, billPaymentOperation.getUserId());
-            statement.setString(2, billPaymentOperation.getBillNumber());
+            statement.setLong(2, billPaymentOperation.getBillNumber());
             statement.setString(3, billPaymentOperation.getPurpose());
             statement.setDouble(4, billPaymentOperation.getAmount());
             statement.executeUpdate();
@@ -97,14 +97,5 @@ public class BillPaymentJDBC implements BillPaymentDAO {
             LOG.error("SQLException occurred in BillPaymentJDBC.class at findAll() method");
         }
         return list;
-    }
-
-    @Override
-    public void close() {
-        try {
-            connection.close();
-        } catch (SQLException e) {
-            LOG.error("SQLException occurred in BillPaymentJDBC.class at close() method");
-        }
     }
 }

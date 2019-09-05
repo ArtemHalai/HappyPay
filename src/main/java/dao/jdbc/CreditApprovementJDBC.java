@@ -116,13 +116,4 @@ public class CreditApprovementJDBC implements CreditApprovementDAO {
         }
         return list;
     }
-
-    @Override
-    public void close() {
-        try {
-            connection.close();
-        } catch (SQLException e) {
-            LOG.error("SQLException occurred in CreditApprovementJDBC.class at close() method");
-        }
-    }
 }

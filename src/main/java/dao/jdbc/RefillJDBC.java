@@ -46,7 +46,7 @@ public class RefillJDBC implements RefillDAO {
         try (PreparedStatement statement = connection.prepareStatement(addOperation, Statement.RETURN_GENERATED_KEYS)) {
             statement.setInt(1, refillOperation.getUserId());
             statement.setDouble(2, refillOperation.getAmount());
-            statement.setString(3, refillOperation.getAccountNumber());
+            statement.setLong(3, refillOperation.getAccountNumber());
             statement.executeUpdate();
             ResultSet rs = statement.getGeneratedKeys();
             if (rs.next())
@@ -95,14 +95,5 @@ public class RefillJDBC implements RefillDAO {
             LOG.error("SQLException occurred in RefillJDBC.class at findAll() method");
         }
         return list;
-    }
-
-    @Override
-    public void close() {
-        try {
-            connection.close();
-        } catch (SQLException e) {
-            LOG.error("SQLException occurred in RefillJDBC.class at close() method");
-        }
     }
 }

@@ -80,15 +80,4 @@ public class ClientDetailsJDBC implements ClientDetailsDAO {
         }
         return list;
     }
-
-    @Override
-    public void close() {
-        try {
-            connection.close();
-            LOG.debug("Connection closed");
-        } catch (SQLException e) {
-            LOG.error("SQLException occurred in ContactDetailsJDBC.class from close() method", e);
-            throw new RuntimeException(e);
-        }
-    }
 }
