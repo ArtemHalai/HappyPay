@@ -11,6 +11,7 @@ public enum Errors {
     ACCOUNT_NUMBER_ERROR("Account number should contains 16 - 30 digits."),
     SOMETHING_WRONG("Something was wrong."),
     AMOUNT_ERROR("Amount should be more than 0."),
+    VALIDITY_ERROR("Validity of your account is expired."),
     BIRTHDAY_DOES_NOT_MATCH("You can register if you are over 18 years old only.");
 
     private String name;

@@ -4,6 +4,7 @@ import dao.intefaces.CreditAccountDAO;
 import dao.mappers.CreditAccountMapper;
 import dao.mappers.Mapper;
 import model.CreditAccount;
+import model.RefillOperation;
 import org.apache.log4j.Logger;
 
 import java.sql.*;
@@ -57,6 +58,57 @@ public class CreditAccountJDBC implements CreditAccountDAO {
             LOG.error("SQLException occurred in DepositAccountJDBC.class at updateBalanceById() method");
         }
         return false;
+    }
+
+    @Override
+    public boolean updateBalanceByAccount(double amount, long account) {
+        String updateBalance = "UPDATE credit_accounts SET balance = ? WHERE account_number = ?";
+        try (PreparedStatement statement = connection.prepareStatement(updateBalance, Statement.RETURN_GENERATED_KEYS)) {
+            statement.setDouble(1, amount);
+            statement.setLong(2, account);
+            statement.executeUpdate();
+            ResultSet rs = statement.getGeneratedKeys();
+            if (rs.next())
+                return true;
+        } catch (SQLException e) {
+            LOG.error("SQLException occurred in DepositAccountJDBC.class at updateBalanceByAccount() method");
+        }
+        return false;
+    }
+
+    @Override
+    public CreditAccount isAccountNumberExist(long accountNumber) {
+        Mapper<CreditAccount> creditAccountMapper = new CreditAccountMapper();
+        CreditAccount creditAccount = new CreditAccount();
+        creditAccount.setUserId(-1);
+        String exist = "SELECT * FROM credit_accounts WHERE account_number = ?";
+        try (PreparedStatement statement = connection.prepareStatement(exist)) {
+            statement.setLong(1, accountNumber);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next())
+                creditAccount = creditAccountMapper.getEntity(rs);
+        } catch (SQLException e) {
+            LOG.error("SQLException occurred in CreditAccountJDBC.class at getByAccountNumber() method");
+        }
+        return creditAccount;
+    }
+
+    @Override
+    public CreditAccount getByAccountAndIban(RefillOperation refillOperation) {
+        Mapper<CreditAccount> creditAccountMapper = new CreditAccountMapper();
+        CreditAccount creditAccount = new CreditAccount();
+        creditAccount.setUserId(-1);
+        String exist = "SELECT * FROM credit_accounts WHERE account_number = ? AND iban = ?";
+        try (PreparedStatement statement = connection.prepareStatement(exist)) {
+            statement.setLong(1, refillOperation.getAccountNumber());
+            statement.setLong(2, refillOperation.getSenderIBAN());
+            ResultSet rs = statement.executeQuery();
+            if (rs.next())
+                creditAccount = creditAccountMapper.getEntity(rs);
+        } catch (SQLException e) {
+            LOG.error("SQLException occurred in CreditAccountJDBC.class at getByAccountAndIban() method");
+        }
+        return creditAccount;
     }
 
     @Override

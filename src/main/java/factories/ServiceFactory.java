@@ -1,6 +1,5 @@
 package factories;
 
-import dao.intefaces.UserDAO;
 import service.*;
 
 public class ServiceFactory {

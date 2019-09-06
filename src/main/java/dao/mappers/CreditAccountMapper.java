@@ -17,6 +17,7 @@ public class CreditAccountMapper implements Mapper<CreditAccount> {
         creditAccount.setUserId(resultSet.getInt(USER_ID.getName()));
         creditAccount.setBalance(resultSet.getDouble(BALANCE.getName()));
         creditAccount.setCurrency(resultSet.getString(CURRENCY.getName()));
+        creditAccount.setIban(resultSet.getLong(IBAN.getName()));
         creditAccount.setLimit(resultSet.getDouble(LIMIT.getName()));
         creditAccount.setRate(resultSet.getDouble(RATE.getName()));
         creditAccount.setArrears(resultSet.getDouble(ARREARS.getName()));

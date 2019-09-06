@@ -3,8 +3,8 @@ package command;
 import controller.validators.LoginValidator;
 import controller.validators.Validator;
 import enums.Mappings;
-import enums.Role;
-import exceptions.WrongUsernameOrPasswordException;
+import facade.LoginFacade;
+import factories.ServiceFactory;
 import model.User;
 import org.apache.log4j.Logger;
 
@@ -26,8 +26,8 @@ import static enums.Role.CLIENT;
 public class LoginCommand implements Command {
 
     private static final Logger LOG = Logger.getLogger(LoginCommand.class);
-
     private LoginFacade loginFacade = new LoginFacade();
+    private Map<String, String> errors;
 
     @Override
     public Mappings execute(HttpServletRequest request, HttpServletResponse response) {
@@ -36,19 +36,17 @@ public class LoginCommand implements Command {
 
         User user = new User();
 
-        Validator loginValidator = new LoginValidator(username, password);
-        Map<String, String> errors = loginValidator.validate();
-        if (!errors.isEmpty()) {
+        if (validation(username, password)) {
             request.setAttribute(ERRORS.getName(), errors);
             return ERROR;
         } else {
             user.setUsername(username);
             user.setPassword(password);
-            user = loginFacade.getUserByUsernameAndPassword(user);
+            loginFacade.setUserService(ServiceFactory.getInstance().getUserService());
+            boolean exist = loginFacade.getUserByUsernameAndPassword(user);
 
-            if (user != null) {
+            if (exist) {
                 HttpSession session = request.getSession();
-
                 LOG.info("User is logged in with username: " + username);
                 if (user.getRole() == ADMIN.getRoleId()) {
                     session.setAttribute(ROLE.getName(), ADMIN.getRoleId());
@@ -58,16 +56,17 @@ public class LoginCommand implements Command {
                     session.setAttribute(USER_ID.getName(), user.getUserId());
                     return HOME;
                 }
-                try {
-                    throw new WrongUsernameOrPasswordException("Wrong username or password");
-                } catch (WrongUsernameOrPasswordException e) {
-                    LOG.error("Access denied to username = " + username + ", " + e.getMessage());
-                }
             } else {
                 errors.put(USER.getName(), USER_DOES_NOT_EXIST.getName());
                 request.setAttribute(ERRORS.getName(), errors);
                 return ERROR;
             }
         }
+    }
+
+    private boolean validation(String username, String password) {
+        Validator loginValidator = new LoginValidator(username, password);
+        errors = loginValidator.validate();
+        return !errors.isEmpty();
     }
 }

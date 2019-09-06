@@ -4,6 +4,7 @@ import dao.intefaces.DepositAccountDAO;
 import dao.mappers.DepositAccountMapper;
 import dao.mappers.Mapper;
 import model.DepositAccount;
+import model.RefillOperation;
 import org.apache.log4j.Logger;
 
 import java.sql.*;
@@ -57,12 +58,64 @@ public class DepositAccountJDBC implements DepositAccountDAO {
     }
 
     @Override
+    public boolean updateBalanceByAccount(double amount, long account) {
+        String updateBalance = "UPDATE deposit_accounts SET balance = ? WHERE account_number = ?";
+        try (PreparedStatement statement = connection.prepareStatement(updateBalance, Statement.RETURN_GENERATED_KEYS)) {
+            statement.setDouble(1, amount);
+            statement.setLong(2, account);
+            statement.executeUpdate();
+            ResultSet rs = statement.getGeneratedKeys();
+            if (rs.next())
+                return true;
+        } catch (SQLException e) {
+            LOG.error("SQLException occurred in DepositAccountJDBC.class at updateBalanceByAccount() method");
+        }
+        return false;
+    }
+
+    @Override
+    public DepositAccount isAccountNumberExist(long accountNumber) {
+        Mapper<DepositAccount> depositAccountMapper = new DepositAccountMapper();
+        DepositAccount depositAccount = new DepositAccount();
+        depositAccount.setUserId(-1);
+        String getById = "SELECT * FROM deposit_accounts WHERE account_number = ?";
+        try (PreparedStatement statement = connection.prepareStatement(getById)) {
+            statement.setLong(1, accountNumber);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next())
+                depositAccount = depositAccountMapper.getEntity(rs);
+        } catch (SQLException e) {
+            LOG.error("SQLException occurred in DepositAccountJDBC.class at getByAccountNumber() method");
+        }
+        return depositAccount;
+    }
+
+    @Override
+    public DepositAccount getByAccountAndIban(RefillOperation refillOperation) {
+        Mapper<DepositAccount> depositAccountMapper = new DepositAccountMapper();
+        DepositAccount depositAccount = new DepositAccount();
+        depositAccount.setUserId(-1);
+        String getById = "SELECT * FROM deposit_accounts WHERE account_number = ? AND iban = ?";
+        try (PreparedStatement statement = connection.prepareStatement(getById)) {
+            statement.setLong(1, refillOperation.getAccountNumber());
+            statement.setLong(2, refillOperation.getSenderIBAN());
+            ResultSet rs = statement.executeQuery();
+            if (rs.next())
+                depositAccount = depositAccountMapper.getEntity(rs);
+        } catch (SQLException e) {
+            LOG.error("SQLException occurred in DepositAccountJDBC.class at getByAccountAndIban() method");
+        }
+        return depositAccount;
+    }
+
+    @Override
     public DepositAccount getById(int id) {
         Mapper<DepositAccount> depositAccountMapper = new DepositAccountMapper();
         DepositAccount depositAccount = new DepositAccount();
         depositAccount.setUserId(-1);
 
-        String getById = "SELECT * FROM deposit_accounts WHERE user_id = ?";
+        String getById = "SELECT * FROM deposit_accounts LEFT JOIN refill_operation ON deposit_accounts.user_id = " +
+                " refill_operation.user_id WHERE user_id = ?";
         try (PreparedStatement statement = connection.prepareStatement(getById)) {
             statement.setInt(1, id);
             ResultSet rs = statement.executeQuery();

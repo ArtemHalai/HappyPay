@@ -1,6 +1,9 @@
 package command;
 
+import enums.Fields;
 import enums.Mappings;
+import facade.TransferFacade;
+import factories.ServiceFactory;
 import model.TransferOperation;
 import org.apache.log4j.Logger;
 import util.CheckOperationErrors;
@@ -11,6 +14,7 @@ import javax.servlet.http.HttpSession;
 
 import java.sql.Date;
 
+import static enums.Attributes.ACCOUNT;
 import static enums.Fields.*;
 import static enums.Mappings.*;
 import static enums.Role.CLIENT;
@@ -28,6 +32,7 @@ public class TransferCommand implements Command {
         int userId = (int) session.getAttribute(USER_ID.getName());
         double amount = Double.parseDouble(request.getParameter(AMOUNT.getName()));
         long recipientAccountNumber = Long.parseLong(request.getParameter(ACCOUNT_NUMBER.getName()));
+        String account = request.getParameter(ACCOUNT.getName());
 
         if (recipientAccountNumber <= 0) {
             return TRANSFER;
@@ -44,7 +49,10 @@ public class TransferCommand implements Command {
             transferOperation.setRecipientAccountNumber(recipientAccountNumber);
             transferOperation.setUserId(userId);
             transferOperation.setDate(new Date(System.currentTimeMillis()));
-            boolean transferred = transferFacade.transfer(transferOperation);
+            transferFacade.setTransferService(ServiceFactory.getInstance().getTransferService());
+            transferFacade.setCreditAccountService(ServiceFactory.getInstance().getCreditAccountService());
+            transferFacade.setDepositAccountService(ServiceFactory.getInstance().getDepositAccountService());
+            boolean transferred = transferFacade.transfer(transferOperation, Fields.valueOf(account));
             if (transferred)
                 return SUCCESSFUL;
             else

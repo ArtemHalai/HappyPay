@@ -12,7 +12,7 @@ public enum Attributes {
     PASSWORD("password"),
     PHONE_NUMBER("phone_number"),
     BIRTHDAY("birthday"),
-    CARD_NUMBER("card_number");
+    ACCOUNT("account");
 
     private String name;
 

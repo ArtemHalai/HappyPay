@@ -10,12 +10,21 @@ public class CreditAccount extends UserAccount {
     private double rate;
     private double arrears;
     private double balance;
+    private long iban;
     private double interestCharges;
     private long accountNumber;
     private String currency;
 
     public CreditAccount() {
         this.currency = USD.getName();
+    }
+
+    public long getIban() {
+        return iban;
+    }
+
+    public void setIban(long iban) {
+        this.iban = iban;
     }
 
     public double getLimit() {
@@ -84,13 +93,14 @@ public class CreditAccount extends UserAccount {
                 Double.compare(that.rate, rate) == 0 &&
                 Double.compare(that.arrears, arrears) == 0 &&
                 Double.compare(that.balance, balance) == 0 &&
+                iban == that.iban &&
                 Double.compare(that.interestCharges, interestCharges) == 0 &&
-                Objects.equals(accountNumber, that.accountNumber) &&
+                accountNumber == that.accountNumber &&
                 Objects.equals(currency, that.currency);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), limit, rate, arrears, balance, interestCharges, accountNumber, currency);
+        return Objects.hash(super.hashCode(), limit, rate, arrears, balance, iban, interestCharges, accountNumber, currency);
     }
 }

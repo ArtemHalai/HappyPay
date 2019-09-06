@@ -15,6 +15,8 @@ public enum Fields {
     PURPOSE("purpose"),
     BALANCE("balance"),
     CURRENCY("currency"),
+    IBAN("iban"),
+    SENDER_IBAN("sender_iban"),
     VALIDITY("validity"),
     DEPOSIT("deposit"),
     DECISION("decision"),

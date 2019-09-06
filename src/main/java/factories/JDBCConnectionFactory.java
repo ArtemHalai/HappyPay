@@ -30,7 +30,7 @@ public class JDBCConnectionFactory {
                             (factory, genPool, null, null, false, true);
             dataSource = new PoolingDataSource(genPool);
         } catch (ClassNotFoundException e) {
-            LOG.error("Error occurred in JDBCConnectionFactory.class at private constructor");
+            LOG.error("ClassNotFoundException occurred in JDBCConnectionFactory.class at private constructor");
         }
     }
 
@@ -45,8 +45,14 @@ public class JDBCConnectionFactory {
         return connectionFactory;
     }
 
-    public Connection getConnection() throws SQLException {
-        return dataSource.getConnection();
+    public Connection getConnection() {
+        Connection connection = null;
+        try {
+            connection = dataSource.getConnection();
+        } catch (SQLException e) {
+            LOG.error("SQLException occurred in JDBCConnectionFactory.class at getConnection() method");
+        }
+        return connection;
     }
 
     public static GenericObjectPool getConnectionPool() {

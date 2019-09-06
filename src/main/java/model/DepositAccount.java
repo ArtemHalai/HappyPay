@@ -13,11 +13,20 @@ public class DepositAccount extends UserAccount {
     private Date term;
     private String currency;
     private double balance;
+    private long iban;
     private long accountNumber;
     private List<RefillOperation> refillList = new ArrayList<>();
 
     public DepositAccount() {
         this.currency = USD.getName();
+    }
+
+    public long getIban() {
+        return iban;
+    }
+
+    public void setIban(long iban) {
+        this.iban = iban;
     }
 
     public double getRate() {
@@ -76,14 +85,15 @@ public class DepositAccount extends UserAccount {
         DepositAccount that = (DepositAccount) o;
         return Double.compare(that.rate, rate) == 0 &&
                 Double.compare(that.balance, balance) == 0 &&
+                iban == that.iban &&
+                accountNumber == that.accountNumber &&
                 Objects.equals(term, that.term) &&
                 Objects.equals(currency, that.currency) &&
-                Objects.equals(accountNumber, that.accountNumber) &&
                 Objects.equals(refillList, that.refillList);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), rate, term, currency, balance, accountNumber, refillList);
+        return Objects.hash(super.hashCode(), rate, term, currency, balance, iban, accountNumber, refillList);
     }
 }

@@ -3,6 +3,8 @@ package command;
 import controller.validators.RegistrationValidator;
 import controller.validators.Validator;
 import enums.Mappings;
+import facade.RegistrationFacade;
+import factories.ServiceFactory;
 import model.ClientDetails;
 import org.apache.log4j.Logger;
 import util.DateParser;
@@ -24,8 +26,8 @@ import static enums.Role.CLIENT;
 public class RegistrationCommand implements Command {
 
     private static final Logger LOG = Logger.getLogger(RegistrationCommand.class);
-
     private RegistrationFacade registrationFacade = new RegistrationFacade();
+    private Map<String, String> errors;
 
     @Override
     public Mappings execute(HttpServletRequest request, HttpServletResponse response) {
@@ -44,13 +46,12 @@ public class RegistrationCommand implements Command {
         clientDetails.setPhoneNumber(phoneNumber);
         clientDetails.setBirthday(DateParser.parse(birthday));
 
-        Validator registrationValidator = new RegistrationValidator(clientDetails);
-        Map<String, String> errors = registrationValidator.validate();
-
-        if (!errors.isEmpty()) {
+        if (validation(clientDetails)) {
             request.setAttribute(ERRORS.getName(), errors);
             return ERROR;
         } else {
+            registrationFacade.setClientDetailsService(ServiceFactory.getInstance().getClientDetailsService());
+            registrationFacade.setUserService(ServiceFactory.getInstance().getUserService());
             int userId = registrationFacade.addUser(clientDetails);
 
             if (userId > 0) {
@@ -65,5 +66,11 @@ public class RegistrationCommand implements Command {
                 return ERROR;
             }
         }
+    }
+
+    private boolean validation(ClientDetails clientDetails) {
+        Validator registrationValidator = new RegistrationValidator(clientDetails);
+        errors = registrationValidator.validate();
+        return !errors.isEmpty();
     }
 }

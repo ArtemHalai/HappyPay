@@ -1,6 +1,8 @@
 package command;
 
 import enums.Mappings;
+import facade.DepositAccountFacade;
+import factories.ServiceFactory;
 import model.DepositAccount;
 import org.apache.log4j.Logger;
 
@@ -26,6 +28,7 @@ public class DepositAccountCommand implements Command {
         int userId = (int) session.getAttribute(USER_ID.getName());
         if (role == CLIENT.getRoleId() && userId > 0) {
             LOG.info("Client requests deposit account");
+            depositAccountFacade.setDepositAccountService(ServiceFactory.getInstance().getDepositAccountService());
             DepositAccount depositAccount = depositAccountFacade.getDepositAccount(userId);
             session.setAttribute(DEPOSIT_ACCOUNT.getName(), depositAccount);
             return DEPOSIT;

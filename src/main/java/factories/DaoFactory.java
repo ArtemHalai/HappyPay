@@ -2,21 +2,14 @@ package factories;
 
 import dao.intefaces.*;
 import dao.jdbc.*;
+import enums.DAOEnum;
+import exceptions.UnknownDaoImplementation;
 
+import java.rmi.activation.UnknownObjectException;
 import java.sql.Connection;
 
 public class DaoFactory {
     private static volatile DaoFactory factory = null;
-
-    private static BillPaymentDAO billPaymentJDBC = null;
-    private static ClientDetailsDAO clientDetailsJDBC = null;
-    private static CreditAccountDAO creditAccountJDBC = null;
-    private static CreditApprovementDAO creditApprovementJDBC = null;
-    private static DepositAccountDAO depositAccountJDBC = null;
-    private static RefillDAO refillJDBC = null;
-    private static TransferDAO transferJDBC = null;
-    private static UserAccountDAO userAccountJDBC = null;
-    private static UserDAO userService = null;
 
     private DaoFactory() {
 
@@ -33,39 +26,84 @@ public class DaoFactory {
         return factory;
     }
 
-    public BillPaymentDAO getBillPaymentDAO(Connection connection) {
-        return new BillPaymentJDBC(connection);
+    public BillPaymentDAO getBillPaymentDAO(Connection connection, DAOEnum daoEnum) {
+        switch (daoEnum) {
+            case BILL_PAYMENT__JDBC:
+                return new BillPaymentJDBC(connection);
+            default:
+                throw new UnknownDaoImplementation("Unknown dao implementation");
+        }
     }
 
-    public ClientDetailsDAO getClientDetailsDAO(Connection connection) {
-        return new ClientDetailsJDBC(connection);
+    public ClientDetailsDAO getClientDetailsDAO(Connection connection, DAOEnum daoEnum) {
+        switch (daoEnum) {
+            case CLIENT_DETAILS_JDBC:
+                return new ClientDetailsJDBC(connection);
+            default:
+                throw new UnknownDaoImplementation("Unknown dao implementation");
+        }
     }
 
-    public CreditAccountDAO getCreditAccountDAO(Connection connection) {
-        return new CreditAccountJDBC(connection);
+    public CreditAccountDAO getCreditAccountDAO(Connection connection, DAOEnum daoEnum) {
+        switch (daoEnum) {
+            case CREDIT_ACCOUNT_JDBC:
+                return new CreditAccountJDBC(connection);
+            default:
+                throw new UnknownDaoImplementation("Unknown dao implementation");
+        }
     }
 
-    public CreditApprovementDAO getCreditApprovementDAO(Connection connection) {
-        return new CreditApprovementJDBC(connection);
+    public CreditApprovementDAO getCreditApprovementDAO(Connection connection, DAOEnum daoEnum) {
+        switch (daoEnum) {
+            case CREDIT_APPROVEMENT_JDBC:
+                return new CreditApprovementJDBC(connection);
+            default:
+                throw new UnknownDaoImplementation("Unknown dao implementation");
+        }
     }
 
-    public DepositAccountDAO getDepositAccountDAO(Connection connection) {
-        return new DepositAccountJDBC(connection);
+    public DepositAccountDAO getDepositAccountDAO(Connection connection, DAOEnum daoEnum) {
+        switch (daoEnum) {
+            case DEPOSIT_ACCOUNT_JDBC:
+                return new DepositAccountJDBC(connection);
+            default:
+                throw new UnknownDaoImplementation("Unknown dao implementation");
+        }
     }
 
-    public RefillDAO getRefillDAO(Connection connection) {
-        return new RefillJDBC(connection);
+    public RefillDAO getRefillDAO(Connection connection, DAOEnum daoEnum) {
+        switch (daoEnum) {
+            case REFILL_JDBC:
+                return new RefillJDBC(connection);
+            default:
+                throw new UnknownDaoImplementation("Unknown dao implementation");
+        }
     }
 
-    public TransferDAO getTransferDAO(Connection connection) {
-        return new TransferJDBC(connection);
+    public TransferDAO getTransferDAO(Connection connection, DAOEnum daoEnum) {
+        switch (daoEnum) {
+            case TRANSFER_JDBC:
+                return new TransferJDBC(connection);
+            default:
+                throw new UnknownDaoImplementation("Unknown dao implementation");
+        }
     }
 
-    public UserAccountDAO getUserAccountDAO(Connection connection) {
-        return new UserAccountJDBC(connection);
+    public UserAccountDAO getUserAccountDAO(Connection connection, DAOEnum daoEnum) {
+        switch (daoEnum) {
+            case USER_ACCOUNT_JDBC:
+                return new UserAccountJDBC(connection);
+            default:
+                throw new UnknownDaoImplementation("Unknown dao implementation");
+        }
     }
 
-    public UserDAO getUserDAO(Connection connection) {
-        return new UserJDBC(connection);
+    public UserDAO getUserDAO(Connection connection, DAOEnum daoEnum) {
+        switch (daoEnum) {
+            case USER_JDBC:
+                return new UserJDBC(connection);
+            default:
+                throw new UnknownDaoImplementation("Unknown dao implementation");
+        }
     }
 }

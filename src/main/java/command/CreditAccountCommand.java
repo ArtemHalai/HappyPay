@@ -1,6 +1,8 @@
 package command;
 
 import enums.Mappings;
+import facade.CreditAccountFacade;
+import factories.ServiceFactory;
 import model.CreditAccount;
 import org.apache.log4j.Logger;
 
@@ -26,6 +28,7 @@ public class CreditAccountCommand implements Command {
         int userId = (int) session.getAttribute(USER_ID.getName());
         if (role == CLIENT.getRoleId() && userId > 0) {
             LOG.info("Client requests credit account");
+            creditAccountFacade.setCreditAccountService(ServiceFactory.getInstance().getCreditAccountService());
             CreditAccount creditAccount = creditAccountFacade.getCreditAccount(userId);
             session.setAttribute(CREDIT_ACCOUNT.getName(), creditAccount);
             return CREDIT;
