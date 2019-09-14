@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class ClientDetailsJDBC implements ClientDetailsDAO {
@@ -22,19 +23,19 @@ public class ClientDetailsJDBC implements ClientDetailsDAO {
     @Override
     public boolean add(ClientDetails clientDetails) {
 
-        String add = "INSERT INTO client_details (user_id, name, last_name, mobile_phone, username, " +
+        String add = "INSERT INTO client_details (user_id, name, surname, phone_number, username, password," +
                 "birthday) " +
-                "VALUES (?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement statement = connection.prepareStatement(add, Statement.RETURN_GENERATED_KEYS)) {
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement statement = connection.prepareStatement(add)) {
             statement.setInt(1, clientDetails.getUserId());
             statement.setString(2, clientDetails.getName());
             statement.setString(3, clientDetails.getSurname());
             statement.setString(4, clientDetails.getPhoneNumber());
             statement.setString(5, clientDetails.getUsername());
-            statement.setDate(6, clientDetails.getBirthday());
-            statement.executeUpdate();
-            ResultSet rs = statement.getGeneratedKeys();
-            if (rs.next())
+            statement.setString(6, clientDetails.getPassword());
+            statement.setDate(7, clientDetails.getBirthday(), Calendar.getInstance());
+            int generated = statement.executeUpdate();
+            if (generated > 0)
                 return true;
         } catch (SQLException e) {
             LOG.error("SQLException occurred in ClientDetailsJDBC.class at add() method");
@@ -58,26 +59,5 @@ public class ClientDetailsJDBC implements ClientDetailsDAO {
             LOG.error("SQLException occurred in ClientDetailsJDBC.class at getById() method");
         }
         return clientDetails;
-    }
-
-    @Override
-    public List<ClientDetails> findAll() {
-        List<ClientDetails> list = new ArrayList<>();
-
-        String findAll = "SELECT * FROM client_details";
-
-        try (PreparedStatement statement = connection.prepareStatement(findAll)) {
-            ResultSet rs = statement.executeQuery();
-
-            Mapper<ClientDetails> clientDetailsMapper = new ClientDetailsMapper();
-
-            while (rs.next()) {
-                ClientDetails clientDetails = clientDetailsMapper.getEntity(rs);
-                list.add(clientDetails);
-            }
-        } catch (SQLException e) {
-            LOG.error("SQLException occurred in ClientDetailsJDBC.class at findAll() method");
-        }
-        return list;
     }
 }

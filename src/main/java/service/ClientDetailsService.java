@@ -23,8 +23,4 @@ public class ClientDetailsService {
     public ClientDetails getById(int id) {
         return clientDetailsDAO.getById(id);
     }
-
-    public List<ClientDetails> findAll() {
-        return clientDetailsDAO.findAll();
-    }
 }

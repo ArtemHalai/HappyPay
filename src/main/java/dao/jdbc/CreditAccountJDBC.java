@@ -4,7 +4,6 @@ import dao.intefaces.CreditAccountDAO;
 import dao.mappers.CreditAccountMapper;
 import dao.mappers.Mapper;
 import model.CreditAccount;
-import model.RefillOperation;
 import org.apache.log4j.Logger;
 
 import java.sql.*;
@@ -23,20 +22,19 @@ public class CreditAccountJDBC implements CreditAccountDAO {
     @Override
     public boolean add(CreditAccount creditAccount) {
 
-        String add = "INSERT INTO credit_accounts (user_id, balance, currency, credit_limit, rate, " +
-                "arrears, interest_charges) " +
-                "VALUES (?, ?, ?, ?, ?)";
-        try (PreparedStatement statement = connection.prepareStatement(add, Statement.RETURN_GENERATED_KEYS)) {
+        String add = "INSERT INTO credit_accounts (user_id, currency, credit_limit, rate, " +
+                "arrears, interest_charges, account_number) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement statement = connection.prepareStatement(add)) {
             statement.setInt(1, creditAccount.getUserId());
-            statement.setDouble(2, creditAccount.getBalance());
-            statement.setString(3, creditAccount.getCurrency());
-            statement.setDouble(4, creditAccount.getLimit());
-            statement.setDouble(5, creditAccount.getRate());
-            statement.setDouble(6, creditAccount.getArrears());
-            statement.setDouble(7, creditAccount.getInterestCharges());
-            statement.executeUpdate();
-            ResultSet rs = statement.getGeneratedKeys();
-            if (rs.next())
+            statement.setString(2, creditAccount.getCurrency());
+            statement.setDouble(3, creditAccount.getLimit());
+            statement.setDouble(4, creditAccount.getRate());
+            statement.setDouble(5, creditAccount.getArrears());
+            statement.setDouble(6, creditAccount.getInterestCharges());
+            statement.setLong(7, creditAccount.getAccountNumber());
+            int generated = statement.executeUpdate();
+            if (generated > 0)
                 return true;
         } catch (SQLException e) {
             LOG.error("SQLException occurred in CreditAccountJDBC.class at add() method");
@@ -46,13 +44,12 @@ public class CreditAccountJDBC implements CreditAccountDAO {
 
     @Override
     public boolean updateBalanceById(double amount, int userId) {
-        String updateBalance = "UPDATE credit_accounts SET balance = ? WHERE user_id = ?";
-        try (PreparedStatement statement = connection.prepareStatement(updateBalance, Statement.RETURN_GENERATED_KEYS)) {
+        String updateBalance = "UPDATE credit_accounts SET credit_limit = ? WHERE user_id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(updateBalance)) {
             statement.setDouble(1, amount);
             statement.setInt(2, userId);
-            statement.executeUpdate();
-            ResultSet rs = statement.getGeneratedKeys();
-            if (rs.next())
+            int generated = statement.executeUpdate();
+            if (generated > 0)
                 return true;
         } catch (SQLException e) {
             LOG.error("SQLException occurred in DepositAccountJDBC.class at updateBalanceById() method");
@@ -61,54 +58,52 @@ public class CreditAccountJDBC implements CreditAccountDAO {
     }
 
     @Override
-    public boolean updateBalanceByAccount(double amount, long account) {
-        String updateBalance = "UPDATE credit_accounts SET balance = ? WHERE account_number = ?";
-        try (PreparedStatement statement = connection.prepareStatement(updateBalance, Statement.RETURN_GENERATED_KEYS)) {
+    public boolean payArrears(double amount, int userId) {
+        String payArrears = "UPDATE credit_accounts SET arrears = ? WHERE user_id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(payArrears)) {
             statement.setDouble(1, amount);
-            statement.setLong(2, account);
-            statement.executeUpdate();
-            ResultSet rs = statement.getGeneratedKeys();
-            if (rs.next())
+            statement.setInt(2, userId);
+            int generated = statement.executeUpdate();
+            if (generated > 0)
                 return true;
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in DepositAccountJDBC.class at updateBalanceByAccount() method");
+            LOG.error("SQLException occurred in CreditAccountJDBC.class at payArrears() method");
         }
         return false;
     }
 
     @Override
-    public CreditAccount isAccountNumberExist(long accountNumber) {
-        Mapper<CreditAccount> creditAccountMapper = new CreditAccountMapper();
-        CreditAccount creditAccount = new CreditAccount();
-        creditAccount.setUserId(-1);
-        String exist = "SELECT * FROM credit_accounts WHERE account_number = ?";
-        try (PreparedStatement statement = connection.prepareStatement(exist)) {
-            statement.setLong(1, accountNumber);
+    public List<CreditAccount> getAll() {
+        List<CreditAccount> list = new ArrayList<>();
+
+        String findAll = "SELECT * FROM credit_accounts";
+
+        try (PreparedStatement statement = connection.prepareStatement(findAll)) {
             ResultSet rs = statement.executeQuery();
-            if (rs.next())
-                creditAccount = creditAccountMapper.getEntity(rs);
+            Mapper<CreditAccount> creditAccountMapper = new CreditAccountMapper();
+            while (rs.next()) {
+                CreditAccount creditAccount = creditAccountMapper.getEntity(rs);
+                list.add(creditAccount);
+            }
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in CreditAccountJDBC.class at getByAccountNumber() method");
+            LOG.error("SQLException occurred in CreditAccountJDBC.class at getAll() method");
         }
-        return creditAccount;
+        return list;
     }
 
     @Override
-    public CreditAccount getByAccountAndIban(RefillOperation refillOperation) {
-        Mapper<CreditAccount> creditAccountMapper = new CreditAccountMapper();
-        CreditAccount creditAccount = new CreditAccount();
-        creditAccount.setUserId(-1);
-        String exist = "SELECT * FROM credit_accounts WHERE account_number = ? AND iban = ?";
-        try (PreparedStatement statement = connection.prepareStatement(exist)) {
-            statement.setLong(1, refillOperation.getAccountNumber());
-            statement.setLong(2, refillOperation.getSenderIBAN());
-            ResultSet rs = statement.executeQuery();
-            if (rs.next())
-                creditAccount = creditAccountMapper.getEntity(rs);
+    public boolean updateInterestCharges(double amount, int userId) {
+        String payArrears = "UPDATE credit_accounts SET interest_charges = ? WHERE user_id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(payArrears)) {
+            statement.setDouble(1, amount);
+            statement.setInt(2, userId);
+            int generated = statement.executeUpdate();
+            if (generated > 0)
+                return true;
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in CreditAccountJDBC.class at getByAccountAndIban() method");
+            LOG.error("SQLException occurred in CreditAccountJDBC.class at updateInterestCharges() method");
         }
-        return creditAccount;
+        return false;
     }
 
     @Override
@@ -127,26 +122,5 @@ public class CreditAccountJDBC implements CreditAccountDAO {
             LOG.error("SQLException occurred in CreditAccountJDBC.class at getById() method");
         }
         return creditAccount;
-    }
-
-    @Override
-    public List<CreditAccount> findAll() {
-        List<CreditAccount> list = new ArrayList<>();
-
-        String findAll = "SELECT * FROM credit_accounts";
-
-        try (PreparedStatement statement = connection.prepareStatement(findAll)) {
-            ResultSet rs = statement.executeQuery();
-
-            Mapper<CreditAccount> creditAccountMapper = new CreditAccountMapper();
-
-            while (rs.next()) {
-                CreditAccount creditAccount = creditAccountMapper.getEntity(rs);
-                list.add(creditAccount);
-            }
-        } catch (SQLException e) {
-            LOG.error("SQLException occurred in CreditAccountJDBC.class at findAll() method");
-        }
-        return list;
     }
 }

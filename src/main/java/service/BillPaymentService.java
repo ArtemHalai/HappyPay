@@ -1,6 +1,7 @@
 package service;
 
 import dao.intefaces.BillPaymentDAO;
+import model.AllOperationsDTO;
 import model.BillPaymentOperation;
 
 import java.util.List;
@@ -13,10 +14,6 @@ public class BillPaymentService {
         this.billPaymentDAO = billPaymentDAO;
     }
 
-    public List<BillPaymentOperation> getAllById(int id) {
-        return billPaymentDAO.getAllById(id);
-    }
-
     public boolean add(BillPaymentOperation billPaymentOperation) {
         return billPaymentDAO.add(billPaymentOperation);
     }
@@ -25,7 +22,7 @@ public class BillPaymentService {
         return billPaymentDAO.getById(id);
     }
 
-    public List<BillPaymentOperation> findAll() {
-        return billPaymentDAO.findAll();
+    public AllOperationsDTO getAllOperations(AllOperationsDTO allOperationsDTO) {
+        return billPaymentDAO.getLimitOperations(allOperationsDTO);
     }
 }

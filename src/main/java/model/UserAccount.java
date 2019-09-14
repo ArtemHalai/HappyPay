@@ -1,14 +1,13 @@
 package model;
 
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public class UserAccount {
 
     protected int userId;
     private Date validity;
+    private double balance;
     private boolean deposit;
     private boolean credit;
     private long accountNumber;
@@ -16,6 +15,14 @@ public class UserAccount {
     public UserAccount() {
         this.deposit = false;
         this.credit = false;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(double balance) {
+        this.balance = balance;
     }
 
     public int getUserId() {
@@ -64,14 +71,15 @@ public class UserAccount {
         if (o == null || getClass() != o.getClass()) return false;
         UserAccount that = (UserAccount) o;
         return userId == that.userId &&
+                Double.compare(that.balance, balance) == 0 &&
                 deposit == that.deposit &&
                 credit == that.credit &&
-                Objects.equals(validity, that.validity) &&
-                Objects.equals(accountNumber, that.accountNumber);
+                accountNumber == that.accountNumber &&
+                Objects.equals(validity, that.validity);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, validity, deposit, credit, accountNumber);
+        return Objects.hash(userId, validity, balance, deposit, credit, accountNumber);
     }
 }

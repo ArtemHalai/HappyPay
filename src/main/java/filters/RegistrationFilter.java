@@ -23,10 +23,12 @@ public class RegistrationFilter implements Filter {
 
         HttpSession session = req.getSession(false);
 
-        int role = (int) req.getSession().getAttribute(ROLE.getName());
-        if (role == CLIENT.getRoleId() ||
-                role == ADMIN.getRoleId()) {
-            session.invalidate();
+        if (session.getAttribute(ROLE.getName()) != null) {
+            int role = (int) session.getAttribute(ROLE.getName());
+            if (role == CLIENT.getRoleId() ||
+                    role == ADMIN.getRoleId()) {
+                session.invalidate();
+            }
         }
         filterChain.doFilter(req, resp);
     }

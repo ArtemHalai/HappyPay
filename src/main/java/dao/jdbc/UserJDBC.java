@@ -24,40 +24,23 @@ public class UserJDBC implements UserDAO {
     }
 
     @Override
-    public boolean isUserExist(String username) {
+    public User isUserExist(String username) {
+        Mapper<User> userMapper = new UserMapper();
+        User obj = null;
         String isUserExist = "SELECT * FROM users WHERE username = ?";
         try (PreparedStatement statement = connection.prepareStatement(isUserExist)) {
             statement.setString(1, username);
             ResultSet rs = statement.executeQuery();
-
             if (rs.next())
-                return true;
+                obj = userMapper.getEntity(rs);
         } catch (SQLException e) {
             LOG.error("SQLException occurred in UserJDBC.class at isUserExist() method");
         }
-        return false;
-    }
-
-    public int getUserIdByUsername(String username) {
-        String getIdByUsername = "SELECT user_id FROM users WHERE username = ?";
-        int id = -1;
-        try (PreparedStatement statement = connection.prepareStatement(getIdByUsername)) {
-            statement.setString(1, username);
-            ResultSet rs = statement.executeQuery();
-
-            if (rs.next()) {
-                id = rs.getInt(USER_ID.getName());
-            }
-        } catch (SQLException e) {
-            LOG.error("SQLException occurred in UserJDBC.class at getUserIdByUsername() method");
-        }
-        return id;
-
+        return obj;
     }
 
     @Override
     public User getUserByUsernameAndPassword(User user) {
-
         String getByUsernameAndPassword = "SELECT * FROM users WHERE username = ? AND password = ?";
         Mapper<User> userMapper = new UserMapper();
         User obj = null;
@@ -66,7 +49,6 @@ public class UserJDBC implements UserDAO {
             statement.setString(1, user.getUsername());
             statement.setString(2, user.getPassword());
             ResultSet rs = statement.executeQuery();
-
             if (rs.next())
                 obj = userMapper.getEntity(rs);
         } catch (SQLException e) {
@@ -77,7 +59,6 @@ public class UserJDBC implements UserDAO {
 
     @Override
     public int add(User user) {
-
         String addUser = "INSERT INTO users (username, password, role) VALUES (?, ?, ?)";
         int userId = -1;
         try (PreparedStatement statement = connection.prepareStatement(addUser, Statement.RETURN_GENERATED_KEYS)) {
@@ -114,26 +95,4 @@ public class UserJDBC implements UserDAO {
         }
         return user;
     }
-
-    @Override
-    public List<User> findAll() {
-        List<User> list = new ArrayList<>();
-
-        String findAll = "SELECT * FROM users";
-
-        try (PreparedStatement statement = connection.prepareStatement(findAll)) {
-            ResultSet rs = statement.executeQuery();
-
-            Mapper<User> userMapper = new UserMapper();
-
-            while (rs.next()) {
-                User user = userMapper.getEntity(rs);
-                list.add(user);
-            }
-        } catch (SQLException e) {
-            LOG.error("SQLException occurred in UserJDBC.class at findAll() method");
-        }
-        return list;
-    }
-
 }

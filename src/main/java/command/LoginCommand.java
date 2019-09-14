@@ -7,6 +7,7 @@ import facade.LoginFacade;
 import factories.ServiceFactory;
 import model.User;
 import org.apache.log4j.Logger;
+import util.CheckRoleAndId;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,8 +18,9 @@ import java.util.Map;
 import static enums.Attributes.*;
 import static enums.Attributes.ERRORS;
 import static enums.Errors.USER_DOES_NOT_EXIST;
-import static enums.Fields.ROLE;
-import static enums.Fields.USER_ID;
+import static enums.Fields.*;
+import static enums.Fields.PASSWORD;
+import static enums.Fields.USERNAME;
 import static enums.Mappings.*;
 import static enums.Role.ADMIN;
 import static enums.Role.CLIENT;
@@ -31,36 +33,45 @@ public class LoginCommand implements Command {
 
     @Override
     public Mappings execute(HttpServletRequest request, HttpServletResponse response) {
+
+        HttpSession session = request.getSession();
+        if (CheckRoleAndId.check(session) || session.getAttribute(ROLE.getName()) != null)
+            return LOGGED_IN;
         String username = request.getParameter(USERNAME.getName());
         String password = request.getParameter(PASSWORD.getName());
 
-        User user = new User();
-
+        if (username == null || password == null)
+            return LOGIN_VIEW;
         if (validation(username, password)) {
             request.setAttribute(ERRORS.getName(), errors);
             return ERROR;
         } else {
-            user.setUsername(username);
-            user.setPassword(password);
-            loginFacade.setUserService(ServiceFactory.getInstance().getUserService());
-            boolean exist = loginFacade.getUserByUsernameAndPassword(user);
+            return loginUser(request, session, username, password);
+        }
+    }
 
-            if (exist) {
-                HttpSession session = request.getSession();
-                LOG.info("User is logged in with username: " + username);
-                if (user.getRole() == ADMIN.getRoleId()) {
-                    session.setAttribute(ROLE.getName(), ADMIN.getRoleId());
-                    return HOME_ADMIN;
-                } else {
-                    session.setAttribute(ROLE.getName(), CLIENT.getRoleId());
-                    session.setAttribute(USER_ID.getName(), user.getUserId());
-                    return HOME;
-                }
+    private Mappings loginUser(HttpServletRequest request, HttpSession session, String username, String password) {
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword(password);
+        loginFacade.setUserService(ServiceFactory.getInstance().getUserService());
+        User exist = loginFacade.getUserByUsernameAndPassword(user);
+
+        if (exist != null) {
+            LOG.info("User is logged in with username: " + username);
+            if (exist.getRole() == ADMIN.getRoleId()) {
+                session.setAttribute(ROLE.getName(), ADMIN.getRoleId());
+                session.setAttribute(ADMIN_ID.getName(), exist.getUserId());
+                return HOME_ADMIN;
             } else {
-                errors.put(USER.getName(), USER_DOES_NOT_EXIST.getName());
-                request.setAttribute(ERRORS.getName(), errors);
-                return ERROR;
+                session.setAttribute(ROLE.getName(), CLIENT.getRoleId());
+                session.setAttribute(USER_ID.getName(), exist.getUserId());
+                return HOME;
             }
+        } else {
+            errors.put(USER.getName(), USER_DOES_NOT_EXIST.getName());
+            request.setAttribute(ERRORS.getName(), errors);
+            return ERROR;
         }
     }
 

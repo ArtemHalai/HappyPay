@@ -1,7 +1,9 @@
 package service;
 
 import dao.intefaces.RefillDAO;
+import model.AllOperationsDTO;
 import model.RefillOperation;
+import model.RefillPaginationDTO;
 
 import java.util.List;
 
@@ -13,10 +15,6 @@ public class RefillService {
         this.refillDAO = refillDAO;
     }
 
-    public List<RefillOperation> getAllById(int id) {
-        return refillDAO.getAllById(id);
-    }
-
     public boolean add(RefillOperation refillOperation) {
         return refillDAO.add(refillOperation);
     }
@@ -25,7 +23,11 @@ public class RefillService {
         return refillDAO.getById(id);
     }
 
-    public List<RefillOperation> findAll() {
-        return refillDAO.findAll();
+    public RefillPaginationDTO getRefillOperations(RefillPaginationDTO paginationDTO) {
+        return refillDAO.getRefillOperations(paginationDTO);
+    }
+
+    public AllOperationsDTO getAllOperations(AllOperationsDTO allOperationsDTO) {
+        return refillDAO.getLimitOperations(allOperationsDTO);
     }
 }

@@ -28,8 +28,17 @@ public class DaoFactory {
 
     public BillPaymentDAO getBillPaymentDAO(Connection connection, DAOEnum daoEnum) {
         switch (daoEnum) {
-            case BILL_PAYMENT__JDBC:
+            case BILL_PAYMENT_JDBC:
                 return new BillPaymentJDBC(connection);
+            default:
+                throw new UnknownDaoImplementation("Unknown dao implementation");
+        }
+    }
+
+    public LimitRequestDAO getLimitRequestDAO(Connection connection, DAOEnum daoEnum){
+        switch (daoEnum) {
+            case LIMIT_JDBC:
+                return new LimitRequestJDBC(connection);
             default:
                 throw new UnknownDaoImplementation("Unknown dao implementation");
         }

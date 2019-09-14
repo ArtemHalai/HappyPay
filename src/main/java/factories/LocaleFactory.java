@@ -2,7 +2,7 @@ package factories;
 
 public class LocaleFactory {
     private static volatile LocaleFactory factory = null;
-    private static final String UA = "ua";
+    private static final String UK = "uk";
     private static final String RU = "ru";
     private static final String EN = "en";
 
@@ -23,8 +23,8 @@ public class LocaleFactory {
 
     public String getLocale(String locale) {
         switch (locale) {
-            case UA:
-                return UA;
+            case UK:
+                return UK;
             case RU:
                 return RU;
             default:

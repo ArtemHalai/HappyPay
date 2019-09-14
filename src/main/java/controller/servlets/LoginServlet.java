@@ -23,6 +23,9 @@ public class LoginServlet extends HttpServlet {
             case LOGIN_VIEW:
                 req.getRequestDispatcher(LOGIN_PAGE.getName()).forward(req, resp);
                 break;
+            case LOGGED_IN:
+                resp.sendRedirect(LOGGED_IN.getName());
+                break;
         }
     }
 

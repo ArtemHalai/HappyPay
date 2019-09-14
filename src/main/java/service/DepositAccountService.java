@@ -35,26 +35,18 @@ public class DepositAccountService {
         return depositAccountDAO.getById(id);
     }
 
-    public DepositAccount getByAccountNumber(long accountNumber) {
-        return depositAccountDAO.isAccountNumberExist(accountNumber);
+    public boolean updateTerm(int userId) {
+        DepositAccount depositAccount = depositAccountDAO.getById(userId);
+        if (depositAccount.getTerm().getTime() > System.currentTimeMillis())
+            return false;
+        return depositAccountDAO.updateTerm(userId);
     }
 
-    public boolean updateByAccount(double amount, long account) {
-        return depositAccountDAO.updateBalanceByAccount(amount, account);
+    public boolean deleteDepositAccount(int userId) {
+        return depositAccountDAO.deleteDepositAccount(userId);
     }
 
-    public List<DepositAccount> findAll() {
-        return depositAccountDAO.findAll();
-    }
-
-    public DepositAccount getByAccountAndIban(RefillOperation refillOperation) {
-        DepositAccount depositAccount = depositAccountDAO.getByAccountAndIban(refillOperation);
-        if (depositAccount.getUserId() < 0)
-            return null;
-        if (depositAccount.getBalance() >= refillOperation.getAmount()) {
-            depositAccount.setBalance(depositAccount.getBalance() - refillOperation.getAmount());
-            return depositAccount;
-        }
-        return null;
+    public List<DepositAccount> getAll() {
+        return depositAccountDAO.getAll();
     }
 }

@@ -8,10 +8,15 @@ public enum Errors {
     PASSWORD_DOES_NOT_MATCH("Password should contains at least 8 characters."),
     USER_ALREADY_EXISTS("User with such username already exists."),
     USER_DOES_NOT_EXIST("User with such username doesn't exist."),
-    ACCOUNT_NUMBER_ERROR("Account number should contains 16 - 30 digits."),
-    SOMETHING_WRONG("Something was wrong."),
+    ACCOUNT_NUMBER_ERROR("Account number should be more than 0."),
+    CREDIT_ERROR("Credit already requested"),
     AMOUNT_ERROR("Amount should be more than 0."),
+    NOT_ENOUGH_ERROR("Not enough money."),
+    ACCOUNT_ERROR("Account number doesn't exist."),
     VALIDITY_ERROR("Validity of your account is expired."),
+    NO_REQUESTS_ERROR("There are no requests."),
+    NO_REFILL_OPERATION_ERROR("There are no refill operations."),
+    NO_OPERATION_ERROR("There are no operations."),
     BIRTHDAY_DOES_NOT_MATCH("You can register if you are over 18 years old only.");
 
     private String name;

@@ -1,8 +1,8 @@
 package model;
 
+import enums.DepositEnum;
+
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import static enums.Currency.USD;
@@ -10,23 +10,23 @@ import static enums.Currency.USD;
 public class DepositAccount extends UserAccount {
 
     private double rate;
+    private Date startDate;
     private Date term;
     private String currency;
     private double balance;
-    private long iban;
-    private long accountNumber;
-    private List<RefillOperation> refillList = new ArrayList<>();
+    private DepositEnum depositEnum;
 
     public DepositAccount() {
         this.currency = USD.getName();
+        this.startDate = new Date(System.currentTimeMillis());
     }
 
-    public long getIban() {
-        return iban;
+    public Date getStartDate() {
+        return startDate;
     }
 
-    public void setIban(long iban) {
-        this.iban = iban;
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
     }
 
     public double getRate() {
@@ -61,20 +61,12 @@ public class DepositAccount extends UserAccount {
         this.balance = balance;
     }
 
-    public long getAccountNumber() {
-        return accountNumber;
+    public DepositEnum getDepositEnum() {
+        return depositEnum;
     }
 
-    public void setAccountNumber(long accountNumber) {
-        this.accountNumber = accountNumber;
-    }
-
-    public List<RefillOperation> getRefillList() {
-        return refillList;
-    }
-
-    public void setRefillList(List<RefillOperation> refillList) {
-        this.refillList = refillList;
+    public void setDepositEnum(DepositEnum depositEnum) {
+        this.depositEnum = depositEnum;
     }
 
     @Override
@@ -85,15 +77,14 @@ public class DepositAccount extends UserAccount {
         DepositAccount that = (DepositAccount) o;
         return Double.compare(that.rate, rate) == 0 &&
                 Double.compare(that.balance, balance) == 0 &&
-                iban == that.iban &&
-                accountNumber == that.accountNumber &&
+                Objects.equals(startDate, that.startDate) &&
                 Objects.equals(term, that.term) &&
                 Objects.equals(currency, that.currency) &&
-                Objects.equals(refillList, that.refillList);
+                depositEnum == that.depositEnum;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), rate, term, currency, balance, iban, accountNumber, refillList);
+        return Objects.hash(super.hashCode(), rate, startDate, term, currency, balance, depositEnum);
     }
 }

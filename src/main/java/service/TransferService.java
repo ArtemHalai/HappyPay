@@ -1,6 +1,7 @@
 package service;
 
 import dao.intefaces.TransferDAO;
+import model.AllOperationsDTO;
 import model.TransferOperation;
 
 import java.util.List;
@@ -13,10 +14,6 @@ public class TransferService {
         this.transferDAO = transferDAO;
     }
 
-    public List<TransferOperation> getAllById(int id) {
-        return transferDAO.getAllById(id);
-    }
-
     public boolean add(TransferOperation transferOperation) {
         return transferDAO.add(transferOperation);
     }
@@ -25,7 +22,7 @@ public class TransferService {
         return transferDAO.getById(id);
     }
 
-    public List<TransferOperation> findAll() {
-        return transferDAO.findAll();
+    public AllOperationsDTO getAllOperations(AllOperationsDTO allOperationsDTO) {
+        return transferDAO.getLimitOperations(allOperationsDTO);
     }
 }

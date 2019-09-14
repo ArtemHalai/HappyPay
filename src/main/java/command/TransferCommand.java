@@ -1,23 +1,28 @@
 package command;
 
-import enums.Fields;
 import enums.Mappings;
 import facade.TransferFacade;
 import factories.ServiceFactory;
 import model.TransferOperation;
+import model.UserAccount;
 import org.apache.log4j.Logger;
 import util.CheckOperationErrors;
+import util.CheckRoleAndId;
+import util.DateValidity;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import java.sql.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import static enums.Attributes.ACCOUNT;
+import static enums.Errors.ACCOUNT_ERROR;
+import static enums.Errors.ACCOUNT_NUMBER_ERROR;
 import static enums.Fields.*;
 import static enums.Mappings.*;
-import static enums.Role.CLIENT;
 
 public class TransferCommand implements Command {
 
@@ -25,38 +30,49 @@ public class TransferCommand implements Command {
 
     private TransferFacade transferFacade = new TransferFacade();
 
+    private Map<String, String> errors = new HashMap<>();
+
     @Override
     public Mappings execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
-        int role = (int) session.getAttribute(ROLE.getName());
+        if (!CheckRoleAndId.check(session))
+            return LOGIN_VIEW;
+
         int userId = (int) session.getAttribute(USER_ID.getName());
+        transferFacade.setUserAccountService(ServiceFactory.getInstance().getUserAccountService());
+        UserAccount userAccount = transferFacade.getUserAccount(userId);
+        if (userAccount.getValidity() == null || !DateValidity.valid(userAccount.getValidity()))
+            return CLIENT_ACCOUNTS;
+
+        if (request.getParameter(AMOUNT.getName()) == null)
+            return TRANSFER;
+
         double amount = Double.parseDouble(request.getParameter(AMOUNT.getName()));
         long recipientAccountNumber = Long.parseLong(request.getParameter(ACCOUNT_NUMBER.getName()));
-        String account = request.getParameter(ACCOUNT.getName());
 
-        if (recipientAccountNumber <= 0) {
-            return TRANSFER;
-        } else if (role != CLIENT.getRoleId() && userId <= 0) {
-            return LOGIN_VIEW;
-        }
+        errors = CheckOperationErrors.errorsEmpty(request, amount);
 
-        if (!CheckOperationErrors.errorsEmpty(request, amount, recipientAccountNumber)) {
+        if (recipientAccountNumber <= 0)
+            errors.put(ACCOUNT_NUMBER.getName(), ACCOUNT_NUMBER_ERROR.getName());
+
+        if (!errors.isEmpty())
             return ERROR;
-        } else {
-            LOG.info("Client transfers amount: " + amount);
-            TransferOperation transferOperation = new TransferOperation();
-            transferOperation.setAmount(amount);
-            transferOperation.setRecipientAccountNumber(recipientAccountNumber);
-            transferOperation.setUserId(userId);
-            transferOperation.setDate(new Date(System.currentTimeMillis()));
-            transferFacade.setTransferService(ServiceFactory.getInstance().getTransferService());
-            transferFacade.setCreditAccountService(ServiceFactory.getInstance().getCreditAccountService());
-            transferFacade.setDepositAccountService(ServiceFactory.getInstance().getDepositAccountService());
-            boolean transferred = transferFacade.transfer(transferOperation, Fields.valueOf(account));
-            if (transferred)
-                return SUCCESSFUL;
-            else
-                return UNSUCCESSFUL;
-        }
+        else
+            return transferOperation(userId, amount, recipientAccountNumber);
+    }
+
+    private Mappings transferOperation(int userId, double amount, long recipientAccountNumber) {
+        LOG.info("Client transfers amount: " + amount);
+        TransferOperation transferOperation = new TransferOperation();
+        transferOperation.setAmount(amount);
+        transferOperation.setRecipientAccountNumber(recipientAccountNumber);
+        transferOperation.setUserId(userId);
+        transferFacade.setTransferService(ServiceFactory.getInstance().getTransferService());
+        transferFacade.setUserAccountService(ServiceFactory.getInstance().getUserAccountService());
+        boolean transferred = transferFacade.transfer(transferOperation);
+        if (transferred)
+            return SUCCESSFUL;
+        errors.put(ACCOUNT.getName(), ACCOUNT_ERROR.getName());
+        return ERROR;
     }
 }

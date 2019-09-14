@@ -10,7 +10,8 @@ public enum DAOEnum {
     REFILL_JDBC("refill_jdbc"),
     TRANSFER_JDBC("transfer_jdbc"),
     USER_ACCOUNT_JDBC("user_account_jdbc"),
-    USER_JDBC("user_jdbc");
+    USER_JDBC("user_jdbc"),
+    LIMIT_JDBC("limit_jdbc");
 
     private String name;
 

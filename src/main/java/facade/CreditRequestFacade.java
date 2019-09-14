@@ -2,14 +2,16 @@ package facade;
 
 import factories.DaoFactory;
 import factories.JDBCConnectionFactory;
+import model.CreditApprovementOperation;
 import model.CreditRequest;
 import model.UserAccount;
 import service.CreditApprovementService;
 import service.UserAccountService;
-import util.TransactionManager;
+import util.ConnectionClosure;
 
 import java.sql.Connection;
 
+import static enums.DAOEnum.CREDIT_APPROVEMENT_JDBC;
 import static enums.DAOEnum.USER_ACCOUNT_JDBC;
 
 public class CreditRequestFacade {
@@ -33,27 +35,35 @@ public class CreditRequestFacade {
         this.creditApprovementService = creditApprovementService;
     }
 
-    public boolean createCreditRequest(int userId, double amount) {
+    public boolean createCreditRequest(CreditRequest creditRequest) {
         connection = connectionFactory.getConnection();
-        TransactionManager.setRepeatableRead(connection);
+        creditApprovementService.setCreditApprovementDAO(factory.getCreditApprovementDAO(connection, CREDIT_APPROVEMENT_JDBC));
+
+        CreditApprovementOperation operation = creditApprovementService.getById(creditRequest.getUserId());
+        if (operation.getUserId() < 0 && creditApprovementService.createCreditRequest(creditRequest)) {
+            ConnectionClosure.close(connection);
+            return true;
+        }
+        ConnectionClosure.close(connection);
+        return false;
+    }
+
+    public boolean checkCredit(int userId) {
+        connection = connectionFactory.getConnection();
+        userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
+        if (userAccountService.getById(userId).getCredit()) {
+            ConnectionClosure.close(connection);
+            return false;
+        }
+        ConnectionClosure.close(connection);
+        return true;
+    }
+
+    public UserAccount getUserAccount(int userId) {
+        connection = connectionFactory.getConnection();
         userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
         UserAccount userAccount = userAccountService.getById(userId);
-        if (userAccount.getCredit()) {
-            TransactionManager.rollbackTransaction(connection);
-            return false;
-        } else {
-            CreditRequest creditRequest = new CreditRequest();
-            creditRequest.setUserId(userId);
-            creditRequest.setDecision(false);
-            creditRequest.setAmount(amount);
-            boolean created = creditApprovementService.createCreditRequest(creditRequest);
-            if (created) {
-                TransactionManager.commitTransaction(connection);
-                return true;
-            } else {
-                TransactionManager.rollbackTransaction(connection);
-                return false;
-            }
-        }
+        ConnectionClosure.close(connection);
+        return userAccount;
     }
 }

@@ -1,0 +1,123 @@
+body {
+padding-top:6vh;
+width:100vw;
+height:100vh;
+overflow:hidden;
+  background-image: url("../images/loginBackground.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    }
+
+    .main {
+        background-color: #FFF;
+        width: 30vw;
+        height: 85vh;
+        margin: auto;
+        border-radius: 1.5em;
+        overflow:scroll;
+        opacity: 0.9;
+        box-shadow: 0px 11px 35px 2px rgba(0, 0, 0, 0.14);
+    }
+
+    ::-webkit-scrollbar {
+        width: 0px;
+    }
+
+
+    .sign {
+        padding-top: 5%;
+        color: #3bb78f;
+        font-family: sans-serif;
+        font-weight: bold;
+        font-size: 24px;
+    }
+
+    .uname {
+    flex-grow:1;
+    width: 100%;
+    color: rgb(38, 50, 56);
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 1px;
+    background: rgba(136, 136, 186, 0.04);
+    padding: 10px 20px;
+    border-radius: 20px;
+    box-sizing: border-box;
+    border: 2px solid rgba(0, 0, 0, 0.08);
+    margin-bottom: 5%;
+    outline: none;
+    text-align: center;
+    font-family: sans-serif;
+    }
+
+    form.registrationForm {
+    display:flex;
+    flex-direction:column;
+    justify-content: center;
+        padding: 5%;
+    }
+
+    .uname:focus {
+        border: 2px solid rgba(0, 0, 0, 0.18) !important;
+    }
+
+ label{
+  text-align:center;
+  color:red;
+  }
+
+.birthday{
+padding-left:9vh;
+}
+
+    .submit {
+   flex-grow:1;
+      cursor: pointer;
+        border-radius: 5em;
+        color: #fff;
+        border: 0;
+        padding-left: 40px;
+        padding-right: 40px;
+        padding-bottom: 10px;
+        padding-top: 10px;
+            margin-bottom: 5%;
+        font-family: sans-serif;
+        font-size: 13px;
+        box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.04);
+    }
+
+    .registration{
+    flex-grow:1;
+          cursor: pointer;
+            border-radius: 5em;
+            color: #fff;
+            background-color: #3bb78f;
+                         background-image: linear-gradient(315deg, #3bb78f 0%, #0bab64 74%);
+            border: 0;
+            padding-left: 40px;
+            padding-right: 40px;
+            padding-bottom: 10px;
+            padding-top: 10px;
+            font-family: sans-serif;
+            font-size: 13px;
+            box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.04);
+    }
+
+    .return{
+      flex-grow: 1;
+            cursor: pointer;
+            border-radius: 5em;
+            color: #fff;
+            background-color: #3bb78f;
+                 background-image: linear-gradient(315deg, #3bb78f 0%, #0bab64 74%);
+            border: 0;
+            padding-left: 40px;
+            padding-right: 40px;
+            padding-bottom: 10px;
+            padding-top: 10px;
+            margin-top:5%;
+            font-family: sans-serif;
+            font-size: 13px;
+            box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.04);
+      }

@@ -1,7 +1,8 @@
 package dao.intefaces;
 
 import model.DepositAccount;
-import model.RefillOperation;
+
+import java.util.List;
 
 public interface DepositAccountDAO extends DAO<DepositAccount> {
 
@@ -9,9 +10,11 @@ public interface DepositAccountDAO extends DAO<DepositAccount> {
 
     boolean updateBalanceById(double amount, int userId);
 
-    boolean updateBalanceByAccount(double amount, long account);
+    boolean updateTerm(int userId);
 
-    DepositAccount isAccountNumberExist(long accountNumber);
+    boolean deleteDepositAccount(int userId);
 
-    DepositAccount getByAccountAndIban(RefillOperation refillOperation);
+    int count(int userId);
+
+    List<DepositAccount> getAll();
 }

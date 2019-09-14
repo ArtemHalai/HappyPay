@@ -16,7 +16,7 @@ public class TransferMapper implements Mapper<TransferOperation> {
         TransferOperation transferOperation = new TransferOperation();
 
         transferOperation.setUserId(resultSet.getInt(USER_ID.getName()));
-        transferOperation.setRecipientAccountNumber(resultSet.getString(RECIPIENT_ACCOUNT_NUMBER.getName()));
+        transferOperation.setRecipientAccountNumber(resultSet.getLong(RECIPIENT_ACCOUNT_NUMBER.getName()));
         transferOperation.setAmount(resultSet.getDouble(AMOUNT.getName()));
         transferOperation.setDate(resultSet.getDate(DATE.getName()));
 

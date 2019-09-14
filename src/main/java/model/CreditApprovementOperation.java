@@ -2,29 +2,17 @@ package model;
 
 import java.util.Objects;
 
+import static enums.OperationType.CREDIT_APPROVEMENT;
+
 public class CreditApprovementOperation extends Operation {
 
-    private int managerId;
-    private double amount;
     private boolean decision;
 
-    public int getManagerId() {
-        return managerId;
+    public CreditApprovementOperation() {
+        this.operationType=CREDIT_APPROVEMENT.getName();
     }
 
-    public void setManagerId(int managerId) {
-        this.managerId = managerId;
-    }
-
-    public double getAmount() {
-        return amount;
-    }
-
-    public void setAmount(double amount) {
-        this.amount = amount;
-    }
-
-    public boolean getDecision() {
+    public boolean isDecision() {
         return decision;
     }
 
@@ -37,14 +25,12 @@ public class CreditApprovementOperation extends Operation {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        CreditApprovementOperation creditApprovement = (CreditApprovementOperation) o;
-        return managerId == creditApprovement.managerId &&
-                Double.compare(creditApprovement.amount, amount) == 0 &&
-                decision == creditApprovement.decision;
+        CreditApprovementOperation that = (CreditApprovementOperation) o;
+        return decision == that.decision;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), managerId, amount, decision);
+        return Objects.hash(super.hashCode(), decision);
     }
 }

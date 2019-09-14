@@ -24,9 +24,11 @@ public class LogFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpSession session = request.getSession();
 
-        int role = (int) session.getAttribute(ROLE.getName());
-        if (role == CLIENT.getRoleId()) {
-            logger.info("Client is visiting "+((HttpServletRequest) servletRequest).getServletPath());
+        if (session.getAttribute(ROLE.getName()) != null) {
+            int role = (int) session.getAttribute(ROLE.getName());
+            if (role == CLIENT.getRoleId()) {
+                logger.info("Client is visiting " + ((HttpServletRequest) servletRequest).getServletPath());
+            }
         }
         filterChain.doFilter(servletRequest, servletResponse);
     }

@@ -14,6 +14,7 @@ public class ServiceFactory {
     private static TransferService transferService = null;
     private static UserAccountService userAccountService = null;
     private static UserService userService = null;
+    private static LimitRequestService limitRequestService = null;
 
     private ServiceFactory() {
 
@@ -34,6 +35,12 @@ public class ServiceFactory {
         if (billPaymentService == null)
             billPaymentService = new BillPaymentService();
         return billPaymentService;
+    }
+
+    public LimitRequestService getLimitRequestService() {
+        if (limitRequestService == null)
+            limitRequestService = new LimitRequestService();
+        return limitRequestService;
     }
 
     public ClientDetailsService getClientDetailsService() {

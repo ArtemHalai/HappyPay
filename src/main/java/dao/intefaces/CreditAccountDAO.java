@@ -3,15 +3,17 @@ package dao.intefaces;
 import model.CreditAccount;
 import model.RefillOperation;
 
+import java.util.List;
+
 public interface CreditAccountDAO extends DAO<CreditAccount> {
 
     boolean add(CreditAccount creditAccount);
 
     boolean updateBalanceById(double amount, int userId);
 
-    boolean updateBalanceByAccount(double amount, long account);
+    boolean payArrears(double amount, int userId);
 
-    CreditAccount isAccountNumberExist(long accountNumber);
+    List<CreditAccount> getAll();
 
-    CreditAccount getByAccountAndIban(RefillOperation refillOperation);
+    boolean updateInterestCharges(double amount, int userId);
 }

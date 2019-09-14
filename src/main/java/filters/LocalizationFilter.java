@@ -21,14 +21,13 @@ public class LocalizationFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         String locale = req.getParameter(LOCALE);
 
-        String userLocale;
         if (locale != null) {
-            userLocale = LocaleFactory.getInstance().getLocale(locale);
+            locale = LocaleFactory.getInstance().getLocale(locale);
         } else {
-            userLocale = (String) req.getSession().getAttribute(LANGUAGE);
+            locale = (String) req.getSession().getAttribute(LANGUAGE);
         }
 
-        req.getSession().setAttribute(LANGUAGE, userLocale);
+        req.getSession().setAttribute(LANGUAGE, locale);
         filterChain.doFilter(request, response);
     }
 

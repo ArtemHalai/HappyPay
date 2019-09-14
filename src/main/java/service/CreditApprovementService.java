@@ -1,8 +1,10 @@
 package service;
 
 import dao.intefaces.CreditApprovementDAO;
+import model.AllOperationsDTO;
 import model.CreditApprovementOperation;
 import model.CreditRequest;
+import model.CreditRequestAdmin;
 
 import java.util.List;
 
@@ -14,23 +16,23 @@ public class CreditApprovementService {
         this.creditApprovementDAO = creditApprovementDAO;
     }
 
-    public boolean add(CreditApprovementOperation creditApprovementOperation) {
-        return creditApprovementDAO.add(creditApprovementOperation);
-    }
-
     public boolean createCreditRequest(CreditRequest request) {
         return creditApprovementDAO.createCreditRequest(request);
-    }
-
-    public List<CreditApprovementOperation> getAllById(int id) {
-        return creditApprovementDAO.getAllById(id);
     }
 
     public CreditApprovementOperation getById(int id) {
         return creditApprovementDAO.getById(id);
     }
 
-    public List<CreditApprovementOperation> findAll() {
-        return creditApprovementDAO.findAll();
+    public List<CreditRequestAdmin> findAllByDecision(boolean decision) {
+        return creditApprovementDAO.findAllByDecision(decision);
+    }
+
+    public boolean updateDecision(boolean decision, int userId) {
+        return creditApprovementDAO.updateDecision(decision, userId);
+    }
+
+    public boolean deleteRequest(int userId){
+        return creditApprovementDAO.deleteRequest(userId);
     }
 }

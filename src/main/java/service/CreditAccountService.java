@@ -2,7 +2,6 @@ package service;
 
 import dao.intefaces.CreditAccountDAO;
 import model.CreditAccount;
-import model.RefillOperation;
 
 import java.util.List;
 
@@ -18,43 +17,23 @@ public class CreditAccountService {
         return creditAccountDAO.add(creditAccount);
     }
 
-    public boolean updateBalanceById(double amount, int userId) {
-        return creditAccountDAO.updateBalanceById(amount, userId);
+    public boolean updateArrears(double amount, int userId) {
+        return creditAccountDAO.payArrears(amount, userId);
     }
 
-    public CreditAccount payById(int id, double amount) {
-        CreditAccount creditAccount = creditAccountDAO.getById(id);
-        if (creditAccount.getBalance() >= amount) {
-            creditAccount.setBalance(creditAccount.getBalance() - amount);
-            return creditAccount;
-        }
-        return null;
+    public boolean updateBalanceById(double amount, int userId){
+        return creditAccountDAO.updateBalanceById(amount, userId);
     }
 
     public CreditAccount getById(int id) {
         return creditAccountDAO.getById(id);
     }
 
-    public CreditAccount getByAccountNumber(long accountNumber) {
-        return creditAccountDAO.isAccountNumberExist(accountNumber);
+    public List<CreditAccount> getAll() {
+        return creditAccountDAO.getAll();
     }
 
-    public boolean updateByAccount(double amount, long account) {
-        return creditAccountDAO.updateBalanceByAccount(amount, account);
-    }
-
-    public List<CreditAccount> findAll() {
-        return creditAccountDAO.findAll();
-    }
-
-    public CreditAccount getByAccountAndIban(RefillOperation refillOperation) {
-        CreditAccount creditAccount = creditAccountDAO.getByAccountAndIban(refillOperation);
-        if (creditAccount.getUserId() < 0)
-            return null;
-        if (creditAccount.getBalance() >= refillOperation.getAmount()) {
-            creditAccount.setBalance(creditAccount.getBalance() - refillOperation.getAmount());
-            return creditAccount;
-        }
-        return null;
+    public boolean updateInterestCharges(double amount, int userId) {
+        return creditAccountDAO.updateInterestCharges(amount, userId);
     }
 }

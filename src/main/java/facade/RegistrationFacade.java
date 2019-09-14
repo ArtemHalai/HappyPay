@@ -4,19 +4,19 @@ import factories.DaoFactory;
 import factories.JDBCConnectionFactory;
 import model.ClientDetails;
 import model.User;
-import service.ClientDetailsService;
-import service.UserService;
-import util.ConnectionClosure;
+import model.UserAccount;
+import service.*;
+import util.DateValidity;
+import util.TransactionManager;
 
 import java.sql.Connection;
-
-import static enums.DAOEnum.CLIENT_DETAILS_JDBC;
-import static enums.DAOEnum.USER_JDBC;
+import static enums.DAOEnum.*;
 
 public class RegistrationFacade {
 
     private ClientDetailsService clientDetailsService;
     private UserService userService;
+    private UserAccountService userAccountService;
     private Connection connection;
     private DaoFactory factory;
     private JDBCConnectionFactory connectionFactory;
@@ -24,6 +24,10 @@ public class RegistrationFacade {
     public RegistrationFacade() {
         factory = DaoFactory.getInstance();
         connectionFactory = JDBCConnectionFactory.getInstance();
+    }
+
+    public void setUserAccountService(UserAccountService userAccountService) {
+        this.userAccountService = userAccountService;
     }
 
     public void setClientDetailsService(ClientDetailsService clientDetailsService) {
@@ -37,21 +41,38 @@ public class RegistrationFacade {
     public int addUser(ClientDetails clientDetails) {
         int userId = -1;
         connection = connectionFactory.getConnection();
-
+        TransactionManager.setRepeatableRead(connection);
         userService.setUserDAO(factory.getUserDAO(connection, USER_JDBC));
         clientDetailsService.setClientDetailsDAO(factory.getClientDetailsDAO(connection, CLIENT_DETAILS_JDBC));
+        userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
         if (userService.isUserExist(clientDetails.getUsername())) {
-            ConnectionClosure.close(connection);
+            TransactionManager.rollbackTransaction(connection);
             return userId;
         } else {
-            User user = new User();
-            user.setUsername(clientDetails.getUsername());
-            user.setPassword(clientDetails.getPassword());
-            userId = userService.addUser(user);
-            clientDetails.setUserId(userId);
-            clientDetailsService.add(clientDetails);
-            ConnectionClosure.close(connection);
+            return addNewUser(clientDetails);
+        }
+    }
+
+    private int addNewUser(ClientDetails clientDetails) {
+        int userId;
+        int unsuccessful = -1;
+        User user = new User();
+        user.setUsername(clientDetails.getUsername());
+        user.setPassword(clientDetails.getPassword());
+        userId = userService.addUser(user);
+        clientDetails.setUserId(userId);
+        boolean clientDetailsAdded = clientDetailsService.add(clientDetails);
+        UserAccount userAccount = new UserAccount();
+        userAccount.setUserId(userId);
+        userAccount.setValidity(DateValidity.setValidity());
+        userAccount.setCredit(false);
+        userAccount.setDeposit(false);
+        boolean userAccountAdded = userAccountService.add(userAccount);
+        if (userId > 0 && clientDetailsAdded && userAccountAdded) {
+            TransactionManager.commitTransaction(connection);
             return userId;
         }
+        TransactionManager.rollbackTransaction(connection);
+        return unsuccessful;
     }
 }

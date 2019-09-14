@@ -10,7 +10,6 @@ import static enums.Fields.*;
 
 public class RefillMapper implements Mapper<RefillOperation> {
 
-
     @Override
     public RefillOperation getEntity(ResultSet resultSet) throws SQLException {
 
@@ -18,8 +17,8 @@ public class RefillMapper implements Mapper<RefillOperation> {
 
         refillOperation.setUserId(resultSet.getInt(USER_ID.getName()));
         refillOperation.setAmount(resultSet.getDouble(AMOUNT.getName()));
-        refillOperation.setAccountNumber(resultSet.getString(ACCOUNT_NUMBER.getName()));
         refillOperation.setDate(resultSet.getDate(DATE.getName()));
+        refillOperation.setSenderAccountType(resultSet.getString(SENDER_ACCOUNT_TYPE.getName()));
 
         return refillOperation;
     }

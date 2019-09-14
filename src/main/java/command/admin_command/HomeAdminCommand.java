@@ -1,5 +1,6 @@
-package command;
+package command.admin_command;
 
+import command.Command;
 import enums.Mappings;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,11 +13,12 @@ import static enums.Role.ADMIN;
 public class HomeAdminCommand implements Command {
     @Override
     public Mappings execute(HttpServletRequest request, HttpServletResponse response) {
-        int role = (int) request.getSession().getAttribute(ROLE.getName());
-        if (role == ADMIN.getRoleId()) {
-            return HOME_ADMIN;
-        } else {
-            return LOGIN_VIEW;
+        if (request.getSession().getAttribute(ROLE.getName()) != null) {
+            int role = (int) request.getSession().getAttribute(ROLE.getName());
+            if (role == ADMIN.getRoleId()) {
+                return HOME_ADMIN;
+            }
         }
+        return LOGIN_VIEW;
     }
 }

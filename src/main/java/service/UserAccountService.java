@@ -1,6 +1,7 @@
 package service;
 
 import dao.intefaces.UserAccountDAO;
+import model.RefillOperation;
 import model.UserAccount;
 
 import java.util.List;
@@ -21,15 +22,39 @@ public class UserAccountService {
         return userAccountDAO.getById(id);
     }
 
-    public List<UserAccount> findAll() {
-        return userAccountDAO.findAll();
+    public boolean updateBalanceById(double amount, int userId){
+        return userAccountDAO.updateBalanceById(amount, userId);
     }
 
-    public boolean updateDepositStatusById(int id) {
-        return userAccountDAO.updateDepositStatusById(id);
+    public boolean updateCreditStatusById(int id, boolean decision) {
+        return userAccountDAO.updateCreditStatusById(id, decision);
     }
 
-    public boolean updateCreditStatusById(int id) {
-        return userAccountDAO.updateCreditStatusById(id);
+    public boolean updateTerm(int userId) {
+        UserAccount userAccount = userAccountDAO.getById(userId);
+        if (userAccount.getValidity().getTime() > System.currentTimeMillis())
+            return false;
+        return userAccountDAO.updateTerm(userId);
+    }
+
+    public UserAccount getByAccountNumber(long recipientAccountNumber) {
+        return userAccountDAO.getByAccountNumber(recipientAccountNumber);
+    }
+
+    public UserAccount payById(int userId, double amount) {
+        UserAccount userAccount = userAccountDAO.getById(userId);
+        if (userAccount.getBalance() >= amount) {
+            userAccount.setBalance(userAccount.getBalance() - amount);
+            return userAccount;
+        }
+        return null;
+    }
+
+    public boolean updateByAccount(double amount, long recipientAccountNumber) {
+        return userAccountDAO.updateByAccount(amount, recipientAccountNumber);
+    }
+
+    public boolean updateDepositStatusById(int userId, boolean decision) {
+        return userAccountDAO.updateDepositStatusById(userId, decision);
     }
 }

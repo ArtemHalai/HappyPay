@@ -1,12 +1,17 @@
 package dao.intefaces;
 
+import model.AllOperationsDTO;
 import model.RefillOperation;
+import model.RefillPaginationDTO;
 
-import java.util.List;
 
 public interface RefillDAO extends DAO<RefillOperation> {
 
     boolean add(RefillOperation refillOperation);
 
-    List<RefillOperation> getAllById(int id);
+    RefillPaginationDTO getRefillOperations(RefillPaginationDTO paginationDTO);
+
+    int count(int userId);
+
+    AllOperationsDTO getLimitOperations(AllOperationsDTO allOperationsDTO);
 }

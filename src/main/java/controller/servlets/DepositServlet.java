@@ -21,25 +21,14 @@ public class DepositServlet extends HttpServlet {
             case DEPOSIT:
                 req.getRequestDispatcher(DEPOSIT_PAGE.getName()).forward(req, resp);
                 break;
+            case OPEN_DEPOSIT:
+                resp.sendRedirect(OPEN_DEPOSIT.getName());
+                break;
+            case CLIENT_ACCOUNTS:
+                resp.sendRedirect(CLIENT_ACCOUNTS.getName());
+                break;
             case LOGIN_VIEW:
                 resp.sendRedirect(LOGIN_VIEW.getName());
-                break;
-        }
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Mappings page = ActionHandler.getPage(req, resp);
-
-        switch (page) {
-            case ERROR:
-                req.getRequestDispatcher(DEPOSIT_PAGE.getName()).forward(req, resp);
-                break;
-            case SUCCESSFUL:
-                resp.sendRedirect(req.getServletPath() + "/" + SUCCESSFUL.getName());
-                break;
-            case UNSUCCESSFUL:
-                resp.sendRedirect(req.getServletPath() + "/" + UNSUCCESSFUL.getName());
                 break;
         }
     }

@@ -10,13 +10,10 @@ import static enums.Attributes.ERRORS;
 
 public class CheckOperationErrors {
 
-    public static boolean errorsEmpty(HttpServletRequest request, double amount, long recipientAccountNumber){
-        Validator operationValidator = new OperationValidator(amount, recipientAccountNumber);
+    public static Map<String, String> errorsEmpty(HttpServletRequest request, double amount) {
+        Validator operationValidator = new OperationValidator(amount);
         Map<String, String> errors = operationValidator.validate();
-        if (!errors.isEmpty()) {
-            request.setAttribute(ERRORS.getName(), errors);
-            return false;
-        }
-        return true;
+        request.setAttribute(ERRORS.getName(), errors);
+        return errors;
     }
 }

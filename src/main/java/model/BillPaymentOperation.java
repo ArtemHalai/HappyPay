@@ -2,11 +2,16 @@ package model;
 
 import java.util.Objects;
 
+import static enums.OperationType.BILL_PAYMENT;
+
 public class BillPaymentOperation extends Operation {
 
     private long billNumber;
     private String purpose;
-    private double amount;
+
+    public BillPaymentOperation() {
+        this.operationType = BILL_PAYMENT.getName();
+    }
 
     public long getBillNumber() {
         return billNumber;
@@ -24,27 +29,18 @@ public class BillPaymentOperation extends Operation {
         this.purpose = purpose;
     }
 
-    public double getAmount() {
-        return amount;
-    }
-
-    public void setAmount(double amount) {
-        this.amount = amount;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof BillPaymentOperation)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        BillPaymentOperation billPayment = (BillPaymentOperation) o;
-        return Double.compare(billPayment.amount, amount) == 0 &&
-                billNumber == billPayment.billNumber &&
-                purpose.equals(billPayment.purpose);
+        BillPaymentOperation that = (BillPaymentOperation) o;
+        return billNumber == that.billNumber &&
+                Objects.equals(purpose, that.purpose);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), billNumber, purpose, amount);
+        return Objects.hash(super.hashCode(), billNumber, purpose);
     }
 }

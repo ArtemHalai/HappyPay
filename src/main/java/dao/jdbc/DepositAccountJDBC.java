@@ -4,12 +4,15 @@ import dao.intefaces.DepositAccountDAO;
 import dao.mappers.DepositAccountMapper;
 import dao.mappers.Mapper;
 import model.DepositAccount;
-import model.RefillOperation;
 import org.apache.log4j.Logger;
+import util.DateValidity;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+
+import static enums.Attributes.TOTAL;
 
 public class DepositAccountJDBC implements DepositAccountDAO {
 
@@ -23,17 +26,19 @@ public class DepositAccountJDBC implements DepositAccountDAO {
     @Override
     public boolean add(DepositAccount depositAccount) {
 
-        String add = "INSERT INTO deposit_accounts (user_id, balance, currency,  rate, term) VALUES (?, ?, ?, ?, ?)";
-        try (PreparedStatement statement = connection.prepareStatement(add, Statement.RETURN_GENERATED_KEYS)) {
+        String add = "INSERT INTO deposit_accounts (user_id, balance, currency, deposit_term, rate, term, start_date)" +
+                " VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement statement = connection.prepareStatement(add)) {
             statement.setInt(1, depositAccount.getUserId());
             statement.setDouble(2, depositAccount.getBalance());
             statement.setString(3, depositAccount.getCurrency());
-            statement.setDouble(4, depositAccount.getRate());
-            statement.setDate(5, depositAccount.getTerm());
-            statement.executeUpdate();
+            statement.setString(4, depositAccount.getDepositEnum().getName());
+            statement.setDouble(5, depositAccount.getRate());
+            statement.setDate(6, depositAccount.getTerm(), Calendar.getInstance());
+            statement.setDate(7, depositAccount.getStartDate(), Calendar.getInstance());
+            int generated = statement.executeUpdate();
 
-            ResultSet rs = statement.getGeneratedKeys();
-            if (rs.next())
+            if (generated > 0)
                 return true;
         } catch (SQLException e) {
             LOG.error("SQLException occurred in DepositAccountJDBC.class at add() method");
@@ -44,12 +49,11 @@ public class DepositAccountJDBC implements DepositAccountDAO {
     @Override
     public boolean updateBalanceById(double amount, int userId) {
         String updateBalance = "UPDATE deposit_accounts SET balance = ? WHERE user_id = ?";
-        try (PreparedStatement statement = connection.prepareStatement(updateBalance, Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement statement = connection.prepareStatement(updateBalance)) {
             statement.setDouble(1, amount);
             statement.setInt(2, userId);
-            statement.executeUpdate();
-            ResultSet rs = statement.getGeneratedKeys();
-            if (rs.next())
+            int generated = statement.executeUpdate();
+            if (generated > 0)
                 return true;
         } catch (SQLException e) {
             LOG.error("SQLException occurred in DepositAccountJDBC.class at updateBalanceById() method");
@@ -58,54 +62,69 @@ public class DepositAccountJDBC implements DepositAccountDAO {
     }
 
     @Override
-    public boolean updateBalanceByAccount(double amount, long account) {
-        String updateBalance = "UPDATE deposit_accounts SET balance = ? WHERE account_number = ?";
-        try (PreparedStatement statement = connection.prepareStatement(updateBalance, Statement.RETURN_GENERATED_KEYS)) {
-            statement.setDouble(1, amount);
-            statement.setLong(2, account);
-            statement.executeUpdate();
-            ResultSet rs = statement.getGeneratedKeys();
-            if (rs.next())
+    public boolean updateTerm(int userId) {
+        String updateTerm = "UPDATE deposit_accounts SET term = ? WHERE user_id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(updateTerm)) {
+            statement.setDate(1, DateValidity.setDepositTerm(), Calendar.getInstance());
+            statement.setLong(2, userId);
+            int generated = statement.executeUpdate();
+            if (generated > 0)
                 return true;
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in DepositAccountJDBC.class at updateBalanceByAccount() method");
+            LOG.error("SQLException occurred in DepositAccountJDBC.class at updateTerm() method");
         }
         return false;
     }
 
     @Override
-    public DepositAccount isAccountNumberExist(long accountNumber) {
-        Mapper<DepositAccount> depositAccountMapper = new DepositAccountMapper();
-        DepositAccount depositAccount = new DepositAccount();
-        depositAccount.setUserId(-1);
-        String getById = "SELECT * FROM deposit_accounts WHERE account_number = ?";
-        try (PreparedStatement statement = connection.prepareStatement(getById)) {
-            statement.setLong(1, accountNumber);
-            ResultSet rs = statement.executeQuery();
-            if (rs.next())
-                depositAccount = depositAccountMapper.getEntity(rs);
-        } catch (SQLException e) {
-            LOG.error("SQLException occurred in DepositAccountJDBC.class at getByAccountNumber() method");
+    public boolean deleteDepositAccount(int userId) {
+        if (count(userId) > 0) {
+            String delete = "DELETE FROM deposit_accounts WHERE user_id = ?";
+            try (PreparedStatement statement = connection.prepareStatement(delete)) {
+                statement.setInt(1, userId);
+                int generated = statement.executeUpdate();
+                if (generated > 0)
+                    return true;
+            } catch (SQLException e) {
+                LOG.error("SQLException occurred in DepositAccountJDBC.class at deleteDepositAccount() method");
+            }
+            return false;
         }
-        return depositAccount;
+        return true;
     }
 
     @Override
-    public DepositAccount getByAccountAndIban(RefillOperation refillOperation) {
-        Mapper<DepositAccount> depositAccountMapper = new DepositAccountMapper();
-        DepositAccount depositAccount = new DepositAccount();
-        depositAccount.setUserId(-1);
-        String getById = "SELECT * FROM deposit_accounts WHERE account_number = ? AND iban = ?";
-        try (PreparedStatement statement = connection.prepareStatement(getById)) {
-            statement.setLong(1, refillOperation.getAccountNumber());
-            statement.setLong(2, refillOperation.getSenderIBAN());
+    public int count(int userId) {
+        String count = "SELECT COUNT(*) AS total FROM deposit_accounts WHERE user_id = ?";
+        int total = 0;
+        try (PreparedStatement statement = connection.prepareStatement(count)) {
+            statement.setInt(1, userId);
             ResultSet rs = statement.executeQuery();
             if (rs.next())
-                depositAccount = depositAccountMapper.getEntity(rs);
+                total = rs.getInt(TOTAL.getName());
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in DepositAccountJDBC.class at getByAccountAndIban() method");
+            LOG.error("SQLException occurred in DepositAccountJDBC.class at count() method");
         }
-        return depositAccount;
+        return total;
+    }
+
+    @Override
+    public List<DepositAccount> getAll() {
+        List<DepositAccount> list = new ArrayList<>();
+
+        String findAll = "SELECT * FROM deposit_accounts";
+
+        try (PreparedStatement statement = connection.prepareStatement(findAll)) {
+            ResultSet rs = statement.executeQuery();
+            Mapper<DepositAccount> depositAccountMapper = new DepositAccountMapper();
+            while (rs.next()) {
+                DepositAccount depositAccount = depositAccountMapper.getEntity(rs);
+                list.add(depositAccount);
+            }
+        } catch (SQLException e) {
+            LOG.error("SQLException occurred in DepositAccountJDBC.class at getAll() method");
+        }
+        return list;
     }
 
     @Override
@@ -113,9 +132,7 @@ public class DepositAccountJDBC implements DepositAccountDAO {
         Mapper<DepositAccount> depositAccountMapper = new DepositAccountMapper();
         DepositAccount depositAccount = new DepositAccount();
         depositAccount.setUserId(-1);
-
-        String getById = "SELECT * FROM deposit_accounts LEFT JOIN refill_operation ON deposit_accounts.user_id = " +
-                " refill_operation.user_id WHERE user_id = ?";
+        String getById = "SELECT * FROM deposit_accounts WHERE user_id = ?";
         try (PreparedStatement statement = connection.prepareStatement(getById)) {
             statement.setInt(1, id);
             ResultSet rs = statement.executeQuery();
@@ -125,26 +142,5 @@ public class DepositAccountJDBC implements DepositAccountDAO {
             LOG.error("SQLException occurred in DepositAccountJDBC.class at getById() method");
         }
         return depositAccount;
-    }
-
-    @Override
-    public List<DepositAccount> findAll() {
-        List<DepositAccount> list = new ArrayList<>();
-
-        String findAll = "SELECT * FROM deposit_accounts";
-
-        try (PreparedStatement statement = connection.prepareStatement(findAll)) {
-            ResultSet rs = statement.executeQuery();
-
-            Mapper<DepositAccount> depositAccountMapper = new DepositAccountMapper();
-
-            while (rs.next()) {
-                DepositAccount depositAccount = depositAccountMapper.getEntity(rs);
-                list.add(depositAccount);
-            }
-        } catch (SQLException e) {
-            LOG.error("SQLException occurred in DepositAccountJDBC.class at findAll() method");
-        }
-        return list;
     }
 }

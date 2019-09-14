@@ -1,26 +1,28 @@
 package facade;
 
-import enums.Fields;
+import comparator.OperationDateComparator;
 import factories.DaoFactory;
 import factories.JDBCConnectionFactory;
-import model.CreditAccount;
-import model.DepositAccount;
-import model.RefillOperation;
-import service.CreditAccountService;
-import service.DepositAccountService;
-import service.RefillService;
+import model.*;
+import service.*;
 import util.ConnectionClosure;
 import util.TransactionManager;
 
 import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
+import static enums.Attributes.PAGE_SIZE;
 import static enums.DAOEnum.*;
 
 public class RefillFacade {
 
     private RefillService refillService;
-    private DepositAccountService depositAccountService;
+    private TransferService transferService;
+    private BillPaymentService billPaymentService;
     private CreditAccountService creditAccountService;
+    private UserAccountService userAccountService;
     private Connection connection;
     private DaoFactory factory;
     private JDBCConnectionFactory connectionFactory;
@@ -30,68 +32,95 @@ public class RefillFacade {
         connectionFactory = JDBCConnectionFactory.getInstance();
     }
 
-    public void setRefillService(RefillService refillService) {
-        this.refillService = refillService;
+    public void setUserAccountService(UserAccountService userAccountService) {
+        this.userAccountService = userAccountService;
     }
 
-    public void setDepositAccountService(DepositAccountService depositAccountService) {
-        this.depositAccountService = depositAccountService;
+    public void setRefillService(RefillService refillService) {
+        this.refillService = refillService;
     }
 
     public void setCreditAccountService(CreditAccountService creditAccountService) {
         this.creditAccountService = creditAccountService;
     }
 
-    public boolean refill(RefillOperation refillOperation, Fields account) {
+    public void setTransferService(TransferService transferService) {
+        this.transferService = transferService;
+    }
+
+    public void setBillPaymentService(BillPaymentService billPaymentService) {
+        this.billPaymentService = billPaymentService;
+    }
+
+    public boolean refill(RefillOperation refillOperation) {
         connection = connectionFactory.getConnection();
         TransactionManager.setRepeatableRead(connection);
         refillService.setRefillDAO(factory.getRefillDAO(connection, REFILL_JDBC));
-        switch (account) {
-            case CREDIT:
-                return refillCreditAccount(refillOperation);
-            case DEPOSIT:
-                return refillDepositAccount(refillOperation);
-            default:
-                ConnectionClosure.close(connection);
-                return false;
-        }
-    }
-
-    private boolean refillDepositAccount(RefillOperation refillOperation) {
-        depositAccountService.setDepositAccountDAO(factory.getDepositAccountDAO(connection, DEPOSIT_ACCOUNT_JDBC));
-        DepositAccount depositAccountSender = depositAccountService.getByAccountAndIban(refillOperation);
-        if (depositAccountSender == null) {
-            TransactionManager.rollbackTransaction(connection);
-            return false;
-        }
-        DepositAccount depositAccountRecipient = depositAccountService.getById(refillOperation.getUserId());
-        boolean updatedSender = depositAccountService.updateByAccount(depositAccountSender.getBalance(), refillOperation.getAccountNumber());
-        boolean updatedRecipient = depositAccountService.updateBalanceById(refillOperation.getAmount() + depositAccountRecipient.getBalance(),
-                refillOperation.getUserId());
-        if (updatedRecipient && updatedSender) {
-            TransactionManager.commitTransaction(connection);
-            return true;
-        }
-        TransactionManager.rollbackTransaction(connection);
-        return false;
-    }
-
-    private boolean refillCreditAccount(RefillOperation refillOperation) {
         creditAccountService.setCreditAccountDAO(factory.getCreditAccountDAO(connection, CREDIT_ACCOUNT_JDBC));
-        CreditAccount creditAccountSender = creditAccountService.getByAccountAndIban(refillOperation);
-        if (creditAccountSender == null) {
-            TransactionManager.rollbackTransaction(connection);
-            return false;
-        }
-        CreditAccount creditAccountRecipient = creditAccountService.getById(refillOperation.getUserId());
-        boolean updatedSender = creditAccountService.updateByAccount(creditAccountSender.getBalance(), refillOperation.getAccountNumber());
-        boolean updatedRecipient = creditAccountService.updateBalanceById(refillOperation.getAmount() + creditAccountRecipient.getBalance(),
-                refillOperation.getUserId());
-        if (updatedRecipient && updatedSender) {
-            TransactionManager.commitTransaction(connection);
-            return true;
+        userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
+        UserAccount userAccount = userAccountService.getById(refillOperation.getUserId());
+        CreditAccount creditAccount = creditAccountService.getById(refillOperation.getUserId());
+        if (userAccount.getUserId() > 0 && userAccount.getCredit() && creditAccount.getLimit() >= refillOperation.getAmount()) {
+            boolean limitUpdated =
+                    creditAccountService.updateBalanceById(creditAccount.getLimit() - refillOperation.getAmount(), refillOperation.getUserId());
+            boolean addArrears =
+                    creditAccountService.updateArrears(creditAccount.getArrears() + refillOperation.getAmount(), refillOperation.getUserId());
+            boolean updated =
+                    userAccountService.updateBalanceById(userAccount.getBalance() + refillOperation.getAmount(), refillOperation.getUserId());
+            boolean added =
+                    refillService.add(refillOperation);
+            if (updated && added && limitUpdated && addArrears) {
+                TransactionManager.commitTransaction(connection);
+                return true;
+            }
         }
         TransactionManager.rollbackTransaction(connection);
         return false;
+    }
+
+    public RefillPaginationDTO getRefillOperations(RefillPaginationDTO paginationDTO) {
+        connection = connectionFactory.getConnection();
+        refillService.setRefillDAO(factory.getRefillDAO(connection, REFILL_JDBC));
+        RefillPaginationDTO refillPaginationDTO = refillService.getRefillOperations(paginationDTO);
+        ConnectionClosure.close(connection);
+        return refillPaginationDTO;
+    }
+
+    public AllOperationsDTO getAllOperations(AllOperationsDTO allOperationsDTO) {
+        connection = connectionFactory.getConnection();
+        refillService.setRefillDAO(factory.getRefillDAO(connection, REFILL_JDBC));
+        billPaymentService.setBillPaymentDAO(factory.getBillPaymentDAO(connection, BILL_PAYMENT_JDBC));
+        transferService.setTransferDAO(factory.getTransferDAO(connection, TRANSFER_JDBC));
+
+        AllOperationsDTO paginationDTO1 = refillService.getAllOperations(allOperationsDTO);
+        AllOperationsDTO paginationDTO2 = billPaymentService.getAllOperations(allOperationsDTO);
+        AllOperationsDTO paginationDTO3 = transferService.getAllOperations(allOperationsDTO);
+
+        AllOperationsDTO operationsDTO = new AllOperationsDTO();
+        operationsDTO.setUserId(allOperationsDTO.getUserId());
+        operationsDTO.setPageSize(allOperationsDTO.getPageSize());
+
+        List<OperationsData> list = new ArrayList<>();
+        list.addAll(paginationDTO1.getList());
+        list.addAll(paginationDTO2.getList());
+        list.addAll(paginationDTO3.getList());
+        if (list.size() > 10)
+            operationsDTO.setList(list.stream()
+                    .sorted((o1,o2)->new OperationDateComparator()
+                            .compare(o1.getDate(),o2.getDate()))
+                    .collect(Collectors.toList()).subList(0, 10));
+        else
+            operationsDTO.setList(list.stream().sorted().collect(Collectors.toList()));
+
+        ConnectionClosure.close(connection);
+        return operationsDTO;
+    }
+
+    public UserAccount getUserAccount(int userId) {
+        connection = connectionFactory.getConnection();
+        userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
+        UserAccount userAccount = userAccountService.getById(userId);
+        ConnectionClosure.close(connection);
+        return userAccount;
     }
 }

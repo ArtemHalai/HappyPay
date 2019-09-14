@@ -4,16 +4,17 @@ import enums.Mappings;
 import facade.CreditAccountFacade;
 import factories.ServiceFactory;
 import model.CreditAccount;
+import model.UserAccount;
 import org.apache.log4j.Logger;
+import util.CheckRoleAndId;
+import util.DateValidity;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import static enums.Fields.ROLE;
 import static enums.Fields.USER_ID;
 import static enums.Mappings.*;
-import static enums.Role.CLIENT;
 
 public class CreditAccountCommand implements Command {
 
@@ -24,16 +25,21 @@ public class CreditAccountCommand implements Command {
     @Override
     public Mappings execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
-        int role = (int) session.getAttribute(ROLE.getName());
-        int userId = (int) session.getAttribute(USER_ID.getName());
-        if (role == CLIENT.getRoleId() && userId > 0) {
-            LOG.info("Client requests credit account");
+        if (CheckRoleAndId.check(session)) {
+            int userId = (int) session.getAttribute(USER_ID.getName());
             creditAccountFacade.setCreditAccountService(ServiceFactory.getInstance().getCreditAccountService());
+            creditAccountFacade.setUserAccountService(ServiceFactory.getInstance().getUserAccountService());
+            UserAccount userAccount = creditAccountFacade.getUserAccount(userId);
+            if (userAccount.getValidity() == null || !DateValidity.valid(userAccount.getValidity()))
+                return CLIENT_ACCOUNTS;
+
+            LOG.info("Client requests credit account");
             CreditAccount creditAccount = creditAccountFacade.getCreditAccount(userId);
             session.setAttribute(CREDIT_ACCOUNT.getName(), creditAccount);
-            return CREDIT;
-        } else {
-            return LOGIN_VIEW;
+            if (creditAccount.getUserId() > 0)
+                return CREDIT;
+            return CREDIT_REQUEST;
         }
+        return LOGIN_VIEW;
     }
 }

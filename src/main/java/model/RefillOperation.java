@@ -2,34 +2,22 @@ package model;
 
 import java.util.Objects;
 
+import static enums.OperationType.REFILL_OPERATION;
+
 public class RefillOperation extends Operation {
 
-    private double amount;
-    private long accountNumber;
-    private long senderIBAN;
+    private String senderAccountType;
 
-    public long getSenderIBAN() {
-        return senderIBAN;
+    public RefillOperation() {
+        this.operationType = REFILL_OPERATION.getName();
     }
 
-    public void setSenderIBAN(long senderIBAN) {
-        this.senderIBAN = senderIBAN;
+    public String getSenderAccountType() {
+        return senderAccountType;
     }
 
-    public double getAmount() {
-        return amount;
-    }
-
-    public void setAmount(double amount) {
-        this.amount = amount;
-    }
-
-    public long getAccountNumber() {
-        return accountNumber;
-    }
-
-    public void setAccountNumber(long accountNumber) {
-        this.accountNumber = accountNumber;
+    public void setSenderAccountType(String senderAccountType) {
+        this.senderAccountType = senderAccountType;
     }
 
     @Override
@@ -38,13 +26,11 @@ public class RefillOperation extends Operation {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         RefillOperation that = (RefillOperation) o;
-        return Double.compare(that.amount, amount) == 0 &&
-                accountNumber == that.accountNumber &&
-                senderIBAN == that.senderIBAN;
+        return Objects.equals(senderAccountType, that.senderAccountType);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), amount, accountNumber, senderIBAN);
+        return Objects.hash(super.hashCode(), senderAccountType);
     }
 }

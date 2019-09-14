@@ -15,7 +15,7 @@ public class BillPaymentMapper implements Mapper<BillPaymentOperation> {
 
         BillPaymentOperation billPaymentOperation = new BillPaymentOperation();
         billPaymentOperation.setUserId(resultSet.getInt(USER_ID.getName()));
-        billPaymentOperation.setBillNumber(resultSet.getString(BILL_NUMBER.getName()));
+        billPaymentOperation.setBillNumber(resultSet.getLong(BILL_NUMBER.getName()));
         billPaymentOperation.setPurpose(resultSet.getString(PURPOSE.getName()));
         billPaymentOperation.setAmount(resultSet.getDouble(AMOUNT.getName()));
         billPaymentOperation.setDate(resultSet.getDate(DATE.getName()));

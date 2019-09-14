@@ -2,10 +2,15 @@ package model;
 
 import java.util.Objects;
 
+import static enums.OperationType.TRANSFER_OPERATION;
+
 public class TransferOperation extends Operation {
 
     private long recipientAccountNumber;
-    private double amount;
+
+    public TransferOperation() {
+        this.operationType = TRANSFER_OPERATION.getName();
+    }
 
     public long getRecipientAccountNumber() {
         return recipientAccountNumber;
@@ -15,26 +20,17 @@ public class TransferOperation extends Operation {
         this.recipientAccountNumber = recipientAccountNumber;
     }
 
-    public double getAmount() {
-        return amount;
-    }
-
-    public void setAmount(double amount) {
-        this.amount = amount;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof TransferOperation)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        TransferOperation transfer = (TransferOperation) o;
-        return Double.compare(transfer.amount, amount) == 0 &&
-                recipientAccountNumber == transfer.recipientAccountNumber;
+        TransferOperation that = (TransferOperation) o;
+        return recipientAccountNumber == that.recipientAccountNumber;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), recipientAccountNumber, amount);
+        return Objects.hash(super.hashCode(), recipientAccountNumber);
     }
 }

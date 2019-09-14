@@ -1,7 +1,9 @@
 package factories;
 
 import command.*;
-import model.CreditRequest;
+import command.admin_command.CreditRequestAdminCommand;
+import command.admin_command.HomeAdminCommand;
+import command.admin_command.LimitRequestAdminCommand;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,16 +21,24 @@ public class CommandFactory {
         commandMap.put(LOGOUT.getName(), new LogoutCommand());
         commandMap.put(LOGGED_IN.getName(), new LoggedInCommand());
         commandMap.put(REGISTRATION_VIEW.getName(), new RegistrationCommand());
-        commandMap.put(CREDIT_ACCOUNT.getName(), new CreditAccountCommand());
-        commandMap.put(CREDIT_APPROVEMENT.getName(), new CreditRequestCommand());
-        commandMap.put(DEPOSIT_ACCOUNT.getName(), new DepositAccountCommand());
+        commandMap.put(CREDIT.getName(), new CreditAccountCommand());
+        commandMap.put(CREDIT_REQUEST.getName(), new CreditRequestCommand());
+        commandMap.put(DEPOSIT.getName(), new DepositAccountCommand());
         commandMap.put(REFILL.getName(), new RefillCommand());
         commandMap.put(TRANSFER.getName(), new TransferCommand());
-        commandMap.put(USER_ACCOUNT.getName(), new UserAccountCommand());
+        commandMap.put(CLIENT_ACCOUNTS.getName(), new UserAccountCommand());
         commandMap.put(HOME.getName(), new HomeCommand());
         commandMap.put(HOME_ADMIN.getName(), new HomeAdminCommand());
         commandMap.put(SUCCESSFUL.getName(), new SuccessfulCommand());
-        commandMap.put(UNSUCCESSFUL.getName(), new UnsuccessfulCommand());
+        commandMap.put(PAY_ARREARS.getName(), new PayArrearsCommand());
+        commandMap.put(REFILL_LIST_CLIENT.getName(), new RefillListClientCommand());
+        commandMap.put(CREDIT_REQUEST_ADMIN.getName(), new CreditRequestAdminCommand());
+        commandMap.put(LIMIT_REQUEST.getName(), new LimitRequestCommand());
+        commandMap.put(LIMIT_REQUEST_ADMIN.getName(), new LimitRequestAdminCommand());
+        commandMap.put(UPDATE_TERM.getName(), new UpdateTermCommand());
+        commandMap.put(OPERATION_LIST_CLIENT.getName(), new OperationListClientCommand());
+        commandMap.put(OPEN_DEPOSIT.getName(), new OpenDepositCommand());
+        commandMap.put(PAY_INTEREST_CHARGES.getName(), new PayInterestChargesCommand());
     }
 
     public static Command getCommand(String action) {

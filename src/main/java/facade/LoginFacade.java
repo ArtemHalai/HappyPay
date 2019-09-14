@@ -26,11 +26,11 @@ public class LoginFacade {
         this.userService = userService;
     }
 
-    public boolean getUserByUsernameAndPassword(User user) {
+    public User getUserByUsernameAndPassword(User user) {
         connection = connectionFactory.getConnection();
         userService.setUserDAO(factory.getUserDAO(connection, USER_JDBC));
-        User u = userService.getUserByUsernameAndPassword(user);
+        User exist = userService.getUserByUsernameAndPassword(user);
         ConnectionClosure.close(connection);
-        return u != null;
+        return exist;
     }
 }

@@ -19,8 +19,7 @@ import static enums.Attributes.ERRORS;
 import static enums.Errors.USER_ALREADY_EXISTS;
 import static enums.Fields.ROLE;
 import static enums.Fields.USER_ID;
-import static enums.Mappings.ERROR;
-import static enums.Mappings.HOME;
+import static enums.Mappings.*;
 import static enums.Role.CLIENT;
 
 public class RegistrationCommand implements Command {
@@ -38,6 +37,9 @@ public class RegistrationCommand implements Command {
         String phoneNumber = request.getParameter(PHONE_NUMBER.getName());
         String birthday = request.getParameter(BIRTHDAY.getName());
 
+        if (name == null)
+            return REGISTRATION_VIEW;
+
         ClientDetails clientDetails = new ClientDetails();
         clientDetails.setName(name);
         clientDetails.setSurname(surname);
@@ -52,6 +54,7 @@ public class RegistrationCommand implements Command {
         } else {
             registrationFacade.setClientDetailsService(ServiceFactory.getInstance().getClientDetailsService());
             registrationFacade.setUserService(ServiceFactory.getInstance().getUserService());
+            registrationFacade.setUserAccountService(ServiceFactory.getInstance().getUserAccountService());
             int userId = registrationFacade.addUser(clientDetails);
 
             if (userId > 0) {

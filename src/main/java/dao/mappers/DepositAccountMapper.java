@@ -1,5 +1,6 @@
 package dao.mappers;
 
+import enums.DepositEnum;
 import model.DepositAccount;
 import model.RefillOperation;
 
@@ -21,21 +22,11 @@ public class DepositAccountMapper implements Mapper<DepositAccount> {
         depositAccount.setUserId(resultSet.getInt(USER_ID.getName()));
         depositAccount.setBalance(resultSet.getDouble(BALANCE.getName()));
         depositAccount.setCurrency(resultSet.getString(CURRENCY.getName()));
-        depositAccount.setIban(resultSet.getLong(IBAN.getName()));
+        depositAccount.setStartDate(resultSet.getDate(START_DATE.getName()));
+        depositAccount.setDepositEnum(DepositEnum.valueOf(resultSet.getString(DEPOSIT_TERM.getName())));
+        depositAccount.setAccountNumber(resultSet.getLong(ACCOUNT_NUMBER.getName()));
         depositAccount.setRate(resultSet.getDouble(RATE.getName()));
         depositAccount.setTerm(resultSet.getDate(TERM.getName()));
-        List<RefillOperation> list = new ArrayList<>();
-
-        while (resultSet.next()) {
-            RefillOperation refillOperation = new RefillOperation();
-            refillOperation.setUserId(resultSet.getInt(USER_ID.getName()));
-            refillOperation.setDate(resultSet.getDate(DATE.getName()));
-            refillOperation.setAmount(resultSet.getDouble(AMOUNT.getName()));
-            refillOperation.setAccountNumber(resultSet.getLong(ACCOUNT_NUMBER.getName()));
-            refillOperation.setSenderIBAN(resultSet.getLong(SENDER_IBAN.getName()));
-            list.add(refillOperation);
-        }
-        depositAccount.setRefillList(list);
 
         return depositAccount;
     }

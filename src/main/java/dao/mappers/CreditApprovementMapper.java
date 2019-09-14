@@ -15,8 +15,8 @@ public class CreditApprovementMapper implements Mapper<CreditApprovementOperatio
 
         CreditApprovementOperation creditApprovementOperation = new CreditApprovementOperation();
         creditApprovementOperation.setUserId(resultSet.getInt(USER_ID.getName()));
-        creditApprovementOperation.setManagerId(resultSet.getInt(MANAGER_ID.getName()));
-        creditApprovementOperation.setDate(resultSet.getDate(OPERATION_DATE.getName()));
+        creditApprovementOperation.setDate(resultSet.getDate(DATE.getName()));
+        creditApprovementOperation.setOperationType(resultSet.getString(OPERATION_TYPE.getName()));
         creditApprovementOperation.setDecision(resultSet.getBoolean(DECISION.getName()));
 
         return creditApprovementOperation;

@@ -6,6 +6,8 @@ import util.PasswordEncryption;
 
 import java.util.List;
 
+import static enums.Role.ADMIN;
+
 public class UserService {
 
     private UserDAO userDAO;
@@ -15,16 +17,20 @@ public class UserService {
     }
 
     public User getUserByUsernameAndPassword(User user) {
-        encryptPassword(user);
-        return userDAO.getUserByUsernameAndPassword(user);
+        User u = userDAO.isUserExist(user.getUsername());
+        if (u != null) {
+            if (u.getRole() == ADMIN.getRoleId()) {
+                return userDAO.getUserByUsernameAndPassword(user);
+            }
+            boolean exist = PasswordEncryption.checkPassword(user.getPassword(), u.getPassword());
+            if (exist)
+                return u;
+        }
+        return null;
     }
 
     public boolean isUserExist(String username) {
-        return userDAO.isUserExist(username);
-    }
-
-    public int getUserIdByUsername(String username) {
-        return userDAO.getUserIdByUsername(username);
+        return userDAO.isUserExist(username) != null;
     }
 
     public int addUser(User user) {
@@ -32,16 +38,9 @@ public class UserService {
         return userDAO.add(user);
     }
 
-    public User getUserById(int id) {
-        return userDAO.getById(id);
-    }
-
-    public List<User> findAll() {
-        return userDAO.findAll();
-    }
-
-    private void encryptPassword(User user) {
+    private User encryptPassword(User user) {
         String password = user.getPassword();
         user.setPassword(PasswordEncryption.encryptPassword(password));
+        return user;
     }
 }

@@ -24,10 +24,12 @@ public class LoginFilter implements Filter {
 
         HttpSession session = req.getSession(false);
 
-        int role = (int) req.getSession().getAttribute(ROLE.getName());
-        if (role == CLIENT.getRoleId() ||
-                role == ADMIN.getRoleId()) {
-            resp.sendRedirect(LOGGED_IN.getName());
+        if (session.getAttribute(ROLE.getName()) != null) {
+            int role = (int) session.getAttribute(ROLE.getName());
+            if (role == CLIENT.getRoleId() ||
+                    role == ADMIN.getRoleId()) {
+                resp.sendRedirect(LOGGED_IN.getName());
+            }
         } else {
             filterChain.doFilter(req, resp);
         }

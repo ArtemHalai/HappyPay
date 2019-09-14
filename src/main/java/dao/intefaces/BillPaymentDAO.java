@@ -1,5 +1,6 @@
 package dao.intefaces;
 
+import model.AllOperationsDTO;
 import model.BillPaymentOperation;
 
 import java.util.List;
@@ -8,5 +9,7 @@ public interface BillPaymentDAO extends DAO<BillPaymentOperation> {
 
     boolean add(BillPaymentOperation billPaymentOperation);
 
-    List<BillPaymentOperation> getAllById(int id);
+    AllOperationsDTO getLimitOperations(AllOperationsDTO allOperationsDTO);
+
+    int count(int userId);
 }

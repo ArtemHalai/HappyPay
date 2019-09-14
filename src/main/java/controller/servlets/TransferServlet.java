@@ -24,6 +24,9 @@ public class TransferServlet extends HttpServlet {
             case LOGIN_VIEW:
                 resp.sendRedirect(LOGIN_VIEW.getName());
                 break;
+            case CLIENT_ACCOUNTS:
+                resp.sendRedirect(CLIENT_ACCOUNTS.getName());
+                break;
         }
     }
 
@@ -38,8 +41,8 @@ public class TransferServlet extends HttpServlet {
             case SUCCESSFUL:
                 resp.sendRedirect(req.getServletPath() + "/" + SUCCESSFUL.getName());
                 break;
-            case UNSUCCESSFUL:
-                resp.sendRedirect(req.getServletPath() + "/" + UNSUCCESSFUL.getName());
+            case CLIENT_ACCOUNTS:
+                resp.sendRedirect(CLIENT_ACCOUNTS.getName());
                 break;
         }
     }

@@ -1,14 +1,12 @@
 package facade;
 
-import enums.Fields;
 import factories.DaoFactory;
 import factories.JDBCConnectionFactory;
-import model.CreditAccount;
-import model.DepositAccount;
 import model.TransferOperation;
-import service.CreditAccountService;
-import service.DepositAccountService;
+import model.UserAccount;
 import service.TransferService;
+import service.UserAccountService;
+import util.ConnectionClosure;
 import util.TransactionManager;
 
 import java.sql.Connection;
@@ -18,8 +16,7 @@ import static enums.DAOEnum.*;
 public class TransferFacade {
 
     private TransferService transferService;
-    private DepositAccountService depositAccountService;
-    private CreditAccountService creditAccountService;
+    private UserAccountService userAccountService;
     private Connection connection;
     private DaoFactory factory;
     private JDBCConnectionFactory connectionFactory;
@@ -29,64 +26,24 @@ public class TransferFacade {
         connectionFactory = JDBCConnectionFactory.getInstance();
     }
 
-    public void setDepositAccountService(DepositAccountService depositAccountService) {
-        this.depositAccountService = depositAccountService;
-    }
-
-    public void setCreditAccountService(CreditAccountService creditAccountService) {
-        this.creditAccountService = creditAccountService;
+    public void setUserAccountService(UserAccountService userAccountService) {
+        this.userAccountService = userAccountService;
     }
 
     public void setTransferService(TransferService transferService) {
         this.transferService = transferService;
     }
 
-    public boolean transfer(TransferOperation transferOperation, Fields account) {
+    public boolean transfer(TransferOperation transferOperation) {
         connection = connectionFactory.getConnection();
         TransactionManager.setRepeatableRead(connection);
         transferService.setTransferDAO(factory.getTransferDAO(connection, TRANSFER_JDBC));
-        switch (account) {
-            case CREDIT:
-                return transferFromCreditAccount(transferOperation);
-            case DEPOSIT:
-                return transferFromDepositAccount(transferOperation);
-            default:
-                TransactionManager.rollbackTransaction(connection);
-                return false;
-        }
-    }
-
-    private boolean transferFromDepositAccount(TransferOperation transferOperation) {
-        depositAccountService.setDepositAccountDAO(factory.getDepositAccountDAO(connection, DEPOSIT_ACCOUNT_JDBC));
-        DepositAccount account = depositAccountService.getByAccountNumber(transferOperation.getRecipientAccountNumber());
-        if (account.getUserId() < 0) {
-            TransactionManager.rollbackTransaction(connection);
-            return false;
-        }
-        DepositAccount depositAccount = depositAccountService.payById(transferOperation.getUserId(),
-                transferOperation.getAmount());
-        if (depositAccount != null && account.getUserId() > 0) {
-            boolean updated = depositAccountService.updateBalanceById(depositAccount.getBalance(), transferOperation.getUserId());
-            boolean updatedRecipient = depositAccountService.updateByAccount(account.getBalance() + transferOperation.getAmount(),
-                    transferOperation.getRecipientAccountNumber());
-            if (isTransferSuccessful(transferOperation, updated, updatedRecipient)) return true;
-        }
-        TransactionManager.rollbackTransaction(connection);
-        return false;
-    }
-
-    private boolean transferFromCreditAccount(TransferOperation transferOperation) {
-        creditAccountService.setCreditAccountDAO(factory.getCreditAccountDAO(connection, CREDIT_ACCOUNT_JDBC));
-        CreditAccount account = creditAccountService.getByAccountNumber(transferOperation.getRecipientAccountNumber());
-        if (account.getUserId() < 0) {
-            TransactionManager.rollbackTransaction(connection);
-            return false;
-        }
-        CreditAccount creditAccount = creditAccountService.payById(transferOperation.getUserId(),
-                transferOperation.getAmount());
-        if (creditAccount != null && account.getUserId() > 0) {
-            boolean updated = creditAccountService.updateBalanceById(creditAccount.getBalance(), transferOperation.getUserId());
-            boolean updatedRecipient = creditAccountService.updateByAccount(account.getBalance() + transferOperation.getAmount(),
+        userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
+        UserAccount recipientAccount = userAccountService.getByAccountNumber(transferOperation.getRecipientAccountNumber());
+        UserAccount userAccount = userAccountService.payById(transferOperation.getUserId(), transferOperation.getAmount());
+        if (userAccount != null && recipientAccount.getUserId() > 0 && userAccount.getValidity().getTime() > System.currentTimeMillis()) {
+            boolean updated = userAccountService.updateBalanceById(userAccount.getBalance(), transferOperation.getUserId());
+            boolean updatedRecipient = userAccountService.updateByAccount(recipientAccount.getBalance() + transferOperation.getAmount(),
                     transferOperation.getRecipientAccountNumber());
             if (isTransferSuccessful(transferOperation, updated, updatedRecipient)) return true;
         }
@@ -101,5 +58,13 @@ public class TransferFacade {
             return true;
         }
         return false;
+    }
+
+    public UserAccount getUserAccount(int userId) {
+        connection = connectionFactory.getConnection();
+        userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
+        UserAccount userAccount = userAccountService.getById(userId);
+        ConnectionClosure.close(connection);
+        return userAccount;
     }
 }

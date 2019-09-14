@@ -16,30 +16,18 @@ public class CreditServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Mappings page = ActionHandler.getPage(req, resp);
-
         switch (page) {
             case CREDIT:
                 req.getRequestDispatcher(CREDIT_PAGE.getName()).forward(req, resp);
                 break;
+            case CREDIT_REQUEST:
+                resp.sendRedirect(CREDIT_REQUEST.getName());
+                break;
             case LOGIN_VIEW:
                 resp.sendRedirect(LOGIN_VIEW.getName());
                 break;
-        }
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Mappings page = ActionHandler.getPage(req, resp);
-
-        switch (page) {
-            case ERROR:
-                req.getRequestDispatcher(CREDIT_PAGE.getName()).forward(req, resp);
-                break;
-            case SUCCESSFUL:
-                resp.sendRedirect(req.getServletPath() + "/" + SUCCESSFUL.getName());
-                break;
-            case UNSUCCESSFUL:
-                resp.sendRedirect(req.getServletPath() + "/" + UNSUCCESSFUL.getName());
+            case CLIENT_ACCOUNTS:
+                resp.sendRedirect(CLIENT_ACCOUNTS.getName());
                 break;
         }
     }

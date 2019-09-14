@@ -17,7 +17,7 @@ public class ClientDetailsMapper implements Mapper<ClientDetails> {
         clientDetails.setUserId(resultSet.getInt(USER_ID.getName()));
         clientDetails.setName(resultSet.getString(NAME.getName()));
         clientDetails.setSurname(resultSet.getString(SURNAME.getName()));
-        clientDetails.setMobilePhone(resultSet.getString(MOBILE_PHONE.getName()));
+        clientDetails.setPhoneNumber(resultSet.getString(MOBILE_PHONE.getName()));
         clientDetails.setUsername(resultSet.getString(USERNAME.getName()));
         clientDetails.setBirthday(resultSet.getDate(BIRTHDAY.getName()));
 
