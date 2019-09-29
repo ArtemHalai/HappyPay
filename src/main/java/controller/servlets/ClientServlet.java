@@ -27,21 +27,4 @@ public class ClientServlet extends HttpServlet {
                 break;
         }
     }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Mappings page = ActionHandler.getPage(req, resp);
-
-        switch (page) {
-            case ERROR:
-                req.getRequestDispatcher(CLIENT_ACCOUNTS_PAGE.getName()).forward(req, resp);
-                break;
-            case DEPOSIT:
-                resp.sendRedirect(req.getServletPath()+"/"+DEPOSIT.getName());
-                break;
-            case CREDIT:
-                resp.sendRedirect(req.getServletPath()+"/"+CREDIT.getName());
-                break;
-        }
-    }
 }

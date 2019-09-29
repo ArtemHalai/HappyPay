@@ -25,7 +25,9 @@ import static enums.Role.CLIENT;
 public class RegistrationCommand implements Command {
 
     private static final Logger LOG = Logger.getLogger(RegistrationCommand.class);
+
     private RegistrationFacade registrationFacade = new RegistrationFacade();
+
     private Map<String, String> errors;
 
     @Override

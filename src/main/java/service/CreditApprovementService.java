@@ -1,7 +1,6 @@
 package service;
 
 import dao.intefaces.CreditApprovementDAO;
-import model.AllOperationsDTO;
 import model.CreditApprovementOperation;
 import model.CreditRequest;
 import model.CreditRequestAdmin;

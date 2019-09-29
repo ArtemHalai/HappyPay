@@ -10,8 +10,6 @@ public interface DepositAccountDAO extends DAO<DepositAccount> {
 
     boolean updateBalanceById(double amount, int userId);
 
-    boolean updateTerm(int userId);
-
     boolean deleteDepositAccount(int userId);
 
     int count(int userId);

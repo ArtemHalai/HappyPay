@@ -4,8 +4,6 @@ import dao.intefaces.TransferDAO;
 import model.AllOperationsDTO;
 import model.TransferOperation;
 
-import java.util.List;
-
 public class TransferService {
 
     private TransferDAO transferDAO;

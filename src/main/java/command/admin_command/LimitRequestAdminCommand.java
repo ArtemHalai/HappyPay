@@ -4,7 +4,6 @@ import command.Command;
 import enums.Mappings;
 import facade.LimitRequestAdminFacade;
 import factories.ServiceFactory;
-import model.LimitRequest;
 import model.LimitRequestAdmin;
 
 import javax.servlet.http.HttpServletRequest;

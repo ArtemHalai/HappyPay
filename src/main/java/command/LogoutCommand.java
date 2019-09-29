@@ -8,13 +8,12 @@ import javax.servlet.http.HttpSession;
 
 import static enums.Fields.ROLE;
 import static enums.Mappings.HOME;
-import static enums.Role.*;
 
 public class LogoutCommand implements Command {
 
     @Override
     public Mappings execute(HttpServletRequest request, HttpServletResponse response) {
-        HttpSession session = request.getSession(false);
+        HttpSession session = request.getSession();
         if (session.getAttribute(ROLE.getName()) != null)
             session.invalidate();
         return HOME;

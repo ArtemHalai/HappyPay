@@ -4,8 +4,6 @@ import dao.intefaces.BillPaymentDAO;
 import model.AllOperationsDTO;
 import model.BillPaymentOperation;
 
-import java.util.List;
-
 public class BillPaymentService {
 
     private BillPaymentDAO billPaymentDAO;

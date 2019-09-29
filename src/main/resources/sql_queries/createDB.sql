@@ -40,6 +40,7 @@ currency varchar(10) NOT NULL,
 deposit_term varchar(20) NOT NULL,
 rate decimal(16,2) NOT NULL,
 term date NOT NULL,
+start_date date NOT NULL,
 FOREIGN KEY (user_id) references users(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
 FOREIGN KEY (account_number) references user_account(account_number) ON DELETE CASCADE ON UPDATE CASCADE
 );

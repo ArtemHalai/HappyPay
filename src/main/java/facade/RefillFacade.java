@@ -106,8 +106,8 @@ public class RefillFacade {
         list.addAll(paginationDTO3.getList());
         if (list.size() > 10)
             operationsDTO.setList(list.stream()
-                    .sorted((o1,o2)->new OperationDateComparator()
-                            .compare(o1.getDate(),o2.getDate()))
+                    .sorted((o1, o2) -> new OperationDateComparator()
+                            .compare(o1.getDate(), o2.getDate()))
                     .collect(Collectors.toList()).subList(0, 10));
         else
             operationsDTO.setList(list.stream().sorted().collect(Collectors.toList()));

@@ -62,6 +62,14 @@ public class PayInterestChargesFacade {
         UserAccount userAccount = userAccountService.payById(userId, amount);
         if (userAccount != null && userAccount.getCredit()) {
             CreditAccount creditAccount = creditAccountService.getById(userId);
+
+            if (creditAccount.getInterestCharges() < amount && creditAccountService.updateInterestCharges(0, userId)) {
+                double returnAmount = amount - creditAccount.getInterestCharges();
+                userAccountService.updateBalanceById(userAccount.getBalance() + returnAmount, userId);
+                TransactionManager.commitTransaction(connection);
+                return true;
+            }
+
             if (creditAccount.getInterestCharges() >= amount && creditAccountService.updateInterestCharges(creditAccount.getInterestCharges() - amount, userId)) {
                 userAccountService.updateBalanceById(userAccount.getBalance(), userId);
                 TransactionManager.commitTransaction(connection);

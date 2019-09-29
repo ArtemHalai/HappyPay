@@ -5,8 +5,6 @@ import model.AllOperationsDTO;
 import model.RefillOperation;
 import model.RefillPaginationDTO;
 
-import java.util.List;
-
 public class RefillService {
 
     private RefillDAO refillDAO;

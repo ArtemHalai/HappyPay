@@ -28,7 +28,9 @@ import static enums.Role.CLIENT;
 public class LoginCommand implements Command {
 
     private static final Logger LOG = Logger.getLogger(LoginCommand.class);
+
     private LoginFacade loginFacade = new LoginFacade();
+
     private Map<String, String> errors;
 
     @Override

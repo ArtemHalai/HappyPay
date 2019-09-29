@@ -1,10 +1,7 @@
 package service;
 
 import dao.intefaces.UserAccountDAO;
-import model.RefillOperation;
 import model.UserAccount;
-
-import java.util.List;
 
 public class UserAccountService {
 

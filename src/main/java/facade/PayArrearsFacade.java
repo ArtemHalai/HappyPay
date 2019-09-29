@@ -44,6 +44,14 @@ public class PayArrearsFacade {
         UserAccount userAccount = userAccountService.payById(userId, amount);
         if (userAccount != null && userAccount.getCredit()) {
             CreditAccount creditAccount = creditAccountService.getById(userId);
+
+            if (creditAccount.getArrears() < amount && creditAccountService.updateArrears(0, userId)) {
+                double returnAmount = amount - creditAccount.getArrears();
+                userAccountService.updateBalanceById(userAccount.getBalance() + returnAmount, userId);
+                TransactionManager.commitTransaction(connection);
+                return true;
+            }
+
             if (creditAccount.getArrears() >= amount && creditAccountService.updateArrears(creditAccount.getArrears() - amount, userId)) {
                 userAccountService.updateBalanceById(userAccount.getBalance(), userId);
                 TransactionManager.commitTransaction(connection);

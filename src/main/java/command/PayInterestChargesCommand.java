@@ -25,7 +25,9 @@ import static enums.Mappings.*;
 public class PayInterestChargesCommand implements Command {
 
     private static final Logger LOG = Logger.getLogger(BillPaymentCommand.class);
+
     private PayInterestChargesFacade payInterestChargesFacade = new PayInterestChargesFacade();
+
     private Map<String, String> errors = new HashMap<>();
 
     @Override

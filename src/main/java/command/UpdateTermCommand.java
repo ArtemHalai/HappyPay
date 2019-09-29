@@ -1,6 +1,5 @@
 package command;
 
-import enums.Fields;
 import enums.Mappings;
 import facade.UpdateTermFacade;
 import factories.ServiceFactory;
@@ -13,7 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import static enums.Fields.ACCOUNT;
 import static enums.Fields.USER_ID;
 import static enums.Mappings.*;
 

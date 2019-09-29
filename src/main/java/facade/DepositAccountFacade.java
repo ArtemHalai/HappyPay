@@ -69,11 +69,10 @@ public class DepositAccountFacade {
         if (userAccount.getUserId() > 0) {
             boolean updatedAccountBalance =
                     userAccountService.updateBalanceById(userAccount.getBalance() + amount, depositAccount.getUserId());
-            boolean updatedDepositBalance = depositAccountService.updateBalanceById(0, depositAccount.getUserId());
             boolean updatedDepositStatus = userAccountService.updateDepositStatusById(depositAccount.getUserId(), false);
             boolean deleted = depositAccountService.deleteDepositAccount(depositAccount.getUserId());
 
-            if (updatedAccountBalance && updatedDepositBalance && updatedDepositStatus && deleted) {
+            if (updatedAccountBalance && updatedDepositStatus && deleted) {
                 TransactionManager.commitTransaction(connection);
                 return true;
             }

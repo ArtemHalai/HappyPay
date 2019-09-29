@@ -5,7 +5,6 @@ import dao.mappers.DepositAccountMapper;
 import dao.mappers.Mapper;
 import model.DepositAccount;
 import org.apache.log4j.Logger;
-import util.DateValidity;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -57,21 +56,6 @@ public class DepositAccountJDBC implements DepositAccountDAO {
                 return true;
         } catch (SQLException e) {
             LOG.error("SQLException occurred in DepositAccountJDBC.class at updateBalanceById() method");
-        }
-        return false;
-    }
-
-    @Override
-    public boolean updateTerm(int userId) {
-        String updateTerm = "UPDATE deposit_accounts SET term = ? WHERE user_id = ?";
-        try (PreparedStatement statement = connection.prepareStatement(updateTerm)) {
-            statement.setDate(1, DateValidity.setDepositTerm(), Calendar.getInstance());
-            statement.setLong(2, userId);
-            int generated = statement.executeUpdate();
-            if (generated > 0)
-                return true;
-        } catch (SQLException e) {
-            LOG.error("SQLException occurred in DepositAccountJDBC.class at updateTerm() method");
         }
         return false;
     }

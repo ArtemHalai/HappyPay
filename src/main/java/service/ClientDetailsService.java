@@ -4,8 +4,6 @@ import dao.intefaces.ClientDetailsDAO;
 import model.ClientDetails;
 import util.PasswordEncryption;
 
-import java.util.List;
-
 public class ClientDetailsService {
 
     private ClientDetailsDAO clientDetailsDAO;
