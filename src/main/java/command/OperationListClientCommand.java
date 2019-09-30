@@ -18,12 +18,25 @@ import static enums.Errors.NO_OPERATION_ERROR;
 import static enums.Fields.USER_ID;
 import static enums.Mappings.*;
 
+/**
+ * Define an object used for executing operation list client command on RefillFacade.
+ *
+ * @see RefillFacade
+ */
 public class OperationListClientCommand implements Command {
 
     private static final Logger LOG = Logger.getLogger(OperationListClientCommand.class);
 
     private RefillFacade refillListClientFacade = new RefillFacade();
 
+    /**
+     * Method to execute operation list client actions on HttpServletRequest and HttpServletResponse.
+     *
+     * @param request  The HttpServletRequest
+     * @param response The HttpServletResponse
+     * @return The enum value representing mapping value.
+     * @see enums.Mappings
+     */
     @Override
     public Mappings execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();

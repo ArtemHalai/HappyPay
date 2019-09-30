@@ -23,6 +23,11 @@ import static enums.Errors.ACCOUNT_NUMBER_ERROR;
 import static enums.Fields.*;
 import static enums.Mappings.*;
 
+/**
+ * Define an object used for executing transfer command on TransferFacade.
+ *
+ * @see TransferFacade
+ */
 public class TransferCommand implements Command {
 
     private static final Logger LOG = Logger.getLogger(TransferCommand.class);
@@ -31,6 +36,14 @@ public class TransferCommand implements Command {
 
     private Map<String, String> errors = new HashMap<>();
 
+    /**
+     * Method to execute transfer actions on HttpServletRequest and HttpServletResponse.
+     *
+     * @param request  The HttpServletRequest
+     * @param response The HttpServletResponse
+     * @return The enum value representing mapping value.
+     * @see enums.Mappings
+     */
     @Override
     public Mappings execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
@@ -60,6 +73,15 @@ public class TransferCommand implements Command {
             return transferOperation(userId, amount, recipientAccountNumber);
     }
 
+    /**
+     * Method to execute transfer action in case of lack of errors in input fields.
+     *
+     * @param userId  The user id
+     * @param amount The amount to pay
+     * @param recipientAccountNumber The recipient account number to pay
+     * @return The enum value representing mapping value.
+     * @see enums.Mappings
+     */
     private Mappings transferOperation(int userId, double amount, long recipientAccountNumber) {
         LOG.info("Client transfers amount: " + amount);
         TransferOperation transferOperation = new TransferOperation();

@@ -3,6 +3,9 @@ package model;
 import java.sql.Date;
 import java.util.Objects;
 
+/**
+ * Represents a LimitRequest object.
+ */
 public class LimitRequest {
 
     private int userId;
@@ -10,34 +13,74 @@ public class LimitRequest {
     private Date operationDate;
     private boolean decision;
 
+    /**
+     * Gets the value of {@link #userId}.
+     *
+     * @return the value of {@link #userId}.
+     */
     public int getUserId() {
         return userId;
     }
 
+    /**
+     * This is a setter which sets the user id.
+     *
+     * @param userId - the user id to be set
+     */
     public void setUserId(int userId) {
         this.userId = userId;
     }
 
+    /**
+     * Gets the value of {@link #amount}.
+     *
+     * @return the value of {@link #amount}.
+     */
     public double getAmount() {
         return amount;
     }
 
+    /**
+     * This is a setter which sets the amount.
+     *
+     * @param amount - the amount to be set
+     */
     public void setAmount(double amount) {
         this.amount = amount;
     }
 
+    /**
+     * Gets the value of {@link #operationDate}.
+     *
+     * @return the value of {@link #operationDate}.
+     */
     public Date getOperationDate() {
         return operationDate;
     }
 
+    /**
+     * This is a setter which sets the operation date.
+     *
+     * @param operationDate - the operation date to be set
+     */
     public void setOperationDate(Date operationDate) {
         this.operationDate = operationDate;
     }
 
+    /**
+     * Gets the value of {@link #decision}.
+     *
+     * @return the value of {@link #decision}.
+     */
     public boolean getDecision() {
         return decision;
     }
 
+    /**
+     * This is a setter which sets the decision.
+     *
+     * @param decision - the decision to be set
+     */
     public void setDecision(boolean decision) {
         this.decision = decision;
     }

@@ -16,12 +16,25 @@ import javax.servlet.http.HttpSession;
 import static enums.Fields.USER_ID;
 import static enums.Mappings.*;
 
+/**
+ * Define an object used for executing credit account command on CreditAccountFacade.
+ *
+ * @see CreditAccountFacade
+ */
 public class CreditAccountCommand implements Command {
 
     private static final Logger LOG = Logger.getLogger(CreditAccountCommand.class);
 
     private CreditAccountFacade creditAccountFacade = new CreditAccountFacade();
 
+    /**
+     * Method to execute credit account actions on HttpServletRequest and HttpServletResponse.
+     *
+     * @param request  The HttpServletRequest
+     * @param response The HttpServletResponse
+     * @return The enum value representing mapping value.
+     * @see enums.Mappings
+     */
     @Override
     public Mappings execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();

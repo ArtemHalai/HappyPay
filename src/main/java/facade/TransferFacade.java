@@ -13,6 +13,12 @@ import java.sql.Connection;
 
 import static enums.DAOEnum.*;
 
+/**
+ * A class that works with TransferService, UserAccountService.
+ *
+ * @see TransferService
+ * @see UserAccountService
+ */
 public class TransferFacade {
 
     private TransferService transferService;
@@ -21,19 +27,45 @@ public class TransferFacade {
     private DaoFactory factory;
     private JDBCConnectionFactory connectionFactory;
 
+    /**
+     * Sole constructor to initialize {@link #factory} and {@link #connectionFactory}.
+     *
+     * @see DaoFactory
+     * @see JDBCConnectionFactory
+     */
     public TransferFacade() {
         factory = DaoFactory.getInstance();
         connectionFactory = JDBCConnectionFactory.getInstance();
     }
 
+    /**
+     * Method to set UserAccountService object {@link #userAccountService}.
+     *
+     * @param userAccountService The UserAccountService object.
+     * @see UserAccountService
+     */
     public void setUserAccountService(UserAccountService userAccountService) {
         this.userAccountService = userAccountService;
     }
 
+    /**
+     * Method to set TransferService object {@link #transferService}.
+     *
+     * @param transferService The TransferService object.
+     * @see TransferService
+     */
     public void setTransferService(TransferService transferService) {
         this.transferService = transferService;
     }
 
+    /**
+     * Method to transfer using TransferOperation object.
+     *
+     * @param transferOperation The TransferOperation object.
+     * @return <code>true</code> if operation was successful; <code>false</code> otherwise.
+     * @see TransferOperation
+     * {@link #isTransferSuccessful(TransferOperation, boolean, boolean)}
+     */
     public boolean transfer(TransferOperation transferOperation) {
         connection = connectionFactory.getConnection();
         TransactionManager.setRepeatableRead(connection);
@@ -51,6 +83,15 @@ public class TransferFacade {
         return false;
     }
 
+    /**
+     * Method to transfer using TransferOperation object.
+     *
+     * @param transferOperation The TransferOperation object.
+     * @param updated The boolean value representing successful result of updating balance by id.
+     * @param updatedRecipient The boolean value representing successful result of updating balance by account.
+     * @return <code>true</code> if operation was successful; <code>false</code> otherwise.
+     * @see TransferOperation
+     */
     private boolean isTransferSuccessful(TransferOperation transferOperation, boolean updated, boolean updatedRecipient) {
         boolean added = transferService.add(transferOperation);
         if (updated && added && updatedRecipient) {
@@ -60,6 +101,13 @@ public class TransferFacade {
         return false;
     }
 
+    /**
+     * Method to get UserAccount object by user id.
+     *
+     * @param userId The user id.
+     * @return The UserAccount object.
+     * @see UserAccount
+     */
     public UserAccount getUserAccount(int userId) {
         connection = connectionFactory.getConnection();
         userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));

@@ -23,6 +23,11 @@ import static enums.Errors.ACCOUNT_NUMBER_ERROR;
 import static enums.Fields.*;
 import static enums.Mappings.*;
 
+/**
+ * Define an object used for executing bill payment command on BillPaymentFacade.
+ *
+ * @see BillPaymentFacade
+ */
 public class BillPaymentCommand implements Command {
 
     private static final Logger LOG = Logger.getLogger(BillPaymentCommand.class);
@@ -31,6 +36,14 @@ public class BillPaymentCommand implements Command {
 
     private Map<String, String> errors = new HashMap<>();
 
+    /**
+     * Method to execute bill payment actions on HttpServletRequest and HttpServletResponse.
+     *
+     * @param request  The HttpServletRequest
+     * @param response The HttpServletResponse
+     * @return The enum value representing mapping value.
+     * @see enums.Mappings
+     */
     @Override
     public Mappings execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
@@ -62,6 +75,16 @@ public class BillPaymentCommand implements Command {
             return makeBillPayment(userId, amount, billNumber, purpose);
     }
 
+    /**
+     * Method to execute bill payment action in case of lack of errors in input fields.
+     *
+     * @param userId  The user id
+     * @param amount The amount to pay
+     * @param billNumber The bill number to pay
+     * @param purpose The purpose of payment
+     * @return The enum value representing mapping value.
+     * @see enums.Mappings
+     */
     private Mappings makeBillPayment(int userId, double amount, long billNumber, String purpose) {
         LOG.info("Client pays bill from his account with amount: " + amount);
         BillPaymentOperation billPaymentOperation = new BillPaymentOperation();

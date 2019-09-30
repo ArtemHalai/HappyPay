@@ -15,15 +15,33 @@ import java.util.List;
 
 import static enums.Attributes.TOTAL;
 
+/**
+ * Define an data access object used for executing bill payment's requests to database using JDBC.
+ * This class is implementation of BillPaymentDAO.
+ *
+ * @see BillPaymentDAO
+ */
 public class BillPaymentJDBC implements BillPaymentDAO {
 
     private static final Logger LOG = Logger.getLogger(BillPaymentJDBC.class);
     private Connection connection;
 
+    /**
+     * Creates a BillPaymentJDBC object with the connection {@link #connection}.
+     *
+     * @param connection The connection object.
+     */
     public BillPaymentJDBC(Connection connection) {
         this.connection = connection;
     }
 
+    /**
+     * Method to add bill payment.
+     *
+     * @param billPaymentOperation The BillPaymentOperation object.
+     * @return <code>true</code> if bill payment operation was added; <code>false</code> otherwise.
+     * @see BillPaymentOperation
+     */
     @Override
     public boolean add(BillPaymentOperation billPaymentOperation) {
 
@@ -44,6 +62,12 @@ public class BillPaymentJDBC implements BillPaymentDAO {
         return false;
     }
 
+    /**
+     * Method to get count of all bill payments in database by user id.
+     *
+     * @param userId The user id.
+     * @return The int value representing amount of all bill payments in database by given user id.
+     */
     @Override
     public int count(int userId) {
         String count = "SELECT COUNT(*) AS total FROM bill_payment_operation WHERE user_id = ?";
@@ -59,6 +83,13 @@ public class BillPaymentJDBC implements BillPaymentDAO {
         return total;
     }
 
+    /**
+     * Method to get limited list of bill payment operations.
+     *
+     * @param allOperationsDTO The AllOperationsDTO object.
+     * @return The AllOperationsDTO object containing data needed to collect different types of operations.
+     * @see AllOperationsDTO
+     */
     @Override
     public AllOperationsDTO getLimitOperations(AllOperationsDTO allOperationsDTO) {
         String getOperations = "SELECT * FROM bill_payment_operation WHERE user_id = ? ORDER BY date DESC LIMIT ?";
@@ -79,6 +110,13 @@ public class BillPaymentJDBC implements BillPaymentDAO {
         return operationsDTO;
     }
 
+    /**
+     * Method to get bill payment operation by id.
+     *
+     * @param id The user id.
+     * @return The BillPaymentOperation object.
+     * @see BillPaymentOperation
+     */
     @Override
     public BillPaymentOperation getById(int id) {
         Mapper<BillPaymentOperation> billPaymentMapper = new BillPaymentMapper();

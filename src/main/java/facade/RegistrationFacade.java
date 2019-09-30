@@ -12,6 +12,13 @@ import util.TransactionManager;
 import java.sql.Connection;
 import static enums.DAOEnum.*;
 
+/**
+ * A class that works with ClientDetailsService, UserService, UserAccountService.
+ *
+ * @see ClientDetailsService
+ * @see UserService
+ * @see UserAccountService
+ */
 public class RegistrationFacade {
 
     private ClientDetailsService clientDetailsService;
@@ -21,23 +28,55 @@ public class RegistrationFacade {
     private DaoFactory factory;
     private JDBCConnectionFactory connectionFactory;
 
+    /**
+     * Sole constructor to initialize {@link #factory} and {@link #connectionFactory}.
+     *
+     * @see DaoFactory
+     * @see JDBCConnectionFactory
+     */
     public RegistrationFacade() {
         factory = DaoFactory.getInstance();
         connectionFactory = JDBCConnectionFactory.getInstance();
     }
 
+    /**
+     * Method to set UserAccountService object {@link #userAccountService}.
+     *
+     * @param userAccountService The UserAccountService object.
+     * @see UserAccountService
+     */
     public void setUserAccountService(UserAccountService userAccountService) {
         this.userAccountService = userAccountService;
     }
 
+    /**
+     * Method to set ClientDetailsService object {@link #clientDetailsService}.
+     *
+     * @param clientDetailsService The ClientDetailsService object.
+     * @see ClientDetailsService
+     */
     public void setClientDetailsService(ClientDetailsService clientDetailsService) {
         this.clientDetailsService = clientDetailsService;
     }
 
+    /**
+     * Method to set UserService object {@link #userService}.
+     *
+     * @param userService The UserService object.
+     * @see UserService
+     */
     public void setUserService(UserService userService) {
         this.userService = userService;
     }
 
+    /**
+     * Method to add user using ClientDetails object.
+     *
+     * @param clientDetails The ClientDetails object.
+     * @return The int value representing auto-generated id in database.
+     * @see ClientDetails
+     * {@link #addNewUser(ClientDetails)}
+     */
     public int addUser(ClientDetails clientDetails) {
         int userId = -1;
         connection = connectionFactory.getConnection();
@@ -53,6 +92,13 @@ public class RegistrationFacade {
         }
     }
 
+    /**
+     * Method to add user using ClientDetails object.
+     *
+     * @param clientDetails The ClientDetails object.
+     * @return The int value representing auto-generated id in database.
+     * @see ClientDetails
+     */
     private int addNewUser(ClientDetails clientDetails) {
         int userId;
         int unsuccessful = -1;

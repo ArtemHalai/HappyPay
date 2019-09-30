@@ -17,12 +17,25 @@ import static enums.Errors.VALIDITY_ERROR;
 import static enums.Fields.USER_ID;
 import static enums.Mappings.*;
 
+/**
+ * Define an object used for executing user account command on UserAccountFacade.
+ *
+ * @see UserAccountFacade
+ */
 public class UserAccountCommand implements Command {
 
     private static final Logger LOG = Logger.getLogger(UserAccountCommand.class);
 
     private UserAccountFacade userAccountFacade = new UserAccountFacade();
 
+    /**
+     * Method to execute user account actions on HttpServletRequest and HttpServletResponse.
+     *
+     * @param request  The HttpServletRequest
+     * @param response The HttpServletResponse
+     * @return The enum value representing mapping value.
+     * @see enums.Mappings
+     */
     @Override
     public Mappings execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();

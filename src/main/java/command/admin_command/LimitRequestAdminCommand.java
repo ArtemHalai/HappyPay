@@ -17,11 +17,25 @@ import static enums.Errors.NO_REQUESTS_ERROR;
 import static enums.Fields.*;
 import static enums.Mappings.*;
 
+/**
+ * Define an object used for executing limit request admin command on LimitRequestAdminFacade.
+ *
+ * @see LimitRequestAdminFacade
+ */
 public class LimitRequestAdminCommand implements Command {
 
     private LimitRequestAdminFacade limitRequestAdminFacade = new LimitRequestAdminFacade();
+
     private static final boolean LIMIT_DECISION = false;
 
+    /**
+     * Method to execute limit requests admin actions on HttpServletRequest and HttpServletResponse.
+     *
+     * @param request  The HttpServletRequest
+     * @param response The HttpServletResponse
+     * @return The enum value representing mapping value.
+     * @see enums.Mappings
+     */
     @Override
     public Mappings execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();

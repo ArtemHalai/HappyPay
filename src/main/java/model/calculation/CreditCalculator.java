@@ -4,14 +4,30 @@ import model.CreditAccount;
 
 import java.util.Calendar;
 
+/**
+ * The object used for calculating interest charges on credit account.
+ * Implements Calculator.
+ *
+ * @see Calculator
+ */
 public class CreditCalculator implements Calculator {
 
     private CreditAccount creditAccount;
 
+    /**
+     * Sole constructor to initialize {@link #creditAccount}.
+     *
+     * @param creditAccount The CreditAccount object.
+     */
     public CreditCalculator(CreditAccount creditAccount) {
         this.creditAccount = creditAccount;
     }
 
+    /**
+     * Method to calculate interest charges on credit account.
+     *
+     * @return The double value result calculated by this method.
+     */
     @Override
     public double calculate() {
         int accruedInterestPeriod = 1;

@@ -14,15 +14,33 @@ import java.util.List;
 import static enums.Attributes.TOTAL;
 import static enums.OperationType.REFILL_DEPOSIT;
 
+/**
+ * Define a data access object used for executing refill requests to database using JDBC.
+ * This class is implementation of RefillDAO.
+ *
+ * @see RefillDAO
+ */
 public class RefillJDBC implements RefillDAO {
 
     private static final Logger LOG = Logger.getLogger(RefillJDBC.class);
     private Connection connection;
 
+    /**
+     * Creates a RefillJDBC object with the connection {@link #connection}.
+     *
+     * @param connection The connection object.
+     */
     public RefillJDBC(Connection connection) {
         this.connection = connection;
     }
 
+    /**
+     * Method to get refill operations.
+     *
+     * @param paginationDTO The RefillPaginationDTO object.
+     * @return The RefillPaginationDTO object containing data needed to get all refill operations part by part.
+     * @see RefillPaginationDTO
+     */
     @Override
     public RefillPaginationDTO getRefillOperations(RefillPaginationDTO paginationDTO) {
         String getRefillOperations = "SELECT * FROM refill_operation WHERE user_id = ? AND operation_type = ? LIMIT ? OFFSET ?";
@@ -44,6 +62,12 @@ public class RefillJDBC implements RefillDAO {
         return paginationDTO;
     }
 
+    /**
+     * Method to get count of all refill operations in database by user id.
+     *
+     * @param userId The user id.
+     * @return The int value representing amount of all refill operations in database by given user id.
+     */
     @Override
     public int count(int userId) {
         String count = "SELECT COUNT(*) AS total FROM refill_operation WHERE user_id = ? AND operation_type = ?";
@@ -60,6 +84,13 @@ public class RefillJDBC implements RefillDAO {
         return total;
     }
 
+    /**
+     * Method to add refill operation.
+     *
+     * @param refillOperation The RefillOperation object.
+     * @return <code>true</code> if refill operation was added; <code>false</code> otherwise.
+     * @see RefillOperation
+     */
     @Override
     public boolean add(RefillOperation refillOperation) {
 
@@ -78,6 +109,13 @@ public class RefillJDBC implements RefillDAO {
         return false;
     }
 
+    /**
+     * Method to get limited list of refill operations.
+     *
+     * @param allOperationsDTO The AllOperationsDTO object.
+     * @return The AllOperationsDTO object containing data needed to collect different types of operations.
+     * @see AllOperationsDTO
+     */
     @Override
     public AllOperationsDTO getLimitOperations(AllOperationsDTO allOperationsDTO) {
         String getOperations = "SELECT * FROM refill_operation WHERE user_id = ? ORDER BY date DESC LIMIT ?";
@@ -98,6 +136,13 @@ public class RefillJDBC implements RefillDAO {
         return operationsDTO;
     }
 
+    /**
+     * Method to get refill operation by id.
+     *
+     * @param id The user id.
+     * @return The RefillOperation object.
+     * @see RefillOperation
+     */
     @Override
     public RefillOperation getById(int id) {
         Mapper<RefillOperation> refillOperationMapper = new RefillMapper();

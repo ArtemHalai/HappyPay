@@ -13,9 +13,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static enums.Attributes.PAGE_SIZE;
 import static enums.DAOEnum.*;
 
+/**
+ * A class that works with RefillService, CreditAccountService, BillPaymentService, TransferService, UserAccountService.
+ *
+ * @see RefillService
+ * @see TransferService
+ * @see BillPaymentService
+ * @see CreditAccountService
+ * @see UserAccountService
+ */
 public class RefillFacade {
 
     private RefillService refillService;
@@ -27,31 +35,74 @@ public class RefillFacade {
     private DaoFactory factory;
     private JDBCConnectionFactory connectionFactory;
 
+    /**
+     * Sole constructor to initialize {@link #factory} and {@link #connectionFactory}.
+     *
+     * @see DaoFactory
+     * @see JDBCConnectionFactory
+     */
     public RefillFacade() {
         factory = DaoFactory.getInstance();
         connectionFactory = JDBCConnectionFactory.getInstance();
     }
 
+    /**
+     * Method to set UserAccountService object {@link #userAccountService}.
+     *
+     * @param userAccountService The UserAccountService object.
+     * @see UserAccountService
+     */
     public void setUserAccountService(UserAccountService userAccountService) {
         this.userAccountService = userAccountService;
     }
 
+    /**
+     * Method to set RefillService object {@link #refillService}.
+     *
+     * @param refillService The RefillService object.
+     * @see RefillService
+     */
     public void setRefillService(RefillService refillService) {
         this.refillService = refillService;
     }
 
+    /**
+     * Method to set CreditAccountService object {@link #creditAccountService}.
+     *
+     * @param creditAccountService The CreditAccountService object.
+     * @see CreditAccountService
+     */
     public void setCreditAccountService(CreditAccountService creditAccountService) {
         this.creditAccountService = creditAccountService;
     }
 
+    /**
+     * Method to set TransferService object {@link #transferService}.
+     *
+     * @param transferService The TransferService object.
+     * @see TransferService
+     */
     public void setTransferService(TransferService transferService) {
         this.transferService = transferService;
     }
 
+    /**
+     * Method to set BillPaymentService object {@link #billPaymentService}.
+     *
+     * @param billPaymentService The BillPaymentService object.
+     * @see BillPaymentService
+     */
     public void setBillPaymentService(BillPaymentService billPaymentService) {
         this.billPaymentService = billPaymentService;
     }
 
+    /**
+     * Method to refill using RefillOperation object.
+     *
+     * @param refillOperation The RefillOperation object.
+     * @return <code>true</code> if operation was successful; <code>false</code> otherwise.
+     * @see RefillOperation
+     */
     public boolean refill(RefillOperation refillOperation) {
         connection = connectionFactory.getConnection();
         TransactionManager.setRepeatableRead(connection);
@@ -78,6 +129,13 @@ public class RefillFacade {
         return false;
     }
 
+    /**
+     * Method to get refill operations using RefillPaginationDTO object.
+     *
+     * @param paginationDTO The RefillPaginationDTO object.
+     * @return The RefillPaginationDTO object containing data needed for pagination with refill operations.
+     * @see RefillPaginationDTO
+     */
     public RefillPaginationDTO getRefillOperations(RefillPaginationDTO paginationDTO) {
         connection = connectionFactory.getConnection();
         refillService.setRefillDAO(factory.getRefillDAO(connection, REFILL_JDBC));
@@ -86,6 +144,13 @@ public class RefillFacade {
         return refillPaginationDTO;
     }
 
+    /**
+     * Method to get all operations using AllOperationsDTO object.
+     *
+     * @param allOperationsDTO The AllOperationsDTO object.
+     * @return The AllOperationsDTO object containing necessary data.
+     * @see AllOperationsDTO
+     */
     public AllOperationsDTO getAllOperations(AllOperationsDTO allOperationsDTO) {
         connection = connectionFactory.getConnection();
         refillService.setRefillDAO(factory.getRefillDAO(connection, REFILL_JDBC));
@@ -116,6 +181,13 @@ public class RefillFacade {
         return operationsDTO;
     }
 
+    /**
+     * Method to get UserAccount object by user id.
+     *
+     * @param userId The user id.
+     * @return The UserAccount object.
+     * @see UserAccount
+     */
     public UserAccount getUserAccount(int userId) {
         connection = connectionFactory.getConnection();
         userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));

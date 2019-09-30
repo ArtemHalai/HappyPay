@@ -1,5 +1,25 @@
 package enums;
 
+/**
+ *  Errors that can be used
+ *  <li>{@link #WRONG_USERNAME}</li>
+ *  <li>{@link #NAME_DOES_NOT_MATCH}</li>
+ *  <li>{@link #SURNAME_DOES_NOT_MATCH}</li>
+ *  <li>{@link #PHONE_NUMBER_DOES_NOT_MATCH}</li>
+ *  <li>{@link #PASSWORD_DOES_NOT_MATCH}</li>
+ *  <li>{@link #USER_ALREADY_EXISTS}</li>
+ *  <li>{@link #USER_DOES_NOT_EXIST}</li>
+ *  <li>{@link #ACCOUNT_NUMBER_ERROR}</li>
+ *  <li>{@link #CREDIT_ERROR}</li>
+ *  <li>{@link #AMOUNT_ERROR}</li>
+ *  <li>{@link #NOT_ENOUGH_ERROR}</li>
+ *  <li>{@link #ACCOUNT_ERROR}</li>
+ *  <li>{@link #VALIDITY_ERROR}</li>
+ *  <li>{@link #NO_REQUESTS_ERROR}</li>
+ *  <li>{@link #NO_REFILL_OPERATION_ERROR}</li>
+ *  <li>{@link #NO_OPERATION_ERROR}</li>
+ *  <li>{@link #BIRTHDAY_DOES_NOT_MATCH}</li>
+ */
 public enum Errors {
     WRONG_USERNAME("Wrong username."),
     NAME_DOES_NOT_MATCH("Name should contains at least 2 letter."),
@@ -21,10 +41,20 @@ public enum Errors {
 
     private String name;
 
+    /**
+     * Sole constructor. It is not possible to invoke this constructor.
+     * It is for use by code emitted by the compiler in response to enum type declarations.
+     * @param name The name of enum constant, which is the identifier used to declare it.
+     */
     Errors(String name) {
         this.name = name;
     }
 
+    /**
+     * Gets the value of {@link #name}.
+     *
+     * @return the value of {@link #name}.
+     */
     public String getName() {
         return name;
     }

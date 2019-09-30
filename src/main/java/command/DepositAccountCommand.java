@@ -13,17 +13,28 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import static enums.Errors.VALIDITY_ERROR;
-import static enums.Fields.TERM;
 import static enums.Fields.USER_ID;
 import static enums.Mappings.*;
 
+/**
+ * Define an object used for executing deposit account command on DepositAccountFacade.
+ *
+ * @see DepositAccountFacade
+ */
 public class DepositAccountCommand implements Command {
 
     private static final Logger LOG = Logger.getLogger(DepositAccountCommand.class);
 
     private DepositAccountFacade depositAccountFacade = new DepositAccountFacade();
 
+    /**
+     * Method to execute deposit account actions on HttpServletRequest and HttpServletResponse.
+     *
+     * @param request  The HttpServletRequest
+     * @param response The HttpServletResponse
+     * @return The enum value representing mapping value.
+     * @see enums.Mappings
+     */
     @Override
     public Mappings execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();

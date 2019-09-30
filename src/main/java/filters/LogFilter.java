@@ -10,6 +10,12 @@ import java.io.IOException;
 import static enums.Fields.ROLE;
 import static enums.Role.CLIENT;
 
+/**
+ * Define a log filter class.
+ * This class is implementation of Filter.
+ *
+ * @see Filter
+ */
 public class LogFilter implements Filter {
 
     private Logger logger = Logger.getLogger(this.getClass());
@@ -19,6 +25,18 @@ public class LogFilter implements Filter {
 
     }
 
+    /**
+     * Method to write in log file data about logged in user.
+     * Invoke the next entity in the chain
+     * using the FilterChain object
+     * (<code>filterChain.doFilter()</code>).
+     *
+     * @param servletRequest  The ServletRequest object.
+     * @param servletResponse The ServletResponse object.
+     * @param filterChain     The FilterChain object.
+     * @throws IOException      If IO exception occurred while processing this request.
+     * @throws ServletException If servlet exception occurred while processing this request.
+     */
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;

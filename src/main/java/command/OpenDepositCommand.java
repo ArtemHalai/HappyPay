@@ -20,6 +20,11 @@ import static enums.Fields.AMOUNT;
 import static enums.Fields.USER_ID;
 import static enums.Mappings.*;
 
+/**
+ * Define an object used for executing open deposit command on DepositAccountFacade.
+ *
+ * @see DepositAccountFacade
+ */
 public class OpenDepositCommand implements Command {
 
     private static final Logger LOG = Logger.getLogger(OpenDepositCommand.class);
@@ -28,6 +33,14 @@ public class OpenDepositCommand implements Command {
 
     private Map<String, String> errors = new HashMap<>();
 
+    /**
+     * Method to execute open deposit actions on HttpServletRequest and HttpServletResponse.
+     *
+     * @param request  The HttpServletRequest
+     * @param response The HttpServletResponse
+     * @return The enum value representing mapping value.
+     * @see enums.Mappings
+     */
     @Override
     public Mappings execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();

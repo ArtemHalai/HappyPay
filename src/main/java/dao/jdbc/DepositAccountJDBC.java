@@ -13,15 +13,33 @@ import java.util.List;
 
 import static enums.Attributes.TOTAL;
 
+/**
+ * Define a data access object used for executing deposit account's requests to database using JDBC.
+ * This class is implementation of DepositAccountDAO.
+ *
+ * @see DepositAccountDAO
+ */
 public class DepositAccountJDBC implements DepositAccountDAO {
 
     private static final Logger LOG = Logger.getLogger(DepositAccountJDBC.class);
     private Connection connection;
 
+    /**
+     * Creates a DepositAccountJDBC object with the connection {@link #connection}.
+     *
+     * @param connection The connection object.
+     */
     public DepositAccountJDBC(Connection connection) {
         this.connection = connection;
     }
 
+    /**
+     * Method to add deposit account.
+     *
+     * @param depositAccount The DepositAccount object.
+     * @return <code>true</code> if deposit account was added; <code>false</code> otherwise.
+     * @see DepositAccount
+     */
     @Override
     public boolean add(DepositAccount depositAccount) {
 
@@ -45,6 +63,13 @@ public class DepositAccountJDBC implements DepositAccountDAO {
         return false;
     }
 
+    /**
+     * Method to update balance of deposit account by user id.
+     *
+     * @param amount The amount.
+     * @param userId The user id.
+     * @return <code>true</code> if balance was updated; <code>false</code> otherwise.
+     */
     @Override
     public boolean updateBalanceById(double amount, int userId) {
         String updateBalance = "UPDATE deposit_accounts SET balance = ? WHERE user_id = ?";
@@ -60,6 +85,12 @@ public class DepositAccountJDBC implements DepositAccountDAO {
         return false;
     }
 
+    /**
+     * Method to delete deposit account by user id.
+     *
+     * @param userId The user id.
+     * @return <code>true</code> if deposit account was deleted; <code>false</code> otherwise.
+     */
     @Override
     public boolean deleteDepositAccount(int userId) {
         if (count(userId) > 0) {
@@ -77,6 +108,12 @@ public class DepositAccountJDBC implements DepositAccountDAO {
         return true;
     }
 
+    /**
+     * Method to get count of all deposit accounts in database by user id.
+     *
+     * @param userId The user id.
+     * @return The int value representing amount of all deposit accounts in database by given user id.
+     */
     @Override
     public int count(int userId) {
         String count = "SELECT COUNT(*) AS total FROM deposit_accounts WHERE user_id = ?";
@@ -92,6 +129,12 @@ public class DepositAccountJDBC implements DepositAccountDAO {
         return total;
     }
 
+    /**
+     * Method to get all deposit accounts.
+     *
+     * @return The list containing all deposit accounts.
+     * @see DepositAccount
+     */
     @Override
     public List<DepositAccount> getAll() {
         List<DepositAccount> list = new ArrayList<>();
@@ -111,6 +154,13 @@ public class DepositAccountJDBC implements DepositAccountDAO {
         return list;
     }
 
+    /**
+     * Method to get deposit account by id.
+     *
+     * @param id The user id.
+     * @return The DepositAccount object.
+     * @see DepositAccount
+     */
     @Override
     public DepositAccount getById(int id) {
         Mapper<DepositAccount> depositAccountMapper = new DepositAccountMapper();

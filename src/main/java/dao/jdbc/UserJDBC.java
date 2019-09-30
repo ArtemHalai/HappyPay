@@ -3,26 +3,38 @@ package dao.jdbc;
 import dao.intefaces.UserDAO;
 import dao.mappers.Mapper;
 import dao.mappers.UserMapper;
-import exceptions.WrongUsernameOrPasswordException;
 import model.User;
 import org.apache.log4j.Logger;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
-import static enums.Fields.USER_ID;
-
-
+/**
+ * Define a data access object used for executing user requests to database using JDBC.
+ * This class is implementation of UserDAO.
+ *
+ * @see UserDAO
+ */
 public class UserJDBC implements UserDAO {
 
     private static final Logger LOG = Logger.getLogger(UserJDBC.class);
     private Connection connection;
 
+    /**
+     * Creates a UserJDBC object with the connection {@link #connection}.
+     *
+     * @param connection The connection object.
+     */
     public UserJDBC(Connection connection) {
         this.connection = connection;
     }
 
+    /**
+     * Method to get user by username.
+     *
+     * @param username The username of user.
+     * @return The User object.
+     * @see User
+     */
     @Override
     public User isUserExist(String username) {
         Mapper<User> userMapper = new UserMapper();
@@ -39,6 +51,13 @@ public class UserJDBC implements UserDAO {
         return obj;
     }
 
+    /**
+     * Method to get user by username and password.
+     *
+     * @param user The User object.
+     * @return The User object.
+     * @see User
+     */
     @Override
     public User getUserByUsernameAndPassword(User user) {
         String getByUsernameAndPassword = "SELECT * FROM users WHERE username = ? AND password = ?";
@@ -57,6 +76,13 @@ public class UserJDBC implements UserDAO {
         return obj;
     }
 
+    /**
+     * Method to add user.
+     *
+     * @param user The User object.
+     * @return The int value representing the auto-generated id in database.
+     * @see User
+     */
     @Override
     public int add(User user) {
         String addUser = "INSERT INTO users (username, password, role) VALUES (?, ?, ?)";
@@ -76,6 +102,13 @@ public class UserJDBC implements UserDAO {
         return userId;
     }
 
+    /**
+     * Method to get user by id.
+     *
+     * @param id The user id.
+     * @return The User object.
+     * @see User
+     */
     @Override
     public User getById(int id) {
         Mapper<User> userMapper = new UserMapper();

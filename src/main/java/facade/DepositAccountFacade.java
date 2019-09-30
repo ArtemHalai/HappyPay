@@ -22,6 +22,13 @@ import static enums.DAOEnum.*;
 import static enums.DepositEnum.YEAR;
 import static enums.OperationType.REFILL_DEPOSIT;
 
+/**
+ * A class that works with DepositAccountService, UserAccountService, RefillService.
+ *
+ * @see DepositAccountService
+ * @see UserAccountService
+ * @see RefillService
+ */
 public class DepositAccountFacade {
 
     private DepositAccountService depositAccountService;
@@ -31,23 +38,54 @@ public class DepositAccountFacade {
     private DaoFactory factory;
     private JDBCConnectionFactory connectionFactory;
 
+    /**
+     * Sole constructor to initialize {@link #factory} and {@link #connectionFactory}.
+     *
+     * @see DaoFactory
+     * @see JDBCConnectionFactory
+     */
     public DepositAccountFacade() {
         factory = DaoFactory.getInstance();
         connectionFactory = JDBCConnectionFactory.getInstance();
     }
 
+    /**
+     * Method to set UserAccountService object {@link #userAccountService}.
+     *
+     * @param userAccountService The UserAccountService object.
+     * @see UserAccountService
+     */
     public void setUserAccountService(UserAccountService userAccountService) {
         this.userAccountService = userAccountService;
     }
 
+    /**
+     * Method to set DepositAccountService object {@link #depositAccountService}.
+     *
+     * @param depositAccountService The DepositAccountService object.
+     * @see DepositAccountService
+     */
     public void setDepositAccountService(DepositAccountService depositAccountService) {
         this.depositAccountService = depositAccountService;
     }
 
+    /**
+     * Method to set RefillService object {@link #refillService}.
+     *
+     * @param refillService The RefillService object.
+     * @see RefillService
+     */
     public void setRefillService(RefillService refillService) {
         this.refillService = refillService;
     }
 
+    /**
+     * Method to get DepositAccount object by user id.
+     *
+     * @param userId The user id.
+     * @return The DepositAccount object.
+     * @see DepositAccount
+     */
     public DepositAccount getDepositAccount(int userId) {
         connection = connectionFactory.getConnection();
         depositAccountService.setDepositAccountDAO(factory.getDepositAccountDAO(connection, DEPOSIT_ACCOUNT_JDBC));
@@ -56,6 +94,12 @@ public class DepositAccountFacade {
         return depositAccount;
     }
 
+    /**
+     * Method to transfer money from deposit to main account using DepositAccount object.
+     *
+     * @param depositAccount The DepositAccount.
+     * @return <code>true</code> if operation was successful; <code>false</code> otherwise.
+     */
     public boolean transferMoneyToAccountBalance(DepositAccount depositAccount) {
         connection = connectionFactory.getConnection();
         TransactionManager.setRepeatableRead(connection);
@@ -81,6 +125,12 @@ public class DepositAccountFacade {
         return false;
     }
 
+    /**
+     * Method to check deposit by user id.
+     *
+     * @param userId The user id.
+     * @return <code>true</code> if user doesn't have deposit account; <code>false</code> otherwise.
+     */
     public boolean checkDeposit(int userId) {
         connection = connectionFactory.getConnection();
         userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
@@ -92,6 +142,13 @@ public class DepositAccountFacade {
         return true;
     }
 
+    /**
+     * Method to open deposit by user id and with given amount.
+     *
+     * @param userId The user id.
+     * @param balance The amount to put on deposit account.
+     * @return <code>true</code> if operation was successful; <code>false</code> otherwise.
+     */
     public boolean openDeposit(int userId, double balance) {
         connection = connectionFactory.getConnection();
         TransactionManager.setRepeatableRead(connection);
@@ -105,6 +162,14 @@ public class DepositAccountFacade {
         return false;
     }
 
+    /**
+     * Method to open deposit by user id, given amount and UserAccount object.
+     *
+     * @param userId The user id.
+     * @param balance The amount to put on deposit account.
+     * @param userAccount The UserAccount object.
+     * @return <code>true</code> if operation was successful; <code>false</code> otherwise.
+     */
     private boolean depositCreator(int userId, double balance, UserAccount userAccount) {
         boolean deleted = depositAccountService.deleteDepositAccount(userId);
         if (deleted) {
@@ -133,6 +198,12 @@ public class DepositAccountFacade {
         return false;
     }
 
+    /**
+     * Method to get all deposit accounts.
+     *
+     * @return The list of DepositAccount objects.
+     * @see DepositAccount
+     */
     public List<DepositAccount> getAll() {
         connection = connectionFactory.getConnection();
         depositAccountService.setDepositAccountDAO(factory.getDepositAccountDAO(connection, DEPOSIT_ACCOUNT_JDBC));
@@ -141,6 +212,13 @@ public class DepositAccountFacade {
         return list;
     }
 
+    /**
+     * Method to get UserAccount object by user id.
+     *
+     * @param userId The user id.
+     * @return The UserAccount object.
+     * @see UserAccount
+     */
     public UserAccount getUserAccount(int userId) {
         connection = connectionFactory.getConnection();
         userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));

@@ -17,11 +17,25 @@ import static enums.Errors.NO_REQUESTS_ERROR;
 import static enums.Fields.*;
 import static enums.Mappings.*;
 
+/**
+ * Define an object used for executing credit request admin command on CreditRequestAdminFacade.
+ *
+ * @see CreditRequestAdminFacade
+ */
 public class CreditRequestAdminCommand implements Command {
 
     private CreditRequestAdminFacade creditRequestAdminFacade = new CreditRequestAdminFacade();
+
     private static final boolean CREDIT_DECISION = false;
 
+    /**
+     * Method to execute credit requests admin actions on HttpServletRequest and HttpServletResponse.
+     *
+     * @param request  The HttpServletRequest
+     * @param response The HttpServletResponse
+     * @return The enum value representing mapping value.
+     * @see enums.Mappings
+     */
     @Override
     public Mappings execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();

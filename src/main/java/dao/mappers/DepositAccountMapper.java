@@ -2,23 +2,28 @@ package dao.mappers;
 
 import enums.DepositEnum;
 import model.DepositAccount;
-import model.RefillOperation;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 import static enums.Fields.*;
 
+/**
+ * The object used for getting deposit account data from result set.
+ */
 public class DepositAccountMapper implements Mapper<DepositAccount> {
 
-
+    /**
+     * Method to get deposit account entity from result set.
+     *
+     * @param resultSet The result set object.
+     * @return The DepositAccount object.
+     * @throws SQLException If sql exception occurred while processing this request.
+     * @see ResultSet
+     * @see DepositAccount
+     */
     @Override
     public DepositAccount getEntity(ResultSet resultSet) throws SQLException {
-
         DepositAccount depositAccount = new DepositAccount();
-
         depositAccount.setUserId(resultSet.getInt(USER_ID.getName()));
         depositAccount.setBalance(resultSet.getDouble(BALANCE.getName()));
         depositAccount.setCurrency(resultSet.getString(CURRENCY.getName()));

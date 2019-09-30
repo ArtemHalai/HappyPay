@@ -13,6 +13,12 @@ import java.sql.Connection;
 
 import static enums.DAOEnum.*;
 
+/**
+ * A class that works with BillPaymentService, UserAccountService.
+ *
+ * @see BillPaymentService
+ * @see UserAccountService
+ */
 public class BillPaymentFacade {
 
     private BillPaymentService billPaymentService;
@@ -21,19 +27,44 @@ public class BillPaymentFacade {
     private DaoFactory factory;
     private JDBCConnectionFactory connectionFactory;
 
+    /**
+     * Sole constructor to initialize {@link #factory} and {@link #connectionFactory}.
+     *
+     * @see DaoFactory
+     * @see JDBCConnectionFactory
+     */
     public BillPaymentFacade() {
         factory = DaoFactory.getInstance();
         connectionFactory = JDBCConnectionFactory.getInstance();
     }
 
+    /**
+     * Method to set BillPaymentService object {@link #billPaymentService}.
+     *
+     * @param billPaymentService The BillPaymentService object.
+     * @see BillPaymentService
+     */
     public void setBillPaymentService(BillPaymentService billPaymentService) {
         this.billPaymentService = billPaymentService;
     }
 
+    /**
+     * Method to set UserAccountService object {@link #userAccountService}.
+     *
+     * @param userAccountService The UserAccountService object.
+     * @see UserAccountService
+     */
     public void setUserAccountService(UserAccountService userAccountService) {
         this.userAccountService = userAccountService;
     }
 
+    /**
+     * Method to pay bill using BillPaymentOperation object.
+     *
+     * @param billPaymentOperation The BillPaymentOperation object.
+     * @return <code>true</code> if operation was successful; <code>false</code> otherwise.
+     * @see BillPaymentOperation
+     */
     public boolean payBill(BillPaymentOperation billPaymentOperation) {
         connection = connectionFactory.getConnection();
         TransactionManager.setRepeatableRead(connection);
@@ -52,6 +83,13 @@ public class BillPaymentFacade {
         return false;
     }
 
+    /**
+     * Method to get UserAccount object by user id.
+     *
+     * @param userId The user id.
+     * @return The UserAccount object.
+     * @see UserAccount
+     */
     public UserAccount getUserAccount(int userId) {
         connection = connectionFactory.getConnection();
         userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));

@@ -15,12 +15,25 @@ import javax.servlet.http.HttpSession;
 import static enums.Fields.USER_ID;
 import static enums.Mappings.*;
 
+/**
+ * Define an object used for executing update term command on UpdateTermFacade.
+ *
+ * @see UpdateTermFacade
+ */
 public class UpdateTermCommand implements Command {
 
     private static final Logger LOG = Logger.getLogger(UpdateTermCommand.class);
 
     private UpdateTermFacade updateTermFacade = new UpdateTermFacade();
 
+    /**
+     * Method to execute update term actions on HttpServletRequest and HttpServletResponse.
+     *
+     * @param request  The HttpServletRequest
+     * @param response The HttpServletResponse
+     * @return The enum value representing mapping value.
+     * @see enums.Mappings
+     */
     @Override
     public Mappings execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();

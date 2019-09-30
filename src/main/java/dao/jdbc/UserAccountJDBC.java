@@ -3,24 +3,40 @@ package dao.jdbc;
 import dao.intefaces.UserAccountDAO;
 import dao.mappers.Mapper;
 import dao.mappers.UserAccountMapper;
-import model.RefillOperation;
 import model.UserAccount;
 import org.apache.log4j.Logger;
 import util.DateValidity;
 
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
+/**
+ * Define a data access object used for executing user account requests to database using JDBC.
+ * This class is implementation of UserAccountDAO.
+ *
+ * @see UserAccountDAO
+ */
 public class UserAccountJDBC implements UserAccountDAO {
+
     private static final Logger LOG = Logger.getLogger(UserAccountJDBC.class);
     private Connection connection;
 
+    /**
+     * Creates a UserAccountJDBC object with the connection {@link #connection}.
+     *
+     * @param connection The connection object.
+     */
     public UserAccountJDBC(Connection connection) {
         this.connection = connection;
     }
 
+    /**
+     * Method to add user account.
+     *
+     * @param userAccount The UserAccount object.
+     * @return <code>true</code> if user account was added; <code>false</code> otherwise.
+     * @see UserAccount
+     */
     @Override
     public boolean add(UserAccount userAccount) {
 
@@ -40,6 +56,13 @@ public class UserAccountJDBC implements UserAccountDAO {
         return false;
     }
 
+    /**
+     * Method to update balance of account by user id.
+     *
+     * @param amount The amount.
+     * @param userId The user id.
+     * @return <code>true</code> if balance was updated; <code>false</code> otherwise.
+     */
     @Override
     public boolean updateBalanceById(double amount, int userId) {
         String updateBalance = "UPDATE user_account SET balance = ? WHERE user_id = ?";
@@ -55,6 +78,13 @@ public class UserAccountJDBC implements UserAccountDAO {
         return false;
     }
 
+    /**
+     * Method to get user account by id.
+     *
+     * @param id The user id.
+     * @return The UserAccount object.
+     * @see UserAccount
+     */
     @Override
     public UserAccount getById(int id) {
         Mapper<UserAccount> userAccountMapper = new UserAccountMapper();
@@ -74,6 +104,13 @@ public class UserAccountJDBC implements UserAccountDAO {
         return userAccount;
     }
 
+    /**
+     * Method to update credit status by user id.
+     *
+     * @param decision The decision.
+     * @param id The user id.
+     * @return <code>true</code> if status was updated; <code>false</code> otherwise.
+     */
     @Override
     public boolean updateCreditStatusById(int id, boolean decision) {
         String updateStatus = "UPDATE user_account SET credit = ? WHERE user_id = ?";
@@ -89,6 +126,12 @@ public class UserAccountJDBC implements UserAccountDAO {
         return false;
     }
 
+    /**
+     * Method to update term of account by user id.
+     *
+     * @param userId The user id.
+     * @return <code>true</code> if term was updated; <code>false</code> otherwise.
+     */
     @Override
     public boolean updateTerm(int userId) {
         String updateTerm = "UPDATE user_account SET validity = ? WHERE user_id = ?";
@@ -104,6 +147,13 @@ public class UserAccountJDBC implements UserAccountDAO {
         return false;
     }
 
+    /**
+     * Method to get user account by account number.
+     *
+     * @param recipientAccountNumber The recipient account number.
+     * @return The user account object.
+     * @see UserAccount
+     */
     @Override
     public UserAccount getByAccountNumber(long recipientAccountNumber) {
         Mapper<UserAccount> userAccountMapper = new UserAccountMapper();
@@ -123,6 +173,13 @@ public class UserAccountJDBC implements UserAccountDAO {
         return userAccount;
     }
 
+    /**
+     * Method to update balance by account number.
+     *
+     * @param recipientAccountNumber The recipient account number to be updated.
+     * @param amount The amount to set.
+     * @return <code>true</code> if balance was updated; <code>false</code> otherwise.
+     */
     @Override
     public boolean updateByAccount(double amount, long recipientAccountNumber) {
         String updateBalance = "UPDATE user_account SET balance = ? WHERE account_number = ?";
@@ -138,6 +195,13 @@ public class UserAccountJDBC implements UserAccountDAO {
         return false;
     }
 
+    /**
+     * Method to update deposit status by user id.
+     *
+     * @param decision The decision.
+     * @param userId The user id.
+     * @return <code>true</code> if status was updated; <code>false</code> otherwise.
+     */
     @Override
     public boolean updateDepositStatusById(int userId, boolean decision) {
         String updateStatus = "UPDATE user_account SET deposit = ? WHERE user_id = ?";

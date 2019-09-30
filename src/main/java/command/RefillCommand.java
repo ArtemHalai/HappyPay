@@ -24,6 +24,11 @@ import static enums.Errors.*;
 import static enums.Fields.*;
 import static enums.Mappings.*;
 
+/**
+ * Define an object used for executing refill command on RefillFacade.
+ *
+ * @see RefillFacade
+ */
 public class RefillCommand implements Command {
 
     private static final Logger LOG = Logger.getLogger(RefillCommand.class);
@@ -32,6 +37,14 @@ public class RefillCommand implements Command {
 
     private Map<String, String> errors = new HashMap<>();
 
+    /**
+     * Method to execute refill actions on HttpServletRequest and HttpServletResponse.
+     *
+     * @param request  The HttpServletRequest
+     * @param response The HttpServletResponse
+     * @return The enum value representing mapping value.
+     * @see enums.Mappings
+     */
     @Override
     public Mappings execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
@@ -56,6 +69,14 @@ public class RefillCommand implements Command {
             return refillOperation(session, amount);
     }
 
+    /**
+     * Method to execute refill action in case of lack of errors in input fields.
+     *
+     * @param session The HttpSession
+     * @param amount The amount to refill
+     * @return The enum value representing mapping value.
+     * @see enums.Mappings
+     */
     private Mappings refillOperation(HttpSession session, double amount) {
         int userId = (int) session.getAttribute(USER_ID.getName());
         LOG.info("Client refills his account with amount: " + amount);

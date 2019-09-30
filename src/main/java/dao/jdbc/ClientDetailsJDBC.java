@@ -7,19 +7,35 @@ import model.ClientDetails;
 import org.apache.log4j.Logger;
 
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
+/**
+ * Define a data access object used for executing bill payment's requests to database using JDBC.
+ * This class is implementation of ClientDetailsDAO.
+ *
+ * @see ClientDetailsDAO
+ */
 public class ClientDetailsJDBC implements ClientDetailsDAO {
 
     private static final Logger LOG = Logger.getLogger(ClientDetailsJDBC.class);
     private Connection connection;
 
+    /**
+     * Creates a ClientDetailsJDBC object with the connection {@link #connection}.
+     *
+     * @param connection The connection object.
+     */
     public ClientDetailsJDBC(Connection connection) {
         this.connection = connection;
     }
 
+    /**
+     * Method to add client details.
+     *
+     * @param clientDetails The ClientDetails object.
+     * @return <code>true</code> if client details was added; <code>false</code> otherwise.
+     * @see ClientDetails
+     */
     @Override
     public boolean add(ClientDetails clientDetails) {
 
@@ -43,6 +59,13 @@ public class ClientDetailsJDBC implements ClientDetailsDAO {
         return false;
     }
 
+    /**
+     * Method to get client details by id.
+     *
+     * @param id The user id.
+     * @return The ClientDetails object.
+     * @see ClientDetails
+     */
     @Override
     public ClientDetails getById(int id) {
         Mapper<ClientDetails> clientDetailsMapper = new ClientDetailsMapper();

@@ -10,6 +10,9 @@ import java.util.Map;
 
 import static enums.Mappings.*;
 
+/**
+ * A class that provides factory to get command implementation associated with given action.
+ */
 public class CommandFactory {
 
     private static final Map<String, Command> commandMap;
@@ -41,6 +44,12 @@ public class CommandFactory {
         commandMap.put(PAY_INTEREST_CHARGES.getName(), new PayInterestChargesCommand());
     }
 
+    /**
+     * Gets the command from commandMap.
+     *
+     * @param action The action to identify which command implementation to use.
+     * @return the command implementation associated with given action from {@link #commandMap}.
+     */
     public static Command getCommand(String action) {
         return commandMap.getOrDefault(action, new HomeCommand());
     }

@@ -22,6 +22,11 @@ import static enums.Fields.USER_ID;
 import static enums.Mappings.*;
 import static enums.Role.CLIENT;
 
+/**
+ * Define an object used for executing registration command on RegistrationFacade.
+ *
+ * @see RegistrationFacade
+ */
 public class RegistrationCommand implements Command {
 
     private static final Logger LOG = Logger.getLogger(RegistrationCommand.class);
@@ -30,6 +35,14 @@ public class RegistrationCommand implements Command {
 
     private Map<String, String> errors;
 
+    /**
+     * Method to execute registration actions on HttpServletRequest and HttpServletResponse.
+     *
+     * @param request  The HttpServletRequest
+     * @param response The HttpServletResponse
+     * @return The enum value representing mapping value.
+     * @see enums.Mappings
+     */
     @Override
     public Mappings execute(HttpServletRequest request, HttpServletResponse response) {
         String name = request.getParameter(NAME.getName());
@@ -73,6 +86,14 @@ public class RegistrationCommand implements Command {
         }
     }
 
+    /**
+     * Method to validate data from input fields.
+     *
+     * @param clientDetails The ClientDetails object
+     * @return <code>true</code> if errors were occurred while validating input fields;
+     * <code>false</code> otherwise.
+     * @see enums.Mappings
+     */
     private boolean validation(ClientDetails clientDetails) {
         Validator registrationValidator = new RegistrationValidator(clientDetails);
         errors = registrationValidator.validate();

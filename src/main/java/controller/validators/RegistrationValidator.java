@@ -11,15 +11,31 @@ import static enums.Errors.*;
 import static enums.Regex.NAME_REGEX;
 import static enums.Regex.PHONE_NUMBER_REGEX;
 
+/**
+ * The object used for validating registration data.
+ */
 public class RegistrationValidator extends LoginValidator {
 
     private ClientDetails clientDetails;
 
+    /**
+     * Creates a RegistrationValidator object with the specified client details object {@link #clientDetails}.
+     *
+     * @param clientDetails The client details object containing registration info.
+     * @see ClientDetails
+     */
     public RegistrationValidator(ClientDetails clientDetails) {
         super(clientDetails.getUsername(), clientDetails.getPassword());
         this.clientDetails = clientDetails;
     }
 
+    /**
+     * Method to validate registration info data.
+     *
+     * @return The empty map if validation was successful, and map containing errors if something was invalid
+     * during validation.
+     * @see LoginValidator
+     */
     @Override
     public Map<String, String> validate() {
         validateName();
@@ -31,6 +47,14 @@ public class RegistrationValidator extends LoginValidator {
         return errors;
     }
 
+    /**
+     * Method to validate name.
+     * If name doesn't match regular expression then put the message in map {@link #errors}.
+     *
+     * @see enums.Errors
+     * @see enums.Attributes
+     * @see enums.Regex
+     */
     private void validateName() {
         String name = clientDetails.getName();
 
@@ -39,6 +63,14 @@ public class RegistrationValidator extends LoginValidator {
         }
     }
 
+    /**
+     * Method to validate surname.
+     * If surname doesn't match regular expression then put the message in map {@link #errors}.
+     *
+     * @see enums.Errors
+     * @see enums.Attributes
+     * @see enums.Regex
+     */
     private void validateSurname() {
         String surname = clientDetails.getSurname();
 
@@ -47,6 +79,14 @@ public class RegistrationValidator extends LoginValidator {
         }
     }
 
+    /**
+     * Method to validate phone number.
+     * If phone number doesn't match regular expression then put the message in map {@link #errors}.
+     *
+     * @see enums.Errors
+     * @see enums.Attributes
+     * @see enums.Regex
+     */
     private void validatePhoneNumber() {
         String phoneNumber = clientDetails.getPhoneNumber();
 
@@ -55,6 +95,13 @@ public class RegistrationValidator extends LoginValidator {
         }
     }
 
+    /**
+     * Method to validate birthday.
+     * If client's age is less than 18 then put the message in map {@link #errors}.
+     *
+     * @see enums.Errors
+     * @see enums.Attributes
+     */
     private void validateBirthday() {
         Date birthday = clientDetails.getBirthday();
         Calendar calendar = Calendar.getInstance();

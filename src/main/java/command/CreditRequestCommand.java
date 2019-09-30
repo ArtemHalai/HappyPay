@@ -24,6 +24,11 @@ import static enums.Fields.*;
 import static enums.Mappings.*;
 import static enums.Mappings.CREDIT;
 
+/**
+ * Define an object used for executing credit request command on CreditRequestFacade.
+ *
+ * @see CreditRequestFacade
+ */
 public class CreditRequestCommand implements Command {
 
     private static final Logger LOG = Logger.getLogger(CreditRequestCommand.class);
@@ -32,6 +37,14 @@ public class CreditRequestCommand implements Command {
 
     private Map<String, String> errors = new HashMap<>();
 
+    /**
+     * Method to execute credit request actions on HttpServletRequest and HttpServletResponse.
+     *
+     * @param request  The HttpServletRequest
+     * @param response The HttpServletResponse
+     * @return The enum value representing mapping value.
+     * @see enums.Mappings
+     */
     @Override
     public Mappings execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
@@ -59,6 +72,15 @@ public class CreditRequestCommand implements Command {
         return createCreditRequest(request, userId, amount);
     }
 
+    /**
+     * Method to execute credit request action in case of lack of errors.
+     *
+     * @param request The HttpServletRequest
+     * @param userId  The user id
+     * @param amount The amount to pay
+     * @return The enum value representing mapping value.
+     * @see enums.Mappings
+     */
     private Mappings createCreditRequest(HttpServletRequest request, int userId, double amount) {
         creditRequestFacade.setCreditApprovementService(ServiceFactory.getInstance().getCreditApprovementService());
         CreditRequest creditRequest = new CreditRequest();

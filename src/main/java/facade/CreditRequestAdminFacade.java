@@ -17,6 +17,13 @@ import java.util.List;
 import static enums.AccountDetails.CREDIT_RATE;
 import static enums.DAOEnum.*;
 
+/**
+ * A class that works with CreditApprovementService, CreditAccountService, UserAccountService.
+ *
+ * @see CreditApprovementService
+ * @see CreditAccountService
+ * @see UserAccountService
+ */
 public class CreditRequestAdminFacade {
 
     private CreditApprovementService creditApprovementService;
@@ -26,23 +33,53 @@ public class CreditRequestAdminFacade {
     private DaoFactory factory;
     private JDBCConnectionFactory connectionFactory;
 
+    /**
+     * Sole constructor to initialize {@link #factory} and {@link #connectionFactory}.
+     *
+     * @see DaoFactory
+     * @see JDBCConnectionFactory
+     */
     public CreditRequestAdminFacade() {
         factory = DaoFactory.getInstance();
         connectionFactory = JDBCConnectionFactory.getInstance();
     }
 
+    /**
+     * Method to set CreditApprovementService object {@link #creditApprovementService}.
+     *
+     * @param creditApprovementService The CreditApprovementService object.
+     * @see CreditApprovementService
+     */
     public void setCreditApprovementService(CreditApprovementService creditApprovementService) {
         this.creditApprovementService = creditApprovementService;
     }
 
+    /**
+     * Method to set CreditAccountService object {@link #creditAccountService}.
+     *
+     * @param creditAccountService The CreditAccountService object.
+     * @see CreditAccountService
+     */
     public void setCreditAccountService(CreditAccountService creditAccountService) {
         this.creditAccountService = creditAccountService;
     }
 
+    /**
+     * Method to set UserAccountService object {@link #userAccountService}.
+     *
+     * @param userAccountService The UserAccountService object.
+     * @see UserAccountService
+     */
     public void setUserAccountService(UserAccountService userAccountService) {
         this.userAccountService = userAccountService;
     }
 
+    /**
+     * Method to get all CreditRequestAdmin objects by decision.
+     *
+     * @return The list of CreditRequestAdmin objects.
+     * @see CreditRequestAdmin
+     */
     public List<CreditRequestAdmin> findAllByDecision(boolean decision) {
         connection = connectionFactory.getConnection();
         creditApprovementService.setCreditApprovementDAO(factory.getCreditApprovementDAO(connection, CREDIT_APPROVEMENT_JDBC));
@@ -51,6 +88,14 @@ public class CreditRequestAdminFacade {
         return list;
     }
 
+    /**
+     * Method to update credit status by user id, decision, amount.
+     *
+     * @param userId The user id.
+     * @param decision The decision.
+     * @param amount The amount.
+     * @return <code>true</code> if credit status was updated; <code>false</code> otherwise.
+     */
     public boolean updateCreditStatus(int userId, boolean decision, double amount) {
         connection = connectionFactory.getConnection();
         TransactionManager.setRepeatableRead(connection);
@@ -74,6 +119,12 @@ public class CreditRequestAdminFacade {
         return false;
     }
 
+    /**
+     * Method to delete request by user id.
+     *
+     * @param userId The user id.
+     * @return <code>true</code> if request was deleted; <code>false</code> otherwise.
+     */
     public boolean deleteRequest(int userId) {
         connection = connectionFactory.getConnection();
         creditApprovementService.setCreditApprovementDAO(factory.getCreditApprovementDAO(connection, CREDIT_APPROVEMENT_JDBC));

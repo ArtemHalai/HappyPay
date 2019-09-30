@@ -25,6 +25,11 @@ import static enums.Mappings.*;
 import static enums.Role.ADMIN;
 import static enums.Role.CLIENT;
 
+/**
+ * Define an object used for executing login command on LoginFacade.
+ *
+ * @see LoginFacade
+ */
 public class LoginCommand implements Command {
 
     private static final Logger LOG = Logger.getLogger(LoginCommand.class);
@@ -33,6 +38,14 @@ public class LoginCommand implements Command {
 
     private Map<String, String> errors;
 
+    /**
+     * Method to execute login actions on HttpServletRequest and HttpServletResponse.
+     *
+     * @param request  The HttpServletRequest
+     * @param response The HttpServletResponse
+     * @return The enum value representing mapping value.
+     * @see enums.Mappings
+     */
     @Override
     public Mappings execute(HttpServletRequest request, HttpServletResponse response) {
 
@@ -52,6 +65,16 @@ public class LoginCommand implements Command {
         }
     }
 
+    /**
+     * Method to execute login action in case of lack of errors.
+     *
+     * @param request  The HttpServletRequest
+     * @param session The HttpSession
+     * @param username The username
+     * @param password The password
+     * @return The enum value representing mapping value.
+     * @see enums.Mappings
+     */
     private Mappings loginUser(HttpServletRequest request, HttpSession session, String username, String password) {
         User user = new User();
         user.setUsername(username);
@@ -77,6 +100,15 @@ public class LoginCommand implements Command {
         }
     }
 
+    /**
+     * Method to validate data from input fields.
+     *
+     * @param username The username
+     * @param password The password
+     * @return <code>true</code> if errors were occurred while validating input fields;
+     * <code>false</code> otherwise.
+     * @see enums.Mappings
+     */
     private boolean validation(String username, String password) {
         Validator loginValidator = new LoginValidator(username, password);
         errors = loginValidator.validate();
