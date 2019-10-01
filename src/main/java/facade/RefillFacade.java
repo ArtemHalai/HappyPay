@@ -175,7 +175,8 @@ public class RefillFacade {
                             .compare(o1.getDate(), o2.getDate()))
                     .collect(Collectors.toList()).subList(0, 10));
         else
-            operationsDTO.setList(list.stream().sorted().collect(Collectors.toList()));
+            operationsDTO.setList(list.stream().sorted((o1, o2) -> new OperationDateComparator()
+                    .compare(o1.getDate(), o2.getDate())).collect(Collectors.toList()));
 
         ConnectionClosure.close(connection);
         return operationsDTO;
