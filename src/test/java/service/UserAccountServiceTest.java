@@ -47,17 +47,17 @@ public class UserAccountServiceTest {
     @Test
     public void updateBalanceById() {
         when(dao.updateBalanceById(10.11, 4)).thenReturn(true);
-        boolean b = service.updateBalanceById(10.11, 4);
+        boolean updateBalanceById = service.updateBalanceById(10.11, 4);
         verify(dao).updateBalanceById(10.11, 4);
-        assertTrue(b);
+        assertTrue(updateBalanceById);
     }
 
     @Test
     public void updateCreditStatusById() {
         when(dao.updateCreditStatusById(1, false)).thenReturn(true);
-        boolean b = service.updateCreditStatusById(1, false);
+        boolean updateCreditStatusById = service.updateCreditStatusById(1, false);
         verify(dao).updateCreditStatusById(1, false);
-        assertTrue(b);
+        assertTrue(updateCreditStatusById);
     }
 
     @Test
@@ -65,18 +65,18 @@ public class UserAccountServiceTest {
         userAccount.setValidity(new Date(System.currentTimeMillis() - 100));
         when(dao.getById(1)).thenReturn(userAccount);
         when(dao.updateTerm(1)).thenReturn(false);
-        boolean b = service.updateTerm(1);
+        boolean updatedTerm = service.updateTerm(1);
         verify(dao).updateTerm(1);
-        assertFalse(b);
+        assertFalse(updatedTerm);
     }
 
     @Test
     public void getByAccountNumber() {
         UserAccount account = new UserAccount();
         when(dao.getByAccountNumber(11111111)).thenReturn(account);
-        service.getByAccountNumber(11111111);
+        UserAccount getByAccountNumber = service.getByAccountNumber(11111111);
         verify(dao).getByAccountNumber(11111111);
-        assertEquals(account, service.getByAccountNumber(11111111));
+        assertEquals(account, getByAccountNumber);
     }
 
     @Test
@@ -91,16 +91,16 @@ public class UserAccountServiceTest {
     @Test
     public void updateByAccount() {
         when(dao.updateByAccount(10.1, 11111111)).thenReturn(true);
-        boolean b = service.updateByAccount(10.1, 11111111);
+        boolean updateByAccount = service.updateByAccount(10.1, 11111111);
         verify(dao).updateByAccount(10.1, 11111111);
-        assertTrue(b);
+        assertTrue(updateByAccount);
     }
 
     @Test
     public void updateDepositStatusById() {
         when(dao.updateDepositStatusById(1, false)).thenReturn(true);
-        boolean b = service.updateDepositStatusById(1, false);
+        boolean updateDepositStatusById = service.updateDepositStatusById(1, false);
         verify(dao).updateDepositStatusById(1, false);
-        assertTrue(b);
+        assertTrue(updateDepositStatusById);
     }
 }

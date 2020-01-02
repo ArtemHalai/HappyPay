@@ -36,17 +36,17 @@ public class CreditAccountServiceTest {
     @Test
     public void updateArrears() {
         when(dao.payArrears(100.99, 1)).thenReturn(true);
-        boolean b = service.updateArrears(100.99, 1);
+        boolean updateArrears = service.updateArrears(100.99, 1);
         verify(dao).payArrears(100.99, 1);
-        assertTrue(b);
+        assertTrue(updateArrears);
     }
 
     @Test
     public void updateBalanceById() {
         when(dao.updateBalanceById(4.44, 2)).thenReturn(true);
-        boolean b = service.updateBalanceById(4.44, 2);
+        boolean balanceByIdUpdated = service.updateBalanceById(4.44, 2);
         verify(dao).updateBalanceById(4.44, 2);
-        assertTrue(b);
+        assertTrue(balanceByIdUpdated);
     }
 
     @Test
@@ -79,8 +79,8 @@ public class CreditAccountServiceTest {
     @Test
     public void updateInterestCharges() {
         when(dao.updateInterestCharges(5.55, 4)).thenReturn(true);
-        boolean b = service.updateInterestCharges(5.55, 4);
+        boolean updateInterestCharges = service.updateInterestCharges(5.55, 4);
         verify(dao).updateInterestCharges(5.55, 4);
-        assertTrue(b);
+        assertTrue(updateInterestCharges);
     }
 }

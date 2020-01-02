@@ -1,4 +1,5 @@
 .idea/
-.target/
+target/
+logger/
 HappyPay.iml
 happy-pay.iml

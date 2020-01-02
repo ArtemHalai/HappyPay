@@ -3,6 +3,7 @@ package command;
 import enums.Mappings;
 import facade.LoginFacade;
 import model.User;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -14,9 +15,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import static enums.Attributes.ERRORS;
 import static enums.Fields.*;
-import static enums.Mappings.HOME;
-import static enums.Mappings.LOGIN_VIEW;
+import static enums.Mappings.*;
+import static enums.Role.ADMIN;
 import static enums.Role.CLIENT;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
@@ -43,20 +48,66 @@ public class LoginCommandTest {
     @InjectMocks
     private LoginCommand command;
 
+    private final String USER = "USERNAME";
+    private final String PASS = "11111111";
+
+    @Before
+    public void setUp() {
+        when(request.getSession()).thenReturn(session);
+    }
+
     @Test
-    public void execute() {
-        final String USER = "USERNAME";
-        final String PASS = "11111111";
+    public void executeLOGGED_IN() {
+        when(session.getAttribute(ROLE.getName())).thenReturn(CLIENT.getRoleId());
+        Mappings execute = command.execute(request, response);
+        assertEquals(LOGGED_IN, execute);
+    }
+
+    @Test
+    public void executeLOGIN_VIEW() {
+        Mappings execute = command.execute(request, response);
+        assertEquals(LOGIN_VIEW, execute);
+    }
+
+    @Test
+    public void executeERROR() {
+        String password = "111";
+
+        when(request.getParameter(USERNAME.getName())).thenReturn(USER);
+        when(request.getParameter(PASSWORD.getName())).thenReturn(password);
+
+        Mappings execute = command.execute(request, response);
+
+        Map<String, String> errors = new HashMap<>();
+        errors.put("password", "Password should contains at least 8 characters.");
+        verify(request).setAttribute(ERRORS.getName(), errors);
+
+        assertEquals(ERROR, execute);
+    }
+
+    @Test
+    public void executeHOME_ADMIN() {
+        user.setRole(ADMIN.getRoleId());
+
+        when(request.getParameter(USERNAME.getName())).thenReturn(USER);
+        when(request.getParameter(PASSWORD.getName())).thenReturn(PASS);
+        when(facade.getUserByUsernameAndPassword(any(User.class))).thenReturn(user);
+
+        Mappings execute = command.execute(request, response);
+        verify(session).setAttribute(ROLE.getName(), ADMIN.getRoleId());
+        assertEquals(HOME_ADMIN, execute);
+    }
+
+    @Test
+    public void executeHOME() {
         user.setUsername(USER);
         user.setPassword(PASS);
         user.setUserId(1);
         user.setRole(CLIENT.getRoleId());
 
-        when(request.getSession()).thenReturn(session);
+        when(facade.getUserByUsernameAndPassword(any(User.class))).thenReturn(user);
         when(request.getParameter(USERNAME.getName())).thenReturn(USER);
         when(request.getParameter(PASSWORD.getName())).thenReturn(PASS);
-
-        when(facade.getUserByUsernameAndPassword(any(User.class))).thenReturn(user);
 
         Mappings execute = command.execute(request, response);
 
@@ -66,12 +117,22 @@ public class LoginCommandTest {
 
         assertEquals(HOME, execute);
         assertEquals(user, facade.getUserByUsernameAndPassword(user));
+    }
 
-        when(request.getParameter(USERNAME.getName())).thenReturn(null);
-        when(request.getParameter(PASSWORD.getName())).thenReturn(null);
+    @Test
+    public void executeERROR_USER_DOES_NOT_EXIST() {
+        when(facade.getUserByUsernameAndPassword(any(User.class))).thenReturn(null);
+        when(request.getParameter(USERNAME.getName())).thenReturn(USER);
+        when(request.getParameter(PASSWORD.getName())).thenReturn(PASS);
 
-        Mappings execute1 = command.execute(request, response);
+        Mappings execute = command.execute(request, response);
 
-        assertEquals(LOGIN_VIEW, execute1);
+        verify(facade).getUserByUsernameAndPassword(any(User.class));
+
+        Map<String, String> errors = new HashMap<>();
+        errors.put("user", "User with such username doesn't exist.");
+        verify(request).setAttribute(ERRORS.getName(), errors);
+
+        assertEquals(ERROR, execute);
     }
 }
