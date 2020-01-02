@@ -37,7 +37,7 @@ public class PayInterestChargesServletTest {
         when(request.getSession()).thenReturn(session);
         servlet.doGet(request, response);
         verify(request, times(2)).getRequestURI();
-        verify(session, times(1)).getAttribute(ROLE.getName());
-        verify(response, times(1)).sendRedirect(LOGIN_VIEW.getName());
+        verify(session).getAttribute(ROLE.getName());
+        verify(response).sendRedirect(LOGIN_VIEW.getName());
     }
 }

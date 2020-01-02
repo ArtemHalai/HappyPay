@@ -2,7 +2,6 @@ package service;
 
 import dao.intefaces.DepositAccountDAO;
 import model.DepositAccount;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -25,42 +24,38 @@ public class DepositAccountServiceTest {
     @InjectMocks
     private DepositAccountService service;
 
-    @Before
-    public void init() {
-        service.setDepositAccountDAO(dao);
-    }
-
     @Test
     public void add() {
         DepositAccount depositAccount = new DepositAccount();
         when(dao.add(depositAccount)).thenReturn(true);
-        service.add(depositAccount);
-        verify(dao, times(1)).add(depositAccount);
+        boolean add = service.add(depositAccount);
+        verify(dao).add(depositAccount);
+        assertTrue(add);
     }
 
     @Test
     public void updateBalanceById() {
-        when(dao.updateBalanceById(anyDouble(), anyInt())).thenReturn(true);
-        service.updateBalanceById(110.8, 1);
-        verify(dao, times(1)).updateBalanceById(anyDouble(), anyInt());
-        assertTrue(service.updateBalanceById(120.3, 4));
+        when(dao.updateBalanceById(1.11, 1)).thenReturn(true);
+        boolean b = service.updateBalanceById(1.11, 1);
+        verify(dao).updateBalanceById(1.11, 1);
+        assertTrue(b);
     }
 
     @Test
     public void getById() {
         DepositAccount depositAccount = new DepositAccount();
-        when(dao.getById(anyInt())).thenReturn(depositAccount);
-        service.getById(anyInt());
-        verify(dao, times(1)).getById(anyInt());
-        assertEquals(depositAccount, service.getById(1));
+        when(dao.getById(1)).thenReturn(depositAccount);
+        DepositAccount byId = service.getById(1);
+        verify(dao).getById(1);
+        assertEquals(depositAccount, byId);
     }
 
     @Test
     public void deleteDepositAccount() {
-        when(dao.deleteDepositAccount(anyInt())).thenReturn(true);
-        service.deleteDepositAccount(1);
-        verify(dao, times(1)).deleteDepositAccount(1);
-        assertTrue(service.deleteDepositAccount(4));
+        when(dao.deleteDepositAccount(9)).thenReturn(true);
+        boolean b = service.deleteDepositAccount(9);
+        verify(dao).deleteDepositAccount(9);
+        assertTrue(b);
     }
 
     @Test
@@ -76,8 +71,8 @@ public class DepositAccountServiceTest {
         list.add(depositAccount2);
         list.add(depositAccount3);
         when(dao.getAll()).thenReturn(list);
-        service.getAll();
-        verify(dao, times(1)).getAll();
-        assertEquals(121.1, service.getAll().get(0).getBalance(), 0);
+        List<DepositAccount> all = service.getAll();
+        verify(dao).getAll();
+        assertEquals(121.1, all.get(0).getBalance(), 0);
     }
 }

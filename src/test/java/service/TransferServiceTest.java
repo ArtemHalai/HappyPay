@@ -3,7 +3,6 @@ package service;
 import dao.intefaces.TransferDAO;
 import model.AllOperationsDTO;
 import model.TransferOperation;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -22,26 +21,22 @@ public class TransferServiceTest {
     @InjectMocks
     private TransferService service;
 
-    @Before
-    public void init() {
-        service.setTransferDAO(dao);
-    }
-
     @Test
     public void add() {
         TransferOperation operation = new TransferOperation();
-        when(dao.add(operation)).thenReturn(true);
-        service.add(operation);
-        verify(dao, times(1)).add(operation);
+        when(dao.add(operation)).thenReturn(false);
+        boolean add = service.add(operation);
+        verify(dao).add(operation);
+        assertFalse(add);
     }
 
     @Test
     public void getById() {
         TransferOperation operation = new TransferOperation();
-        when(dao.getById(anyInt())).thenReturn(operation);
-        service.getById(anyInt());
-        verify(dao, times(1)).getById(anyInt());
-        assertEquals(operation, service.getById(1));
+        when(dao.getById(1)).thenReturn(operation);
+        TransferOperation byId = service.getById(1);
+        verify(dao).getById(1);
+        assertEquals(operation, byId);
     }
 
     @Test
@@ -49,8 +44,8 @@ public class TransferServiceTest {
         AllOperationsDTO operationsDTO = new AllOperationsDTO();
         operationsDTO.setUserId(4);
         when(dao.getLimitOperations(operationsDTO)).thenReturn(operationsDTO);
-        service.getAllOperations(operationsDTO);
-        verify(dao, times(1)).getLimitOperations(operationsDTO);
-        assertEquals(4, service.getAllOperations(operationsDTO).getUserId(), 0);
+        int userId = service.getAllOperations(operationsDTO).getUserId();
+        verify(dao).getLimitOperations(operationsDTO);
+        assertEquals(4, userId, 0);
     }
 }

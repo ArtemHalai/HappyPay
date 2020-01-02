@@ -60,7 +60,7 @@ public class PayInterestChargesFacade {
         userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
         creditAccountService.setCreditAccountDAO(factory.getCreditAccountDAO(connection, CREDIT_ACCOUNT_JDBC));
         UserAccount userAccount = userAccountService.payById(userId, amount);
-        if (userAccount != null && userAccount.getCredit()) {
+        if (userAccount != null && userAccount.isCredit()) {
             CreditAccount creditAccount = creditAccountService.getById(userId);
 
             if (creditAccount.getInterestCharges() < amount && creditAccountService.updateInterestCharges(0, userId)) {

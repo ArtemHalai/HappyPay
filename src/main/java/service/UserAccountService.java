@@ -19,7 +19,7 @@ public class UserAccountService {
         return userAccountDAO.getById(id);
     }
 
-    public boolean updateBalanceById(double amount, int userId){
+    public boolean updateBalanceById(double amount, int userId) {
         return userAccountDAO.updateBalanceById(amount, userId);
     }
 
@@ -29,8 +29,9 @@ public class UserAccountService {
 
     public boolean updateTerm(int userId) {
         UserAccount userAccount = userAccountDAO.getById(userId);
-        if (userAccount.getValidity().getTime() > System.currentTimeMillis())
+        if (userAccount.getValidity().getTime() > System.currentTimeMillis()) {
             return false;
+        }
         return userAccountDAO.updateTerm(userId);
     }
 

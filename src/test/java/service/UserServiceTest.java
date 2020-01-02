@@ -2,16 +2,15 @@ package service;
 
 import dao.intefaces.UserDAO;
 import model.User;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static enums.Role.ADMIN;
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -20,40 +19,39 @@ public class UserServiceTest {
     @Mock
     private UserDAO dao;
 
+    @Spy
+    User user;
+
     @InjectMocks
     private UserService service;
 
-    @Before
-    public void init() {
-        service.setUserDAO(dao);
-    }
+    private final String USERNAME = "USERNAME";
 
     @Test
     public void getUserByUsernameAndPassword() {
-        User user = new User();
-        User user1 = spy(user);
-        when(dao.isUserExist(anyString())).thenReturn(user1);
-        when(user1.getRole()).thenReturn(ADMIN.getRoleId());
-        when(dao.getUserByUsernameAndPassword(user1)).thenReturn(user1);
-        service.getUserByUsernameAndPassword(user1);
-        verify(dao, times(1)).getUserByUsernameAndPassword(user1);
-        verify(dao, times(1)).isUserExist(anyString());
-        assertEquals(user1, dao.getUserByUsernameAndPassword(user1));
+        user.setUsername(USERNAME);
+        when(dao.isUserExist(USERNAME)).thenReturn(user);
+        when(user.getRole()).thenReturn(ADMIN.getRoleId());
+        when(dao.getUserByUsernameAndPassword(user)).thenReturn(user);
+        User userByUsernameAndPassword = service.getUserByUsernameAndPassword(user);
+        verify(dao).getUserByUsernameAndPassword(user);
+        verify(dao).isUserExist(USERNAME);
+        assertEquals(user, userByUsernameAndPassword);
     }
 
     @Test
     public void isUserExist() {
-        when(dao.isUserExist(anyString())).thenReturn(new User());
-        service.isUserExist(anyString());
-        verify(dao, times(1)).isUserExist(anyString());
-        assertNotNull(dao.isUserExist(anyString()));
+        when(dao.isUserExist(USERNAME)).thenReturn(user);
+        boolean userExist = service.isUserExist(USERNAME);
+        verify(dao).isUserExist(USERNAME);
+        assertTrue(userExist);
     }
 
     @Test
     public void addUser() {
-        User user = new User();
-        when(dao.add(user)).thenReturn(anyInt());
-        service.addUser(user);
-        verify(dao, times(1)).add(user);
+        when(dao.add(user)).thenReturn(1);
+        int i = service.addUser(user);
+        verify(dao).add(user);
+        assertEquals(1, i);
     }
 }

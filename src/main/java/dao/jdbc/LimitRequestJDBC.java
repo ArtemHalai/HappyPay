@@ -32,7 +32,7 @@ public class LimitRequestJDBC implements LimitRequestDAO {
         try (PreparedStatement statement = connection.prepareStatement(add)) {
             statement.setInt(1, limitRequest.getUserId());
             statement.setDouble(2, limitRequest.getAmount());
-            statement.setBoolean(3, limitRequest.getDecision());
+            statement.setBoolean(3, limitRequest.isDecision());
             statement.setDate(4, limitRequest.getOperationDate(), Calendar.getInstance());
             int generated = statement.executeUpdate();
             if (generated > 0)

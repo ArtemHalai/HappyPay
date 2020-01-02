@@ -51,7 +51,7 @@ public class CreditRequestFacade {
     public boolean checkCredit(int userId) {
         connection = connectionFactory.getConnection();
         userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
-        if (userAccountService.getById(userId).getCredit()) {
+        if (userAccountService.getById(userId).isCredit()) {
             ConnectionClosure.close(connection);
             return false;
         }

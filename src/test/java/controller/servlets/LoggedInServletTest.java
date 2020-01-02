@@ -40,6 +40,6 @@ public class LoggedInServletTest {
         when(request.getRequestURI()).thenReturn(LOGGED_IN.getName());
         when(request.getRequestDispatcher(LOGGED_IN_PAGE.getName())).thenReturn(dispatcher);
         servlet.doGet(request, response);
-        verify(request, times(1)).getRequestDispatcher(LOGGED_IN_PAGE.getName());
+        verify(request).getRequestDispatcher(LOGGED_IN_PAGE.getName());
     }
 }

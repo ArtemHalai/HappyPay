@@ -25,8 +25,9 @@ public class LimitRequestAdminCommand implements Command {
     @Override
     public Mappings execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
-        if (session.getAttribute(ADMIN_ID.getName()) == null)
+        if (session.getAttribute(ADMIN_ID.getName()) == null) {
             return LOGIN_VIEW;
+        }
         if (request.getParameter(DECISION.getName()) == null) {
             limitRequestAdminFacade.setLimitRequestService(ServiceFactory.getInstance().getLimitRequestService());
             List<LimitRequestAdmin> list = limitRequestAdminFacade.findAllByDecision(LIMIT_DECISION);

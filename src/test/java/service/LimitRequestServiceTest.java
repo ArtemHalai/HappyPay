@@ -3,7 +3,6 @@ package service;
 import dao.intefaces.LimitRequestDAO;
 import model.LimitRequest;
 import model.LimitRequestAdmin;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -26,18 +25,14 @@ public class LimitRequestServiceTest {
 
     @InjectMocks
     private LimitRequestService service;
-
-    @Before
-    public void init() {
-        service.setLimitRequestDAO(dao);
-    }
-
+    
     @Test
     public void add() {
         LimitRequest limitRequest = new LimitRequest();
-        when(dao.add(limitRequest)).thenReturn(true);
-        service.add(limitRequest);
-        verify(dao, times(1)).add(limitRequest);
+        when(dao.add(limitRequest)).thenReturn(false);
+        boolean add = service.add(limitRequest);
+        verify(dao).add(limitRequest);
+        assertFalse(add);
     }
 
     @Test
@@ -50,33 +45,33 @@ public class LimitRequestServiceTest {
         request2.setDecision(true);
         List<LimitRequestAdmin> list = new ArrayList<>(Arrays.asList(request, request1, request2));
         when(dao.findAllByDecision(false)).thenReturn(list.stream().filter(x -> !x.isDecision()).collect(Collectors.toList()));
-        service.findAllByDecision(false);
-        verify(dao, times(1)).findAllByDecision(false);
-        assertFalse(service.findAllByDecision(false).get(0).isDecision());
+        List<LimitRequestAdmin> allByDecision = service.findAllByDecision(false);
+        verify(dao).findAllByDecision(false);
+        assertFalse(allByDecision.get(0).isDecision());
     }
 
     @Test
     public void updateDecision() {
-        when(dao.updateDecision(anyBoolean(), anyInt())).thenReturn(true);
-        service.updateDecision(true, 1);
-        verify(dao, times(1)).updateDecision(anyBoolean(), anyInt());
-        assertTrue(service.updateDecision(false, 4));
+        when(dao.updateDecision(true, 6)).thenReturn(true);
+        boolean b = service.updateDecision(true, 6);
+        verify(dao).updateDecision(true, 6);
+        assertTrue(b);
     }
 
     @Test
     public void deleteRequest() {
-        when(dao.deleteRequest(anyInt())).thenReturn(true);
-        service.deleteRequest(1);
-        verify(dao, times(1)).deleteRequest(anyInt());
-        assertTrue(service.deleteRequest(4));
+        when(dao.deleteRequest(7)).thenReturn(true);
+        boolean b = service.deleteRequest(7);
+        verify(dao).deleteRequest(7);
+        assertTrue(b);
     }
 
     @Test
     public void getById() {
         LimitRequest request = new LimitRequest();
-        when(dao.getById(anyInt())).thenReturn(request);
-        service.getById(anyInt());
-        verify(dao, times(1)).getById(anyInt());
-        assertEquals(request, service.getById(1));
+        when(dao.getById(4)).thenReturn(request);
+        LimitRequest byId = service.getById(4);
+        verify(dao).getById(4);
+        assertEquals(request, byId);
     }
 }

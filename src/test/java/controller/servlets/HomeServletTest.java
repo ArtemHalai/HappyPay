@@ -44,7 +44,7 @@ public class HomeServletTest {
         when(request.getRequestDispatcher(INDEX_PAGE.getName())).thenReturn(dispatcher);
         servlet.doGet(request, response);
         verify(request, times(2)).getRequestURI();
-        verify(session, times(1)).getAttribute(ROLE.getName());
-        verify(request, times(1)).getRequestDispatcher(INDEX_PAGE.getName());
+        verify(session).getAttribute(ROLE.getName());
+        verify(request).getRequestDispatcher(INDEX_PAGE.getName());
     }
 }

@@ -2,7 +2,6 @@ package service;
 
 import dao.intefaces.ClientDetailsDAO;
 import model.ClientDetails;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -21,25 +20,20 @@ public class ClientDetailsServiceTest {
     @InjectMocks
     private ClientDetailsService service;
 
-    @Before
-    public void init() {
-        service.setClientDetailsDAO(dao);
-    }
-
     @Test
     public void add() {
         ClientDetails clientDetails = new ClientDetails();
         when(dao.add(clientDetails)).thenReturn(true);
         service.add(clientDetails);
-        verify(dao, times(1)).add(clientDetails);
+        verify(dao).add(clientDetails);
     }
 
     @Test
     public void getById() {
         ClientDetails clientDetails = new ClientDetails();
-        when(dao.getById(anyInt())).thenReturn(clientDetails);
-        service.getById(anyInt());
-        verify(dao, times(1)).getById(anyInt());
-        assertEquals(clientDetails, service.getById(1));
+        when(dao.getById(4)).thenReturn(clientDetails);
+        ClientDetails byId = service.getById(4);
+        verify(dao).getById(4);
+        assertEquals(clientDetails, byId);
     }
 }

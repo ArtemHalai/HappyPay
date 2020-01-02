@@ -39,7 +39,7 @@ public class LogoutServletTest {
         when(session.getAttribute(ROLE.getName())).thenReturn(2);
         servlet.doGet(request, response);
         verify(request, times(2)).getRequestURI();
-        verify(session, times(1)).getAttribute(ROLE.getName());
-        verify(response, times(1)).sendRedirect(HOME.getName());
+        verify(session).getAttribute(ROLE.getName());
+        verify(response).sendRedirect(HOME.getName());
     }
 }

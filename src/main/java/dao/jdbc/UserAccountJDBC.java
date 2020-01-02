@@ -29,8 +29,8 @@ public class UserAccountJDBC implements UserAccountDAO {
         try (PreparedStatement statement = connection.prepareStatement(addUserAccount)) {
             statement.setInt(1, userAccount.getUserId());
             statement.setDate(2, userAccount.getValidity(), Calendar.getInstance());
-            statement.setBoolean(3, userAccount.getDeposit());
-            statement.setBoolean(4, userAccount.getCredit());
+            statement.setBoolean(3, userAccount.isDeposit());
+            statement.setBoolean(4, userAccount.isCredit());
             int generated = statement.executeUpdate();
             if (generated > 0)
                 return true;

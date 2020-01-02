@@ -2,7 +2,6 @@ package service;
 
 import dao.intefaces.CreditAccountDAO;
 import model.CreditAccount;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -25,42 +24,38 @@ public class CreditAccountServiceTest {
     @InjectMocks
     private CreditAccountService service;
 
-    @Before
-    public void init() {
-        service.setCreditAccountDAO(dao);
-    }
-
     @Test
     public void add() {
         CreditAccount account = new CreditAccount();
         when(dao.add(account)).thenReturn(true);
-        service.add(account);
-        verify(dao, times(1)).add(account);
+        boolean add = service.add(account);
+        verify(dao).add(account);
+        assertTrue(add);
     }
 
     @Test
     public void updateArrears() {
-        when(dao.payArrears(anyDouble(), anyInt())).thenReturn(true);
-        service.updateArrears(100.88, 4);
-        verify(dao, times(1)).payArrears(anyDouble(), anyInt());
-        assertTrue(dao.payArrears(110.33, 10));
+        when(dao.payArrears(100.99, 1)).thenReturn(true);
+        boolean b = service.updateArrears(100.99, 1);
+        verify(dao).payArrears(100.99, 1);
+        assertTrue(b);
     }
 
     @Test
     public void updateBalanceById() {
-        when(dao.updateBalanceById(anyDouble(), anyInt())).thenReturn(true);
-        service.updateBalanceById(130.88, 1);
-        verify(dao, times(1)).updateBalanceById(anyDouble(), anyInt());
-        assertTrue(dao.updateBalanceById(89.33, 20));
+        when(dao.updateBalanceById(4.44, 2)).thenReturn(true);
+        boolean b = service.updateBalanceById(4.44, 2);
+        verify(dao).updateBalanceById(4.44, 2);
+        assertTrue(b);
     }
 
     @Test
     public void getById() {
         CreditAccount account = new CreditAccount();
-        when(dao.getById(anyInt())).thenReturn(account);
-        service.getById(anyInt());
-        verify(dao, times(1)).getById(anyInt());
-        assertEquals(account, service.getById(1));
+        when(dao.getById(3)).thenReturn(account);
+        service.getById(3);
+        verify(dao).getById(3);
+        assertEquals(account, service.getById(3));
     }
 
     @Test
@@ -76,16 +71,16 @@ public class CreditAccountServiceTest {
         list.add(creditAccount2);
         list.add(creditAccount3);
         when(dao.getAll()).thenReturn(list);
-        service.getAll();
-        verify(dao, times(1)).getAll();
-        assertEquals(180.14, service.getAll().get(0).getLimit(), 0);
+        List<CreditAccount> all = service.getAll();
+        verify(dao).getAll();
+        assertEquals(180.14, all.get(0).getLimit(), 0);
     }
 
     @Test
     public void updateInterestCharges() {
-        when(dao.updateInterestCharges(anyDouble(), anyInt())).thenReturn(true);
-        service.updateInterestCharges(130.18, 1);
-        verify(dao, times(1)).updateInterestCharges(anyDouble(), anyInt());
-        assertTrue(dao.updateInterestCharges(13.31, 29));
+        when(dao.updateInterestCharges(5.55, 4)).thenReturn(true);
+        boolean b = service.updateInterestCharges(5.55, 4);
+        verify(dao).updateInterestCharges(5.55, 4);
+        assertTrue(b);
     }
 }

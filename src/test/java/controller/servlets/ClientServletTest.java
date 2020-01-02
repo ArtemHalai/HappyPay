@@ -38,6 +38,6 @@ public class ClientServletTest {
         when(request.getSession()).thenReturn(session);
         servlet.doGet(request, response);
         verify(request, times(2)).getRequestURI();
-        verify(session, times(1)).getAttribute(ROLE.getName());
+        verify(session).getAttribute(ROLE.getName());
     }
 }

@@ -42,14 +42,14 @@ public class TransferServletTest {
     public void doGet() throws ServletException, IOException {
         servlet.doGet(request, response);
         verify(request, times(2)).getRequestURI();
-        verify(session, times(1)).getAttribute(ROLE.getName());
-        verify(response, times(1)).sendRedirect(LOGIN_VIEW.getName());
+        verify(session).getAttribute(ROLE.getName());
+        verify(response).sendRedirect(LOGIN_VIEW.getName());
     }
 
     @Test
     public void doPost() throws ServletException, IOException {
         servlet.doPost(request, response);
         verify(request, times(2)).getRequestURI();
-        verify(session, times(1)).getAttribute(ROLE.getName());
+        verify(session).getAttribute(ROLE.getName());
     }
 }

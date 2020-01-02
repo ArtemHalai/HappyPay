@@ -15,6 +15,7 @@ import java.io.IOException;
 
 import static enums.Fields.ROLE;
 import static enums.Mappings.HOME_ADMIN;
+import static enums.Mappings.LOGIN_VIEW;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -36,8 +37,12 @@ public class HomeAdminServletTest {
     public void doGet() throws ServletException, IOException {
         when(request.getRequestURI()).thenReturn(HOME_ADMIN.getName());
         when(request.getSession()).thenReturn(session);
+        when(session.getAttribute(ROLE.getName())).thenReturn(null);
+
         servlet.doGet(request, response);
+
         verify(request, times(2)).getRequestURI();
-        verify(session, times(1)).getAttribute(ROLE.getName());
+        verify(session).getAttribute(ROLE.getName());
+        verify(response).sendRedirect(LOGIN_VIEW.getName());
     }
 }

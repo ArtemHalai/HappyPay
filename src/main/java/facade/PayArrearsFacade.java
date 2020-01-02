@@ -42,7 +42,7 @@ public class PayArrearsFacade {
         userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
         creditAccountService.setCreditAccountDAO(factory.getCreditAccountDAO(connection, CREDIT_ACCOUNT_JDBC));
         UserAccount userAccount = userAccountService.payById(userId, amount);
-        if (userAccount != null && userAccount.getCredit()) {
+        if (userAccount != null && userAccount.isCredit()) {
             CreditAccount creditAccount = creditAccountService.getById(userId);
 
             if (creditAccount.getArrears() < amount && creditAccountService.updateArrears(0, userId)) {

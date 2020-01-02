@@ -37,13 +37,15 @@ public class LoginCommand implements Command {
     public Mappings execute(HttpServletRequest request, HttpServletResponse response) {
 
         HttpSession session = request.getSession();
-        if (CheckRoleAndId.check(session) || session.getAttribute(ROLE.getName()) != null)
+        if (CheckRoleAndId.check(session) || session.getAttribute(ROLE.getName()) != null) {
             return LOGGED_IN;
+        }
         String username = request.getParameter(USERNAME.getName());
         String password = request.getParameter(PASSWORD.getName());
 
-        if (username == null || password == null)
+        if (username == null || password == null) {
             return LOGIN_VIEW;
+        }
         if (validation(username, password)) {
             request.setAttribute(ERRORS.getName(), errors);
             return ERROR;

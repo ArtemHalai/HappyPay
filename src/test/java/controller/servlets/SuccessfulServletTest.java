@@ -36,6 +36,6 @@ public class SuccessfulServletTest {
         when(request.getRequestDispatcher(SUCCESSFUL_PAGE.getName())).thenReturn(dispatcher);
         servlet.doGet(request, response);
         verify(request, times(2)).getRequestURI();
-        verify(request, times(1)).getRequestDispatcher(SUCCESSFUL_PAGE.getName());
+        verify(request).getRequestDispatcher(SUCCESSFUL_PAGE.getName());
     }
 }

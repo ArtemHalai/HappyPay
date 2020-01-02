@@ -84,7 +84,7 @@ public class DepositAccountFacade {
     public boolean checkDeposit(int userId) {
         connection = connectionFactory.getConnection();
         userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
-        if (userAccountService.getById(userId).getDeposit()) {
+        if (userAccountService.getById(userId).isDeposit()) {
             ConnectionClosure.close(connection);
             return false;
         }
@@ -99,7 +99,7 @@ public class DepositAccountFacade {
         depositAccountService.setDepositAccountDAO(factory.getDepositAccountDAO(connection, DEPOSIT_ACCOUNT_JDBC));
         refillService.setRefillDAO(factory.getRefillDAO(connection, REFILL_JDBC));
         UserAccount userAccount = userAccountService.getById(userId);
-        if (userAccount.getUserId() > 0 && userAccount.getBalance() >= balance && !userAccount.getDeposit())
+        if (userAccount.getUserId() > 0 && userAccount.getBalance() >= balance && !userAccount.isDeposit())
             if (depositCreator(userId, balance, userAccount)) return true;
         TransactionManager.rollbackTransaction(connection);
         return false;

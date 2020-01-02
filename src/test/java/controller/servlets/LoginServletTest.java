@@ -49,7 +49,7 @@ public class LoginServletTest {
         servlet.doGet(request, response);
         verify(request, times(2)).getRequestURI();
         verify(session, times(2)).getAttribute(ROLE.getName());
-        verify(response, times(1)).sendRedirect(LOGGED_IN.getName());
+        verify(response).sendRedirect(LOGGED_IN.getName());
     }
 
     @Test
@@ -60,6 +60,6 @@ public class LoginServletTest {
         servlet.doPost(request, response);
         verify(request, times(2)).getRequestURI();
         verify(session, times(2)).getAttribute(ROLE.getName());
-        verify(request, times(1)).getRequestDispatcher(LOGIN_PAGE.getName());
+        verify(request).getRequestDispatcher(LOGIN_PAGE.getName());
     }
 }

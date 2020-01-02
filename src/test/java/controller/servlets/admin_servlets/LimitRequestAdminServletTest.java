@@ -15,6 +15,7 @@ import java.io.IOException;
 
 import static enums.Fields.ADMIN_ID;
 import static enums.Mappings.LIMIT_REQUEST_ADMIN;
+import static enums.Mappings.LOGIN_VIEW;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -36,8 +37,12 @@ public class LimitRequestAdminServletTest {
     public void doGet() throws ServletException, IOException {
         when(request.getRequestURI()).thenReturn(LIMIT_REQUEST_ADMIN.getName());
         when(request.getSession()).thenReturn(session);
+        when(session.getAttribute(ADMIN_ID.getName())).thenReturn(null);
+
         servlet.doGet(request, response);
+
         verify(request, times(2)).getRequestURI();
-        verify(session, times(1)).getAttribute(ADMIN_ID.getName());
+        verify(session).getAttribute(ADMIN_ID.getName());
+        verify(response).sendRedirect(LOGIN_VIEW.getName());
     }
 }

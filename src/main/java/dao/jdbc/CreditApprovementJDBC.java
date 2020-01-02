@@ -32,7 +32,7 @@ public class CreditApprovementJDBC implements CreditApprovementDAO {
         try (PreparedStatement statement = connection.prepareStatement(add)) {
             statement.setInt(1, request.getUserId());
             statement.setDouble(2, request.getAmount());
-            statement.setBoolean(3, request.getDecision());
+            statement.setBoolean(3, request.isDecision());
             int generated = statement.executeUpdate();
             if (generated > 0)
                 return true;

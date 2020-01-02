@@ -44,7 +44,7 @@ public class RegistrationServletTest {
         when(request.getRequestDispatcher(REGISTRATION_PAGE.getName())).thenReturn(dispatcher);
         servlet.doGet(request, response);
         verify(request, times(2)).getRequestURI();
-        verify(request, times(1)).getRequestDispatcher(REGISTRATION_PAGE.getName());
+        verify(request).getRequestDispatcher(REGISTRATION_PAGE.getName());
     }
 
     @Test
