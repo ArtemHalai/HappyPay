@@ -4,6 +4,7 @@ import dao.intefaces.BillPaymentDAO;
 import dao.mappers.BillPaymentMapper;
 import dao.mappers.Mapper;
 import dao.mappers.OperationMapper;
+import lombok.extern.log4j.Log4j;
 import model.AllOperationsDTO;
 import model.BillPaymentOperation;
 import model.OperationsData;
@@ -15,9 +16,9 @@ import java.util.List;
 
 import static enums.Attributes.TOTAL;
 
+@Log4j
 public class BillPaymentJDBC implements BillPaymentDAO {
 
-    private static final Logger LOG = Logger.getLogger(BillPaymentJDBC.class);
     private Connection connection;
 
     public BillPaymentJDBC(Connection connection) {
@@ -39,7 +40,7 @@ public class BillPaymentJDBC implements BillPaymentDAO {
             if (generated > 0)
                 return true;
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in BillPaymentJDBC.class at add() method");
+            log.error("SQLException occurred in BillPaymentJDBC.class at add() method");
         }
         return false;
     }
@@ -54,7 +55,7 @@ public class BillPaymentJDBC implements BillPaymentDAO {
             if (rs.next())
                 total = rs.getInt(TOTAL.getName());
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in BillPaymentJDBC.class at count() method");
+            log.error("SQLException occurred in BillPaymentJDBC.class at count() method");
         }
         return total;
     }
@@ -71,7 +72,7 @@ public class BillPaymentJDBC implements BillPaymentDAO {
             while (rs.next())
                 list.add(operationMapper.getEntity(rs));
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in BillPaymentJDBC.class at getLimitOperations() method");
+            log.error("SQLException occurred in BillPaymentJDBC.class at getLimitOperations() method");
         }
         AllOperationsDTO operationsDTO = new AllOperationsDTO();
         operationsDTO.setUserId(allOperationsDTO.getUserId());
@@ -92,7 +93,7 @@ public class BillPaymentJDBC implements BillPaymentDAO {
             if (rs.next())
                 billPaymentOperation = billPaymentMapper.getEntity(rs);
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in BillPaymentJDBC.class at getById() method");
+            log.error("SQLException occurred in BillPaymentJDBC.class at getById() method");
         }
         return billPaymentOperation;
     }

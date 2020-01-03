@@ -3,9 +3,9 @@ package command;
 import enums.Mappings;
 import facade.RefillFacade;
 import factories.ServiceFactory;
+import lombok.extern.log4j.Log4j;
 import model.AllOperationsDTO;
 import model.UserAccount;
-import org.apache.log4j.Logger;
 import util.CheckRoleAndId;
 import util.DateValidity;
 
@@ -18,9 +18,8 @@ import static enums.Errors.NO_OPERATION_ERROR;
 import static enums.Fields.USER_ID;
 import static enums.Mappings.*;
 
+@Log4j
 public class OperationListClientCommand implements Command {
-
-    private static final Logger LOG = Logger.getLogger(OperationListClientCommand.class);
 
     private RefillFacade refillListClientFacade = new RefillFacade();
 
@@ -39,7 +38,7 @@ public class OperationListClientCommand implements Command {
 
         AllOperationsDTO allOperationsDTO = new AllOperationsDTO();
         allOperationsDTO.setUserId(userId);
-        LOG.info("Client wants to see list of all operations.");
+        log.info("Client wants to see list of all operations.");
         refillListClientFacade.setRefillService(ServiceFactory.getInstance().getRefillService());
         refillListClientFacade.setBillPaymentService(ServiceFactory.getInstance().getBillPaymentService());
         refillListClientFacade.setTransferService(ServiceFactory.getInstance().getTransferService());

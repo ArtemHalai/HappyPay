@@ -3,8 +3,8 @@ package command;
 import enums.Mappings;
 import facade.UserAccountFacade;
 import factories.ServiceFactory;
+import lombok.extern.log4j.Log4j;
 import model.UserAccount;
-import org.apache.log4j.Logger;
 import util.CheckRoleAndId;
 import util.DateValidity;
 
@@ -17,9 +17,8 @@ import static enums.Errors.VALIDITY_ERROR;
 import static enums.Fields.USER_ID;
 import static enums.Mappings.*;
 
+@Log4j
 public class UserAccountCommand implements Command {
-
-    private static final Logger LOG = Logger.getLogger(UserAccountCommand.class);
 
     private UserAccountFacade userAccountFacade = new UserAccountFacade();
 
@@ -28,7 +27,7 @@ public class UserAccountCommand implements Command {
         HttpSession session = request.getSession();
         if (CheckRoleAndId.check(session)) {
             int userId = (int) session.getAttribute(USER_ID.getName());
-            LOG.info("Client requests his accounts");
+            log.info("Client requests his accounts");
             userAccountFacade.setUserAccountService(ServiceFactory.getInstance().getUserAccountService());
             UserAccount userAccount = userAccountFacade.getUserAccount(userId);
             if (userAccount.getValidity() != null && DateValidity.valid(userAccount.getValidity()))

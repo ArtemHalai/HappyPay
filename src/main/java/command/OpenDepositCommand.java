@@ -3,8 +3,8 @@ package command;
 import enums.Mappings;
 import facade.DepositAccountFacade;
 import factories.ServiceFactory;
+import lombok.extern.log4j.Log4j;
 import model.UserAccount;
-import org.apache.log4j.Logger;
 import util.CheckRoleAndId;
 import util.DateValidity;
 
@@ -20,9 +20,8 @@ import static enums.Fields.AMOUNT;
 import static enums.Fields.USER_ID;
 import static enums.Mappings.*;
 
+@Log4j
 public class OpenDepositCommand implements Command {
-
-    private static final Logger LOG = Logger.getLogger(OpenDepositCommand.class);
 
     private DepositAccountFacade depositAccountFacade = new DepositAccountFacade();
 
@@ -51,7 +50,7 @@ public class OpenDepositCommand implements Command {
             request.setAttribute(ERRORS.getName(), errors);
             return OPEN_DEPOSIT;
         }
-        LOG.info("Client wants to open deposit account");
+        log.info("Client wants to open deposit account");
         depositAccountFacade.setDepositAccountService(ServiceFactory.getInstance().getDepositAccountService());
         depositAccountFacade.setRefillService(ServiceFactory.getInstance().getRefillService());
 

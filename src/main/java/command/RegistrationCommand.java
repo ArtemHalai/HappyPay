@@ -5,8 +5,8 @@ import controller.validators.Validator;
 import enums.Mappings;
 import facade.RegistrationFacade;
 import factories.ServiceFactory;
+import lombok.extern.log4j.Log4j;
 import model.ClientDetails;
-import org.apache.log4j.Logger;
 import util.DateParser;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,9 +22,8 @@ import static enums.Fields.USER_ID;
 import static enums.Mappings.*;
 import static enums.Role.CLIENT;
 
+@Log4j
 public class RegistrationCommand implements Command {
-
-    private static final Logger LOG = Logger.getLogger(RegistrationCommand.class);
 
     private RegistrationFacade registrationFacade = new RegistrationFacade();
 
@@ -61,7 +60,7 @@ public class RegistrationCommand implements Command {
 
             if (userId > 0) {
                 HttpSession session = request.getSession();
-                LOG.info("User was registered with username: " + username);
+                log.info("User was registered with username: " + username);
                 session.setAttribute(ROLE.getName(), CLIENT.getRoleId());
                 session.setAttribute(USER_ID.getName(), userId);
                 return HOME;

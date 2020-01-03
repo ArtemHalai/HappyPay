@@ -7,13 +7,13 @@ import java.sql.SQLException;
 
 public class ConnectionClosure {
 
-    private static final Logger LOG = Logger.getLogger(ConnectionClosure.class);
+    private static final Logger log = Logger.getLogger(ConnectionClosure.class);
 
     public static void close(Connection connection) {
         try {
             connection.close();
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in ConnectionClosure.class at close() method");
+            log.error("SQLException occurred in ConnectionClosure.class at close() method");
         }
     }
 }

@@ -5,6 +5,7 @@ import dao.mappers.CreditApprovementMapper;
 import dao.mappers.CreditRequestAdminMapper;
 import dao.mappers.Mapper;
 import dao.mappers.OperationMapper;
+import lombok.extern.log4j.Log4j;
 import model.*;
 import org.apache.log4j.Logger;
 
@@ -15,9 +16,9 @@ import java.util.List;
 
 import static enums.Attributes.TOTAL;
 
+@Log4j
 public class CreditApprovementJDBC implements CreditApprovementDAO {
 
-    private static final Logger LOG = Logger.getLogger(CreditApprovementJDBC.class);
     private Connection connection;
 
     public CreditApprovementJDBC(Connection connection) {
@@ -37,7 +38,7 @@ public class CreditApprovementJDBC implements CreditApprovementDAO {
             if (generated > 0)
                 return true;
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in CreditApprovementJDBC.class at createCreditRequest() method");
+            log.error("SQLException occurred in CreditApprovementJDBC.class at createCreditRequest() method");
         }
         return false;
     }
@@ -52,7 +53,7 @@ public class CreditApprovementJDBC implements CreditApprovementDAO {
             if (rs.next())
                 total = rs.getInt(TOTAL.getName());
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in CreditApprovementJDBC.class at count() method");
+            log.error("SQLException occurred in CreditApprovementJDBC.class at count() method");
         }
         return total;
     }
@@ -70,7 +71,7 @@ public class CreditApprovementJDBC implements CreditApprovementDAO {
             if (rs.next())
                 creditApprovementOperation = creditApprovementOperationMapper.getEntity(rs);
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in CreditApprovementJDBC.class at getById() method");
+            log.error("SQLException occurred in CreditApprovementJDBC.class at getById() method");
         }
         return creditApprovementOperation;
     }
@@ -93,7 +94,7 @@ public class CreditApprovementJDBC implements CreditApprovementDAO {
                 list.add(creditRequestAdmin);
             }
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in CreditApprovementJDBC.class at findAllByDecision() method");
+            log.error("SQLException occurred in CreditApprovementJDBC.class at findAllByDecision() method");
         }
         return list;
     }
@@ -108,7 +109,7 @@ public class CreditApprovementJDBC implements CreditApprovementDAO {
             if (generated > 0)
                 return true;
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in CreditApprovementJDBC.class at updateDecision() method");
+            log.error("SQLException occurred in CreditApprovementJDBC.class at updateDecision() method");
         }
         return false;
     }
@@ -122,7 +123,7 @@ public class CreditApprovementJDBC implements CreditApprovementDAO {
             if (generated > 0)
                 return true;
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in CreditApprovementJDBC.class at deleteRequest() method");
+            log.error("SQLException occurred in CreditApprovementJDBC.class at deleteRequest() method");
         }
         return false;
     }

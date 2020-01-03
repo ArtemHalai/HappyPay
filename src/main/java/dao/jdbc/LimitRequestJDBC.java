@@ -4,6 +4,7 @@ import dao.intefaces.LimitRequestDAO;
 import dao.mappers.LimiRequestMapper;
 import dao.mappers.LimitRequestAdminMapper;
 import dao.mappers.Mapper;
+import lombok.extern.log4j.Log4j;
 import model.LimitRequest;
 import model.LimitRequestAdmin;
 import org.apache.log4j.Logger;
@@ -16,9 +17,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+@Log4j
 public class LimitRequestJDBC implements LimitRequestDAO {
 
-    private static final Logger LOG = Logger.getLogger(CreditApprovementJDBC.class);
     private Connection connection;
 
     public LimitRequestJDBC(Connection connection) {
@@ -38,7 +39,7 @@ public class LimitRequestJDBC implements LimitRequestDAO {
             if (generated > 0)
                 return true;
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in LimitRequestJDBC.class at add() method");
+            log.error("SQLException occurred in LimitRequestJDBC.class at add() method");
         }
         return false;
     }
@@ -62,7 +63,7 @@ public class LimitRequestJDBC implements LimitRequestDAO {
                 list.add(limitRequest);
             }
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in LimitRequestJDBC.class at findAllByDecision() method");
+            log.error("SQLException occurred in LimitRequestJDBC.class at findAllByDecision() method");
         }
         return list;
     }
@@ -77,7 +78,7 @@ public class LimitRequestJDBC implements LimitRequestDAO {
             if (generated > 0)
                 return true;
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in LimitRequestJDBC.class at updateDecision() method");
+            log.error("SQLException occurred in LimitRequestJDBC.class at updateDecision() method");
         }
         return false;
     }
@@ -91,7 +92,7 @@ public class LimitRequestJDBC implements LimitRequestDAO {
             if (generated > 0)
                 return true;
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in LimitRequestJDBC.class at deleteRequest() method");
+            log.error("SQLException occurred in LimitRequestJDBC.class at deleteRequest() method");
         }
         return false;
     }
@@ -109,7 +110,7 @@ public class LimitRequestJDBC implements LimitRequestDAO {
             if (rs.next())
                 limitRequest = limitRequestMapper.getEntity(rs);
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in LimitRequestJDBC.class at getById() method");
+            log.error("SQLException occurred in LimitRequestJDBC.class at getById() method");
         }
         return limitRequest;
     }

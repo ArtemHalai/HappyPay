@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import static enums.Fields.*;
 
 public class LimitRequestAdminMapper implements Mapper<LimitRequestAdmin> {
+
     @Override
     public LimitRequestAdmin getEntity(ResultSet resultSet) throws SQLException {
         LimitRequestAdmin limitRequestAdmin = new LimitRequestAdmin();

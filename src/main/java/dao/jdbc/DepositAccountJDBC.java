@@ -3,6 +3,7 @@ package dao.jdbc;
 import dao.intefaces.DepositAccountDAO;
 import dao.mappers.DepositAccountMapper;
 import dao.mappers.Mapper;
+import lombok.extern.log4j.Log4j;
 import model.DepositAccount;
 import org.apache.log4j.Logger;
 
@@ -13,9 +14,9 @@ import java.util.List;
 
 import static enums.Attributes.TOTAL;
 
+@Log4j
 public class DepositAccountJDBC implements DepositAccountDAO {
 
-    private static final Logger LOG = Logger.getLogger(DepositAccountJDBC.class);
     private Connection connection;
 
     public DepositAccountJDBC(Connection connection) {
@@ -40,7 +41,7 @@ public class DepositAccountJDBC implements DepositAccountDAO {
             if (generated > 0)
                 return true;
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in DepositAccountJDBC.class at add() method");
+            log.error("SQLException occurred in DepositAccountJDBC.class at add() method");
         }
         return false;
     }
@@ -55,7 +56,7 @@ public class DepositAccountJDBC implements DepositAccountDAO {
             if (generated > 0)
                 return true;
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in DepositAccountJDBC.class at updateBalanceById() method");
+            log.error("SQLException occurred in DepositAccountJDBC.class at updateBalanceById() method");
         }
         return false;
     }
@@ -70,7 +71,7 @@ public class DepositAccountJDBC implements DepositAccountDAO {
                 if (generated > 0)
                     return true;
             } catch (SQLException e) {
-                LOG.error("SQLException occurred in DepositAccountJDBC.class at deleteDepositAccount() method");
+                log.error("SQLException occurred in DepositAccountJDBC.class at deleteDepositAccount() method");
             }
             return false;
         }
@@ -87,7 +88,7 @@ public class DepositAccountJDBC implements DepositAccountDAO {
             if (rs.next())
                 total = rs.getInt(TOTAL.getName());
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in DepositAccountJDBC.class at count() method");
+            log.error("SQLException occurred in DepositAccountJDBC.class at count() method");
         }
         return total;
     }
@@ -106,7 +107,7 @@ public class DepositAccountJDBC implements DepositAccountDAO {
                 list.add(depositAccount);
             }
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in DepositAccountJDBC.class at getAll() method");
+            log.error("SQLException occurred in DepositAccountJDBC.class at getAll() method");
         }
         return list;
     }
@@ -123,7 +124,7 @@ public class DepositAccountJDBC implements DepositAccountDAO {
             if (rs.next())
                 depositAccount = depositAccountMapper.getEntity(rs);
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in DepositAccountJDBC.class at getById() method");
+            log.error("SQLException occurred in DepositAccountJDBC.class at getById() method");
         }
         return depositAccount;
     }

@@ -3,8 +3,8 @@ package command;
 import enums.Mappings;
 import facade.PayArrearsFacade;
 import factories.ServiceFactory;
+import lombok.extern.log4j.Log4j;
 import model.UserAccount;
-import org.apache.log4j.Logger;
 import util.CheckRoleAndId;
 import util.DateValidity;
 
@@ -23,9 +23,8 @@ import static enums.Fields.AMOUNT;
 import static enums.Fields.USER_ID;
 import static enums.Mappings.*;
 
+@Log4j
 public class PayArrearsCommand implements Command {
-
-    private static final Logger LOG = Logger.getLogger(BillPaymentCommand.class);
 
     private PayArrearsFacade payArrearsFacade = new PayArrearsFacade();
 
@@ -56,7 +55,7 @@ public class PayArrearsCommand implements Command {
             request.setAttribute(ERRORS.getName(), errors);
             return PAY_ARREARS;
         }
-        LOG.info("Client pays credit arrears");
+        log.info("Client pays credit arrears");
         boolean payedArrears = payArrearsFacade.payArrears(userId, amount);
         if (payedArrears)
             return CLIENT_ACCOUNTS;

@@ -10,6 +10,7 @@ import static enums.Attributes.ROOT;
 import static enums.Mappings.SUCCESSFUL;
 
 public class SuccessfulCommand implements Command {
+
     @Override
     public Mappings execute(HttpServletRequest request, HttpServletResponse response) {
         request.setAttribute(ROOT.getName(), RootPath.getRoot(request));

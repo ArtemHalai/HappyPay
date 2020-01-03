@@ -3,9 +3,9 @@ package command;
 import enums.Mappings;
 import facade.BillPaymentFacade;
 import factories.ServiceFactory;
+import lombok.extern.log4j.Log4j;
 import model.BillPaymentOperation;
 import model.UserAccount;
-import org.apache.log4j.Logger;
 import util.CheckOperationErrors;
 import util.CheckRoleAndId;
 import util.DateValidity;
@@ -23,9 +23,8 @@ import static enums.Errors.ACCOUNT_NUMBER_ERROR;
 import static enums.Fields.*;
 import static enums.Mappings.*;
 
+@Log4j
 public class BillPaymentCommand implements Command {
-
-    private static final Logger LOG = Logger.getLogger(BillPaymentCommand.class);
 
     private BillPaymentFacade billPaymentFacade = new BillPaymentFacade();
 
@@ -63,7 +62,7 @@ public class BillPaymentCommand implements Command {
     }
 
     private Mappings makeBillPayment(int userId, double amount, long billNumber, String purpose) {
-        LOG.info("Client pays bill from his account with amount: " + amount);
+        log.info("Client pays bill from his account with amount: " + amount);
         BillPaymentOperation billPaymentOperation = new BillPaymentOperation();
         billPaymentOperation.setAmount(amount);
         billPaymentOperation.setBillNumber(billNumber);

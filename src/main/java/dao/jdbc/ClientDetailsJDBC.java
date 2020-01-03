@@ -3,6 +3,7 @@ package dao.jdbc;
 import dao.intefaces.ClientDetailsDAO;
 import dao.mappers.ClientDetailsMapper;
 import dao.mappers.Mapper;
+import lombok.extern.log4j.Log4j;
 import model.ClientDetails;
 import org.apache.log4j.Logger;
 
@@ -11,9 +12,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+@Log4j
 public class ClientDetailsJDBC implements ClientDetailsDAO {
 
-    private static final Logger LOG = Logger.getLogger(ClientDetailsJDBC.class);
     private Connection connection;
 
     public ClientDetailsJDBC(Connection connection) {
@@ -38,7 +39,7 @@ public class ClientDetailsJDBC implements ClientDetailsDAO {
             if (generated > 0)
                 return true;
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in ClientDetailsJDBC.class at add() method");
+            log.error("SQLException occurred in ClientDetailsJDBC.class at add() method");
         }
         return false;
     }
@@ -56,7 +57,7 @@ public class ClientDetailsJDBC implements ClientDetailsDAO {
             if (rs.next())
                 clientDetails = clientDetailsMapper.getEntity(rs);
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in ClientDetailsJDBC.class at getById() method");
+            log.error("SQLException occurred in ClientDetailsJDBC.class at getById() method");
         }
         return clientDetails;
     }

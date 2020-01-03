@@ -3,6 +3,7 @@ package dao.jdbc;
 import dao.intefaces.CreditAccountDAO;
 import dao.mappers.CreditAccountMapper;
 import dao.mappers.Mapper;
+import lombok.extern.log4j.Log4j;
 import model.CreditAccount;
 import org.apache.log4j.Logger;
 
@@ -10,9 +11,9 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Log4j
 public class CreditAccountJDBC implements CreditAccountDAO {
 
-    private static final Logger LOG = Logger.getLogger(CreditAccountJDBC.class);
     private Connection connection;
 
     public CreditAccountJDBC(Connection connection) {
@@ -37,7 +38,7 @@ public class CreditAccountJDBC implements CreditAccountDAO {
             if (generated > 0)
                 return true;
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in CreditAccountJDBC.class at add() method");
+            log.error("SQLException occurred in CreditAccountJDBC.class at add() method");
         }
         return false;
     }
@@ -52,7 +53,7 @@ public class CreditAccountJDBC implements CreditAccountDAO {
             if (generated > 0)
                 return true;
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in DepositAccountJDBC.class at updateBalanceById() method");
+            log.error("SQLException occurred in DepositAccountJDBC.class at updateBalanceById() method");
         }
         return false;
     }
@@ -67,7 +68,7 @@ public class CreditAccountJDBC implements CreditAccountDAO {
             if (generated > 0)
                 return true;
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in CreditAccountJDBC.class at payArrears() method");
+            log.error("SQLException occurred in CreditAccountJDBC.class at payArrears() method");
         }
         return false;
     }
@@ -86,7 +87,7 @@ public class CreditAccountJDBC implements CreditAccountDAO {
                 list.add(creditAccount);
             }
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in CreditAccountJDBC.class at getAll() method");
+            log.error("SQLException occurred in CreditAccountJDBC.class at getAll() method");
         }
         return list;
     }
@@ -101,7 +102,7 @@ public class CreditAccountJDBC implements CreditAccountDAO {
             if (generated > 0)
                 return true;
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in CreditAccountJDBC.class at updateInterestCharges() method");
+            log.error("SQLException occurred in CreditAccountJDBC.class at updateInterestCharges() method");
         }
         return false;
     }
@@ -119,7 +120,7 @@ public class CreditAccountJDBC implements CreditAccountDAO {
             if (rs.next())
                 creditAccount = creditAccountMapper.getEntity(rs);
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in CreditAccountJDBC.class at getById() method");
+            log.error("SQLException occurred in CreditAccountJDBC.class at getById() method");
         }
         return creditAccount;
     }

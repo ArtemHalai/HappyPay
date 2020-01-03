@@ -4,6 +4,7 @@ import dao.intefaces.RefillDAO;
 import dao.mappers.Mapper;
 import dao.mappers.OperationMapper;
 import dao.mappers.RefillMapper;
+import lombok.extern.log4j.Log4j;
 import model.*;
 import org.apache.log4j.Logger;
 
@@ -14,9 +15,9 @@ import java.util.List;
 import static enums.Attributes.TOTAL;
 import static enums.OperationType.REFILL_DEPOSIT;
 
+@Log4j
 public class RefillJDBC implements RefillDAO {
 
-    private static final Logger LOG = Logger.getLogger(RefillJDBC.class);
     private Connection connection;
 
     public RefillJDBC(Connection connection) {
@@ -37,7 +38,7 @@ public class RefillJDBC implements RefillDAO {
             while (rs.next())
                 list.add(refillMapper.getEntity(rs));
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in RefillJDBC.class at getRefillOperations() method");
+            log.error("SQLException occurred in RefillJDBC.class at getRefillOperations() method");
         }
         paginationDTO.setList(list);
         paginationDTO.setCount(count(paginationDTO.getUserId()));
@@ -55,7 +56,7 @@ public class RefillJDBC implements RefillDAO {
             if (rs.next())
                 total = rs.getInt(TOTAL.getName());
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in RefillJDBC.class at count() method");
+            log.error("SQLException occurred in RefillJDBC.class at count() method");
         }
         return total;
     }
@@ -73,7 +74,7 @@ public class RefillJDBC implements RefillDAO {
             if (generated > 0)
                 return true;
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in RefillJDBC.class at add() method");
+            log.error("SQLException occurred in RefillJDBC.class at add() method");
         }
         return false;
     }
@@ -90,7 +91,7 @@ public class RefillJDBC implements RefillDAO {
             while (rs.next())
                 list.add(operationMapper.getEntity(rs));
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in RefillJDBC.class at getLimitOperations() method");
+            log.error("SQLException occurred in RefillJDBC.class at getLimitOperations() method");
         }
         AllOperationsDTO operationsDTO = new AllOperationsDTO();
         operationsDTO.setUserId(allOperationsDTO.getUserId());
@@ -112,7 +113,7 @@ public class RefillJDBC implements RefillDAO {
             if (rs.next())
                 refillOperation = refillOperationMapper.getEntity(rs);
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in RefillJDBC.class at getById() method");
+            log.error("SQLException occurred in RefillJDBC.class at getById() method");
         }
         return refillOperation;
     }

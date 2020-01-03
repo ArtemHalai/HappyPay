@@ -3,9 +3,9 @@ package command;
 import enums.Mappings;
 import facade.LimitRequestFacade;
 import factories.ServiceFactory;
+import lombok.extern.log4j.Log4j;
 import model.LimitRequest;
 import model.UserAccount;
-import org.apache.log4j.Logger;
 import util.CheckRoleAndId;
 import util.DateValidity;
 
@@ -23,9 +23,8 @@ import static enums.Fields.AMOUNT;
 import static enums.Fields.USER_ID;
 import static enums.Mappings.*;
 
+@Log4j
 public class LimitRequestCommand implements Command {
-
-    private static final Logger LOG = Logger.getLogger(CreditRequestCommand.class);
 
     private LimitRequestFacade limitRequestFacade = new LimitRequestFacade();
 
@@ -52,7 +51,7 @@ public class LimitRequestCommand implements Command {
             return LIMIT_REQUEST;
         }
 
-        LOG.info("Client wants to increase credit limit");
+        log.info("Client wants to increase credit limit");
         limitRequestFacade.setLimitRequestService(ServiceFactory.getInstance().getLimitRequestService());
         LimitRequest limitRequest = new LimitRequest();
         limitRequest.setUserId(userId);

@@ -9,10 +9,8 @@ import static enums.Fields.*;
 
 public class TransferMapper implements Mapper<TransferOperation> {
 
-
     @Override
     public TransferOperation getEntity(ResultSet resultSet) throws SQLException {
-
         TransferOperation transferOperation = new TransferOperation();
 
         transferOperation.setUserId(resultSet.getInt(USER_ID.getName()));

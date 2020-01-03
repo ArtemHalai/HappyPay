@@ -9,11 +9,10 @@ import static enums.Fields.*;
 
 public class UserAccountMapper implements Mapper<UserAccount> {
 
-
     @Override
     public UserAccount getEntity(ResultSet resultSet) throws SQLException {
-
         UserAccount userAccount = new UserAccount();
+
         userAccount.setUserId(resultSet.getInt(USER_ID.getName()));
         userAccount.setBalance(resultSet.getDouble(BALANCE.getName()));
         userAccount.setAccountNumber(resultSet.getLong(ACCOUNT_NUMBER.getName()));

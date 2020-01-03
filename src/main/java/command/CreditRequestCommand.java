@@ -3,9 +3,9 @@ package command;
 import enums.Mappings;
 import facade.CreditRequestFacade;
 import factories.ServiceFactory;
+import lombok.extern.log4j.Log4j;
 import model.CreditRequest;
 import model.UserAccount;
-import org.apache.log4j.Logger;
 import util.CheckRoleAndId;
 import util.DateValidity;
 
@@ -24,9 +24,8 @@ import static enums.Fields.*;
 import static enums.Mappings.*;
 import static enums.Mappings.CREDIT;
 
+@Log4j
 public class CreditRequestCommand implements Command {
-
-    private static final Logger LOG = Logger.getLogger(CreditRequestCommand.class);
 
     private CreditRequestFacade creditRequestFacade = new CreditRequestFacade();
 
@@ -55,7 +54,7 @@ public class CreditRequestCommand implements Command {
             request.setAttribute(ERRORS.getName(), errors);
             return CREDIT_REQUEST;
         }
-        LOG.info("Client wants to open credit account");
+        log.info("Client wants to open credit account");
         return createCreditRequest(request, userId, amount);
     }
 

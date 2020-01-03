@@ -3,9 +3,9 @@ package command;
 import enums.Mappings;
 import facade.TransferFacade;
 import factories.ServiceFactory;
+import lombok.extern.log4j.Log4j;
 import model.TransferOperation;
 import model.UserAccount;
-import org.apache.log4j.Logger;
 import util.CheckOperationErrors;
 import util.CheckRoleAndId;
 import util.DateValidity;
@@ -23,9 +23,8 @@ import static enums.Errors.ACCOUNT_NUMBER_ERROR;
 import static enums.Fields.*;
 import static enums.Mappings.*;
 
+@Log4j
 public class TransferCommand implements Command {
-
-    private static final Logger LOG = Logger.getLogger(TransferCommand.class);
 
     private TransferFacade transferFacade = new TransferFacade();
 
@@ -61,7 +60,7 @@ public class TransferCommand implements Command {
     }
 
     private Mappings transferOperation(int userId, double amount, long recipientAccountNumber) {
-        LOG.info("Client transfers amount: " + amount);
+        log.info("Client transfers amount: " + amount);
         TransferOperation transferOperation = new TransferOperation();
         transferOperation.setAmount(amount);
         transferOperation.setRecipientAccountNumber(recipientAccountNumber);

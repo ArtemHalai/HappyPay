@@ -9,7 +9,6 @@ import static enums.Fields.*;
 
 public class CreditApprovementMapper implements Mapper<CreditApprovementOperation> {
 
-
     @Override
     public CreditApprovementOperation getEntity(ResultSet resultSet) throws SQLException {
 

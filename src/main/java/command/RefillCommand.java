@@ -3,9 +3,9 @@ package command;
 import enums.Mappings;
 import facade.RefillFacade;
 import factories.ServiceFactory;
+import lombok.extern.log4j.Log4j;
 import model.RefillOperation;
 import model.UserAccount;
-import org.apache.log4j.Logger;
 import util.CheckOperationErrors;
 import util.CheckRoleAndId;
 import util.DateValidity;
@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import java.sql.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,9 +23,8 @@ import static enums.Errors.*;
 import static enums.Fields.*;
 import static enums.Mappings.*;
 
+@Log4j
 public class RefillCommand implements Command {
-
-    private static final Logger LOG = Logger.getLogger(RefillCommand.class);
 
     private RefillFacade refillFacade = new RefillFacade();
 
@@ -58,7 +56,7 @@ public class RefillCommand implements Command {
 
     private Mappings refillOperation(HttpSession session, double amount) {
         int userId = (int) session.getAttribute(USER_ID.getName());
-        LOG.info("Client refills his account with amount: " + amount);
+        log.info("Client refills his account with amount: " + amount);
         RefillOperation refillOperation = new RefillOperation();
         refillOperation.setAmount(amount);
         refillOperation.setUserId(userId);

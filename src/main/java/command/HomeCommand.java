@@ -11,6 +11,7 @@ import static enums.Mappings.*;
 import static enums.Role.ADMIN;
 
 public class HomeCommand implements Command {
+
     @Override
     public Mappings execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();

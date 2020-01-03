@@ -3,9 +3,9 @@ package command;
 import enums.Mappings;
 import facade.RefillFacade;
 import factories.ServiceFactory;
+import lombok.extern.log4j.Log4j;
 import model.RefillPaginationDTO;
 import model.UserAccount;
-import org.apache.log4j.Logger;
 import util.CheckRoleAndId;
 import util.DateValidity;
 
@@ -18,9 +18,8 @@ import static enums.Errors.NO_REFILL_OPERATION_ERROR;
 import static enums.Fields.USER_ID;
 import static enums.Mappings.*;
 
+@Log4j
 public class RefillListClientCommand implements Command {
-
-    private static final Logger LOG = Logger.getLogger(RefillListClientCommand.class);
 
     private RefillFacade refillListClientFacade = new RefillFacade();
 
@@ -43,7 +42,7 @@ public class RefillListClientCommand implements Command {
         RefillPaginationDTO paginationDTO = new RefillPaginationDTO();
         paginationDTO.setUserId(userId);
         paginationDTO.setPage(page);
-        LOG.info("Client wants to see list of refill operations.");
+        log.info("Client wants to see list of refill operations.");
         refillListClientFacade.setRefillService(ServiceFactory.getInstance().getRefillService());
         RefillPaginationDTO refillPaginationDTO = refillListClientFacade.getRefillOperations(paginationDTO);
         if (!refillPaginationDTO.getList().isEmpty()) {

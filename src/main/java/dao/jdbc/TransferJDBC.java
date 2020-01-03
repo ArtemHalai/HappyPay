@@ -4,6 +4,7 @@ import dao.intefaces.TransferDAO;
 import dao.mappers.Mapper;
 import dao.mappers.OperationMapper;
 import dao.mappers.TransferMapper;
+import lombok.extern.log4j.Log4j;
 import model.AllOperationsDTO;
 import model.OperationsData;
 import model.TransferOperation;
@@ -15,9 +16,9 @@ import java.util.List;
 
 import static enums.Attributes.TOTAL;
 
+@Log4j
 public class TransferJDBC implements TransferDAO {
 
-    private static final Logger LOG = Logger.getLogger(TransferJDBC.class);
     private Connection connection;
 
     public TransferJDBC(Connection connection) {
@@ -37,7 +38,7 @@ public class TransferJDBC implements TransferDAO {
             if (generated > 0)
                 return true;
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in TransferJDBC.class at create() method");
+            log.error("SQLException occurred in TransferJDBC.class at create() method");
         }
         return false;
     }
@@ -52,7 +53,7 @@ public class TransferJDBC implements TransferDAO {
             if (rs.next())
                 total = rs.getInt(TOTAL.getName());
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in TransferJDBC.class at count() method");
+            log.error("SQLException occurred in TransferJDBC.class at count() method");
         }
         return total;
     }
@@ -69,7 +70,7 @@ public class TransferJDBC implements TransferDAO {
             while (rs.next())
                 list.add(operationMapper.getEntity(rs));
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in TransferJDBC.class at getLimitOperations() method");
+            log.error("SQLException occurred in TransferJDBC.class at getLimitOperations() method");
         }
         AllOperationsDTO operationsDTO = new AllOperationsDTO();
         operationsDTO.setUserId(allOperationsDTO.getUserId());
@@ -91,7 +92,7 @@ public class TransferJDBC implements TransferDAO {
             if (rs.next())
                 transferOperation = transferMapper.getEntity(rs);
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in UserAccountJDBC.class at getById() method");
+            log.error("SQLException occurred in UserAccountJDBC.class at getById() method");
         }
         return transferOperation;
     }

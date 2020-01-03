@@ -3,6 +3,7 @@ package dao.jdbc;
 import dao.intefaces.UserAccountDAO;
 import dao.mappers.Mapper;
 import dao.mappers.UserAccountMapper;
+import lombok.extern.log4j.Log4j;
 import model.RefillOperation;
 import model.UserAccount;
 import org.apache.log4j.Logger;
@@ -13,8 +14,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+@Log4j
 public class UserAccountJDBC implements UserAccountDAO {
-    private static final Logger LOG = Logger.getLogger(UserAccountJDBC.class);
+
     private Connection connection;
 
     public UserAccountJDBC(Connection connection) {
@@ -35,7 +37,7 @@ public class UserAccountJDBC implements UserAccountDAO {
             if (generated > 0)
                 return true;
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in UserAccountJDBC.class at add() method");
+            log.error("SQLException occurred in UserAccountJDBC.class at add() method");
         }
         return false;
     }
@@ -50,7 +52,7 @@ public class UserAccountJDBC implements UserAccountDAO {
             if (generated > 0)
                 return true;
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in UserAccountJDBC.class at updateBalanceById() method");
+            log.error("SQLException occurred in UserAccountJDBC.class at updateBalanceById() method");
         }
         return false;
     }
@@ -69,7 +71,7 @@ public class UserAccountJDBC implements UserAccountDAO {
             if (rs.next())
                 userAccount = userAccountMapper.getEntity(rs);
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in UserAccountJDBC.class at getById() method");
+            log.error("SQLException occurred in UserAccountJDBC.class at getById() method");
         }
         return userAccount;
     }
@@ -84,7 +86,7 @@ public class UserAccountJDBC implements UserAccountDAO {
             if (generated > 0)
                 return true;
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in UserAccountJDBC.class at updateCreditStatusById() method");
+            log.error("SQLException occurred in UserAccountJDBC.class at updateCreditStatusById() method");
         }
         return false;
     }
@@ -99,7 +101,7 @@ public class UserAccountJDBC implements UserAccountDAO {
             if (generated > 0)
                 return true;
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in UserAccountJDBC.class at updateTerm() method");
+            log.error("SQLException occurred in UserAccountJDBC.class at updateTerm() method");
         }
         return false;
     }
@@ -118,7 +120,7 @@ public class UserAccountJDBC implements UserAccountDAO {
             if (rs.next())
                 userAccount = userAccountMapper.getEntity(rs);
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in UserAccountJDBC.class at getByAccountNumber() method");
+            log.error("SQLException occurred in UserAccountJDBC.class at getByAccountNumber() method");
         }
         return userAccount;
     }
@@ -133,7 +135,7 @@ public class UserAccountJDBC implements UserAccountDAO {
             if (generated > 0)
                 return true;
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in UserAccountJDBC.class at updateByAccount() method");
+            log.error("SQLException occurred in UserAccountJDBC.class at updateByAccount() method");
         }
         return false;
     }
@@ -148,7 +150,7 @@ public class UserAccountJDBC implements UserAccountDAO {
             if (generated > 0)
                 return true;
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in UserAccountJDBC.class at updateDepositStatusById() method");
+            log.error("SQLException occurred in UserAccountJDBC.class at updateDepositStatusById() method");
         }
         return false;
     }

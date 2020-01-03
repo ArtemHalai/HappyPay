@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import static enums.Fields.*;
 
 public class CreditRequestAdminMapper implements Mapper<CreditRequestAdmin> {
+
     @Override
     public CreditRequestAdmin getEntity(ResultSet resultSet) throws SQLException {
         CreditRequestAdmin creditRequestAdmin = new CreditRequestAdmin();

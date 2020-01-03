@@ -13,10 +13,8 @@ import static enums.Fields.*;
 
 public class DepositAccountMapper implements Mapper<DepositAccount> {
 
-
     @Override
     public DepositAccount getEntity(ResultSet resultSet) throws SQLException {
-
         DepositAccount depositAccount = new DepositAccount();
 
         depositAccount.setUserId(resultSet.getInt(USER_ID.getName()));

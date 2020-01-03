@@ -9,7 +9,6 @@ import static enums.Fields.*;
 
 public class ClientDetailsMapper implements Mapper<ClientDetails> {
 
-
     @Override
     public ClientDetails getEntity(ResultSet resultSet) throws SQLException {
         ClientDetails clientDetails = new ClientDetails();

@@ -3,8 +3,8 @@ package command;
 import enums.Mappings;
 import facade.UpdateTermFacade;
 import factories.ServiceFactory;
+import lombok.extern.log4j.Log4j;
 import model.UserAccount;
-import org.apache.log4j.Logger;
 import util.CheckRoleAndId;
 import util.DateValidity;
 
@@ -15,9 +15,8 @@ import javax.servlet.http.HttpSession;
 import static enums.Fields.USER_ID;
 import static enums.Mappings.*;
 
+@Log4j
 public class UpdateTermCommand implements Command {
-
-    private static final Logger LOG = Logger.getLogger(UpdateTermCommand.class);
 
     private UpdateTermFacade updateTermFacade = new UpdateTermFacade();
 
@@ -34,7 +33,7 @@ public class UpdateTermCommand implements Command {
         if (userAccount.getValidity() != null && DateValidity.valid(userAccount.getValidity()))
             return CLIENT_ACCOUNTS;
 
-        LOG.info("Client updates term of account");
+        log.info("Client updates term of account");
 
         if (updateTermFacade.updateTerm(userId))
             return SUCCESSFUL;

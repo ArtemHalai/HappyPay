@@ -4,6 +4,7 @@ import dao.intefaces.UserDAO;
 import dao.mappers.Mapper;
 import dao.mappers.UserMapper;
 import exceptions.WrongUsernameOrPasswordException;
+import lombok.extern.log4j.Log4j;
 import model.User;
 import org.apache.log4j.Logger;
 
@@ -13,10 +14,9 @@ import java.util.List;
 
 import static enums.Fields.USER_ID;
 
-
+@Log4j
 public class UserJDBC implements UserDAO {
 
-    private static final Logger LOG = Logger.getLogger(UserJDBC.class);
     private Connection connection;
 
     public UserJDBC(Connection connection) {
@@ -34,7 +34,7 @@ public class UserJDBC implements UserDAO {
             if (rs.next())
                 obj = userMapper.getEntity(rs);
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in UserJDBC.class at isUserExist() method");
+            log.error("SQLException occurred in UserJDBC.class at isUserExist() method");
         }
         return obj;
     }
@@ -52,7 +52,7 @@ public class UserJDBC implements UserDAO {
             if (rs.next())
                 obj = userMapper.getEntity(rs);
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in UserJDBC.class at getUserByUsernameAndPassword() method");
+            log.error("SQLException occurred in UserJDBC.class at getUserByUsernameAndPassword() method");
         }
         return obj;
     }
@@ -71,7 +71,7 @@ public class UserJDBC implements UserDAO {
             if (rs.next())
                 userId = rs.getInt(1);
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in UserJDBC.class from add() method");
+            log.error("SQLException occurred in UserJDBC.class from add() method");
         }
         return userId;
     }
@@ -91,7 +91,7 @@ public class UserJDBC implements UserDAO {
             if (rs.next())
                 user = userMapper.getEntity(rs);
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in UserJDBC.class at getById() method");
+            log.error("SQLException occurred in UserJDBC.class at getById() method");
         }
         return user;
     }

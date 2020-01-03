@@ -3,8 +3,8 @@ package command;
 import enums.Mappings;
 import facade.PayInterestChargesFacade;
 import factories.ServiceFactory;
+import lombok.extern.log4j.Log4j;
 import model.UserAccount;
-import org.apache.log4j.Logger;
 import util.CheckRoleAndId;
 import util.DateValidity;
 
@@ -22,9 +22,8 @@ import static enums.Fields.AMOUNT;
 import static enums.Fields.USER_ID;
 import static enums.Mappings.*;
 
+@Log4j
 public class PayInterestChargesCommand implements Command {
-
-    private static final Logger LOG = Logger.getLogger(BillPaymentCommand.class);
 
     private PayInterestChargesFacade payInterestChargesFacade = new PayInterestChargesFacade();
 
@@ -55,7 +54,7 @@ public class PayInterestChargesCommand implements Command {
             request.setAttribute(ERRORS.getName(), errors);
             return PAY_INTEREST_CHARGES;
         }
-        LOG.info("Client pays interest charges");
+        log.info("Client pays interest charges");
         boolean payedInterest = payInterestChargesFacade.payInterestCharges(userId, amount);
         if (payedInterest)
             return CLIENT_ACCOUNTS;

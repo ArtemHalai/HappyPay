@@ -7,14 +7,14 @@ import java.sql.SQLException;
 
 public class TransactionManager {
 
-    private static final Logger LOG = Logger.getLogger(TransactionManager.class);
+    private static final Logger log = Logger.getLogger(TransactionManager.class);
 
     public static void setRepeatableRead(Connection connection) {
         try {
             connection.setAutoCommit(false);
             connection.setTransactionIsolation(Connection.TRANSACTION_REPEATABLE_READ);
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in TransactionManager.class at setRepeatableRead() method");
+            log.error("SQLException occurred in TransactionManager.class at setRepeatableRead() method");
         }
     }
 
@@ -23,7 +23,7 @@ public class TransactionManager {
             connection.commit();
             connection.close();
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in TransactionManager.class at commitTransaction() method");
+            log.error("SQLException occurred in TransactionManager.class at commitTransaction() method");
         }
     }
 
@@ -32,7 +32,7 @@ public class TransactionManager {
             connection.rollback();
             connection.close();
         } catch (SQLException e) {
-            LOG.error("SQLException occurred in TransactionManager.class at rollbackTransaction() method");
+            log.error("SQLException occurred in TransactionManager.class at rollbackTransaction() method");
         }
     }
 }

@@ -12,7 +12,6 @@ public class RefillMapper implements Mapper<RefillOperation> {
 
     @Override
     public RefillOperation getEntity(ResultSet resultSet) throws SQLException {
-
         RefillOperation refillOperation = new RefillOperation();
 
         refillOperation.setUserId(resultSet.getInt(USER_ID.getName()));
