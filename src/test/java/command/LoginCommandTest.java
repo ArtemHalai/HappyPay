@@ -17,13 +17,14 @@ import javax.servlet.http.HttpSession;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.*;
 
 import static enums.Attributes.ERRORS;
 import static enums.Fields.*;
 import static enums.Mappings.*;
 import static enums.Role.ADMIN;
 import static enums.Role.CLIENT;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
@@ -48,8 +49,8 @@ public class LoginCommandTest {
     @InjectMocks
     private LoginCommand command;
 
-    private final String USER = "USERNAME";
-    private final String PASS = "11111111";
+    private static final String USER = "USERNAME";
+    private static final String PASS = "11111111";
 
     @Before
     public void setUp() {
@@ -57,49 +58,50 @@ public class LoginCommandTest {
     }
 
     @Test
-    public void executeLOGGED_IN() {
+    public void execute_ReturnsLoggedInMapping_WhenSessionContainsRoleId() {
         when(session.getAttribute(ROLE.getName())).thenReturn(CLIENT.getRoleId());
-        Mappings execute = command.execute(request, response);
-        assertEquals(LOGGED_IN, execute);
+        Mappings actualMapping = command.execute(request, response);
+        assertEquals(LOGGED_IN, actualMapping);
     }
 
     @Test
-    public void executeLOGIN_VIEW() {
+    public void execute_ReturnsLoginViewMapping_WhenUsernameOrPasswordParameterInRequestIsEqualNull() {
         Mappings execute = command.execute(request, response);
         assertEquals(LOGIN_VIEW, execute);
     }
 
     @Test
-    public void executeERROR() {
+    public void execute_ReturnsErrorMapping_WhenUsernameOrPasswordIsNotMatchingRegex() {
         String password = "111";
 
         when(request.getParameter(USERNAME.getName())).thenReturn(USER);
         when(request.getParameter(PASSWORD.getName())).thenReturn(password);
 
-        Mappings execute = command.execute(request, response);
+        Mappings actualMapping = command.execute(request, response);
 
         Map<String, String> errors = new HashMap<>();
         errors.put("password", "Password should contains at least 8 characters.");
         verify(request).setAttribute(ERRORS.getName(), errors);
 
-        assertEquals(ERROR, execute);
+        assertEquals(ERROR, actualMapping);
     }
 
     @Test
-    public void executeHOME_ADMIN() {
+    public void execute_ReturnsHomeAdminMapping_WhenCurrentUserHasAdminRoleId() {
         user.setRole(ADMIN.getRoleId());
 
         when(request.getParameter(USERNAME.getName())).thenReturn(USER);
         when(request.getParameter(PASSWORD.getName())).thenReturn(PASS);
         when(facade.getUserByUsernameAndPassword(any(User.class))).thenReturn(user);
 
-        Mappings execute = command.execute(request, response);
+        Mappings actualMapping = command.execute(request, response);
+
         verify(session).setAttribute(ROLE.getName(), ADMIN.getRoleId());
-        assertEquals(HOME_ADMIN, execute);
+        assertEquals(HOME_ADMIN, actualMapping);
     }
 
     @Test
-    public void executeHOME() {
+    public void execute_ReturnsHomeMapping_WhenCurrentUserHasRoleDifferentThanAdminRoleId() {
         user.setUsername(USER);
         user.setPassword(PASS);
         user.setUserId(1);
@@ -109,23 +111,23 @@ public class LoginCommandTest {
         when(request.getParameter(USERNAME.getName())).thenReturn(USER);
         when(request.getParameter(PASSWORD.getName())).thenReturn(PASS);
 
-        Mappings execute = command.execute(request, response);
+        Mappings actualMapping = command.execute(request, response);
 
         verify(facade).getUserByUsernameAndPassword(any(User.class));
         verify(session).setAttribute(ROLE.getName(), CLIENT.getRoleId());
         verify(session).setAttribute(USER_ID.getName(), user.getUserId());
 
-        assertEquals(HOME, execute);
+        assertEquals(HOME, actualMapping);
         assertEquals(user, facade.getUserByUsernameAndPassword(user));
     }
 
     @Test
-    public void executeERROR_USER_DOES_NOT_EXIST() {
+    public void execute_ReturnsErrorMapping_WhenUserWithSuchUsernameIsNotExisting() {
         when(facade.getUserByUsernameAndPassword(any(User.class))).thenReturn(null);
         when(request.getParameter(USERNAME.getName())).thenReturn(USER);
         when(request.getParameter(PASSWORD.getName())).thenReturn(PASS);
 
-        Mappings execute = command.execute(request, response);
+        Mappings actualMapping = command.execute(request, response);
 
         verify(facade).getUserByUsernameAndPassword(any(User.class));
 
@@ -133,6 +135,68 @@ public class LoginCommandTest {
         errors.put("user", "User with such username doesn't exist.");
         verify(request).setAttribute(ERRORS.getName(), errors);
 
-        assertEquals(ERROR, execute);
+        assertEquals(ERROR, actualMapping);
+    }
+
+    @Test
+    public void execute_SetsErrorsInMap_WhenSendRequestsInMultithreading() {
+
+        Callable<Boolean> callableWithWrongPassword = () -> {
+            String password = "111";
+
+            HttpServletRequest request = mock(HttpServletRequest.class);
+            when(request.getSession()).thenReturn(session);
+            when(request.getParameter(USERNAME.getName())).thenReturn(USER);
+            when(request.getParameter(PASSWORD.getName())).thenReturn(password);
+
+            Map<String, String> errors = new HashMap<>();
+            errors.put("username", "Wrong username.");
+
+            doThrow(new RuntimeException()).when(request).setAttribute(ERRORS.getName(), errors);
+
+            try {
+                command.execute(request, response);
+            } catch (RuntimeException e) {
+                return true;
+            }
+            return false;
+        };
+
+        Callable<Boolean> callableWithWrongUsername = () -> {
+            String username = "a";
+
+            HttpServletRequest request = mock(HttpServletRequest.class);
+            when(request.getSession()).thenReturn(session);
+            when(request.getParameter(USERNAME.getName())).thenReturn(username);
+            when(request.getParameter(PASSWORD.getName())).thenReturn(PASS);
+
+            Map<String, String> errors = new HashMap<>();
+            errors.put("password", "Password should contains at least 8 characters.");
+
+            doThrow(new RuntimeException()).when(request).setAttribute(ERRORS.getName(), errors);
+
+            try {
+                command.execute(request, response);
+            } catch (RuntimeException e) {
+                return true;
+            }
+            return false;
+        };
+
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        boolean isDetected = false;
+
+        while (!isDetected) {
+            Future<Boolean> resultWhenWrongPassword = executor.submit(callableWithWrongPassword);
+            Future<Boolean> resultWhenWrongUsername = executor.submit(callableWithWrongUsername);
+
+            try {
+                isDetected = resultWhenWrongPassword.get() || resultWhenWrongUsername.get();
+            } catch (InterruptedException | ExecutionException e) {
+                break;
+            }
+        }
+        executor.shutdown();
+        assertTrue(isDetected);
     }
 }
