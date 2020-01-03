@@ -66,8 +66,8 @@ public class LoginCommandTest {
 
     @Test
     public void execute_ReturnsLoginViewMapping_WhenUsernameOrPasswordParameterInRequestIsEqualNull() {
-        Mappings execute = command.execute(request, response);
-        assertEquals(LOGIN_VIEW, execute);
+        Mappings actualMapping = command.execute(request, response);
+        assertEquals(LOGIN_VIEW, actualMapping);
     }
 
     @Test
