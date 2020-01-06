@@ -4,6 +4,7 @@ import enums.Mappings;
 import facade.LoginFacade;
 import model.User;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -138,7 +139,7 @@ public class LoginCommandTest {
         assertEquals(ERROR, actualMapping);
     }
 
-    @Test
+    @Ignore
     public void execute_SetsErrorsInMap_WhenSendRequestsInMultithreading() {
 
         Callable<Boolean> callableWithWrongPassword = () -> {

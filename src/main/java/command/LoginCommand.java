@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static enums.Attributes.*;
@@ -30,8 +31,6 @@ public class LoginCommand implements Command {
 
     private LoginFacade loginFacade = new LoginFacade();
 
-    private Map<String, String> errors;
-
     @Override
     public Mappings execute(HttpServletRequest request, HttpServletResponse response) {
 
@@ -45,7 +44,10 @@ public class LoginCommand implements Command {
         if (username == null || password == null) {
             return LOGIN_VIEW;
         }
-        if (validation(username, password)) {
+
+        Map<String, String> errors = validation(username, password);
+
+        if (!errors.isEmpty()) {
             request.setAttribute(ERRORS.getName(), errors);
             return ERROR;
         } else {
@@ -72,15 +74,15 @@ public class LoginCommand implements Command {
                 return HOME;
             }
         } else {
+            Map<String, String> errors = new HashMap<>();
             errors.put(USER.getName(), USER_DOES_NOT_EXIST.getName());
             request.setAttribute(ERRORS.getName(), errors);
             return ERROR;
         }
     }
 
-    private boolean validation(String username, String password) {
+    private Map<String, String> validation(String username, String password) {
         Validator loginValidator = new LoginValidator(username, password);
-        errors = loginValidator.validate();
-        return !errors.isEmpty();
+        return loginValidator.validate();
     }
 }
