@@ -15,14 +15,12 @@ public class UserService {
     }
 
     public User getUserByUsernameAndPassword(User user) {
-        User u = userDAO.isUserExist(user.getUsername());
-        if (u != null) {
-            if (u.getRole() == ADMIN.getRoleId()) {
-                return userDAO.getUserByUsernameAndPassword(user);
+        User userExist = userDAO.isUserExist(user.getUsername());
+        if (userExist != null) {
+            boolean exist = PasswordEncryption.checkPassword(user.getPassword(), userExist.getPassword());
+            if (exist) {
+                return userExist;
             }
-            boolean exist = PasswordEncryption.checkPassword(user.getPassword(), u.getPassword());
-            if (exist)
-                return u;
         }
         return null;
     }

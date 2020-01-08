@@ -9,7 +9,6 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static enums.Role.ADMIN;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -30,13 +29,10 @@ public class UserServiceTest {
     @Test
     public void getUserByUsernameAndPassword() {
         user.setUsername(USERNAME);
-        when(dao.isUserExist(USERNAME)).thenReturn(user);
-        when(user.getRole()).thenReturn(ADMIN.getRoleId());
-        when(dao.getUserByUsernameAndPassword(user)).thenReturn(user);
+        when(dao.isUserExist(USERNAME)).thenReturn(null);
         User userByUsernameAndPassword = service.getUserByUsernameAndPassword(user);
-        verify(dao).getUserByUsernameAndPassword(user);
         verify(dao).isUserExist(USERNAME);
-        assertEquals(user, userByUsernameAndPassword);
+        assertNull(userByUsernameAndPassword);
     }
 
     @Test

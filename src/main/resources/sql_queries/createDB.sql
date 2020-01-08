@@ -102,4 +102,4 @@ date datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
 FOREIGN KEY (user_id) references users(user_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-insert into users(username,password,role) values ("artemadmin","12345678",1);
+insert into users(username,password,role) values ("artemadmin","$2$11$1812gH1234yU4321Ea543uAZ7ro0jUrCz4OupZD/nOKpOMo3CAKAm",1);

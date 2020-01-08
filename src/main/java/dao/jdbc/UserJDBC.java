@@ -3,16 +3,10 @@ package dao.jdbc;
 import dao.intefaces.UserDAO;
 import dao.mappers.Mapper;
 import dao.mappers.UserMapper;
-import exceptions.WrongUsernameOrPasswordException;
 import lombok.extern.log4j.Log4j;
 import model.User;
-import org.apache.log4j.Logger;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-
-import static enums.Fields.USER_ID;
 
 @Log4j
 public class UserJDBC implements UserDAO {
@@ -35,24 +29,6 @@ public class UserJDBC implements UserDAO {
                 obj = userMapper.getEntity(rs);
         } catch (SQLException e) {
             log.error("SQLException occurred in UserJDBC.class at isUserExist() method");
-        }
-        return obj;
-    }
-
-    @Override
-    public User getUserByUsernameAndPassword(User user) {
-        String getByUsernameAndPassword = "SELECT * FROM users WHERE username = ? AND password = ?";
-        Mapper<User> userMapper = new UserMapper();
-        User obj = null;
-
-        try (PreparedStatement statement = connection.prepareStatement(getByUsernameAndPassword)) {
-            statement.setString(1, user.getUsername());
-            statement.setString(2, user.getPassword());
-            ResultSet rs = statement.executeQuery();
-            if (rs.next())
-                obj = userMapper.getEntity(rs);
-        } catch (SQLException e) {
-            log.error("SQLException occurred in UserJDBC.class at getUserByUsernameAndPassword() method");
         }
         return obj;
     }
