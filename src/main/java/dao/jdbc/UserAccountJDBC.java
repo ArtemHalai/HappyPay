@@ -95,7 +95,7 @@ public class UserAccountJDBC implements UserAccountDAO {
     public boolean updateTerm(int userId) {
         String updateTerm = "UPDATE user_account SET validity = ? WHERE user_id = ?";
         try (PreparedStatement statement = connection.prepareStatement(updateTerm)) {
-            statement.setDate(1, DateValidity.setValidity(), Calendar.getInstance());
+            statement.setDate(1, DateValidity.getValidity(), Calendar.getInstance());
             statement.setLong(2, userId);
             int generated = statement.executeUpdate();
             if (generated > 0)

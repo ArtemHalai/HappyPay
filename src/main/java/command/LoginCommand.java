@@ -51,19 +51,19 @@ public class LoginCommand implements Command {
             request.setAttribute(ERRORS.getName(), errors);
             return ERROR;
         } else {
-            return loginUser(request, session, username, password);
+            User user = new User();
+            user.setUsername(username);
+            user.setPassword(password);
+            return loginUser(request, session, user);
         }
     }
 
-    private Mappings loginUser(HttpServletRequest request, HttpSession session, String username, String password) {
-        User user = new User();
-        user.setUsername(username);
-        user.setPassword(password);
+    private Mappings loginUser(HttpServletRequest request, HttpSession session, User user) {
         loginFacade.setUserService(ServiceFactory.getInstance().getUserService());
         User exist = loginFacade.getUserByUsernameAndPassword(user);
 
         if (exist != null) {
-            log.info("User is logged in with username: " + username);
+            log.info("User is logged in with username: " + user.getUsername());
             if (exist.getRole() == ADMIN.getRoleId()) {
                 session.setAttribute(ROLE.getName(), ADMIN.getRoleId());
                 session.setAttribute(ADMIN_ID.getName(), exist.getUserId());

@@ -11,7 +11,7 @@ public class DateValidity {
         return date.getTime() > System.currentTimeMillis();
     }
 
-    public static Date setValidity() {
+    public static Date getValidity() {
         return new Date(System.currentTimeMillis() + FIVE_YEARS);
     }
 

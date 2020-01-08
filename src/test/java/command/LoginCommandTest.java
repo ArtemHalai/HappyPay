@@ -1,5 +1,6 @@
 package command;
 
+import argument_matchers.UserArgumentMatcher;
 import enums.Mappings;
 import facade.LoginFacade;
 import model.User;
@@ -7,9 +8,9 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatcher;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,8 +45,10 @@ public class LoginCommandTest {
     @Mock
     private HttpSession session;
 
-    @Spy
+    @Mock
     private User user;
+
+    private final ArgumentMatcher<User> userArgumentMatcher = new UserArgumentMatcher();
 
     @InjectMocks
     private LoginCommand command;
@@ -89,11 +92,12 @@ public class LoginCommandTest {
 
     @Test
     public void execute_ReturnsHomeAdminMapping_WhenCurrentUserHasAdminRoleId() {
+        User user = spy(new User());
         user.setRole(ADMIN.getRoleId());
 
         when(request.getParameter(USERNAME.getName())).thenReturn(USER);
         when(request.getParameter(PASSWORD.getName())).thenReturn(PASS);
-        when(facade.getUserByUsernameAndPassword(any(User.class))).thenReturn(user);
+        when(facade.getUserByUsernameAndPassword(argThat(userArgumentMatcher))).thenReturn(user);
 
         Mappings actualMapping = command.execute(request, response);
 
@@ -103,34 +107,29 @@ public class LoginCommandTest {
 
     @Test
     public void execute_ReturnsHomeMapping_WhenCurrentUserHasRoleDifferentThanAdminRoleId() {
-        user.setUsername(USER);
-        user.setPassword(PASS);
-        user.setUserId(1);
-        user.setRole(CLIENT.getRoleId());
 
-        when(facade.getUserByUsernameAndPassword(any(User.class))).thenReturn(user);
+        when(facade.getUserByUsernameAndPassword(argThat(userArgumentMatcher))).thenReturn(user);
         when(request.getParameter(USERNAME.getName())).thenReturn(USER);
         when(request.getParameter(PASSWORD.getName())).thenReturn(PASS);
 
         Mappings actualMapping = command.execute(request, response);
 
-        verify(facade).getUserByUsernameAndPassword(any(User.class));
+        verify(facade).getUserByUsernameAndPassword(argThat(userArgumentMatcher));
         verify(session).setAttribute(ROLE.getName(), CLIENT.getRoleId());
         verify(session).setAttribute(USER_ID.getName(), user.getUserId());
 
         assertEquals(HOME, actualMapping);
-        assertEquals(user, facade.getUserByUsernameAndPassword(user));
     }
 
     @Test
     public void execute_ReturnsErrorMapping_WhenUserWithSuchUsernameIsNotExisting() {
-        when(facade.getUserByUsernameAndPassword(any(User.class))).thenReturn(null);
+        when(facade.getUserByUsernameAndPassword(argThat(userArgumentMatcher))).thenReturn(null);
         when(request.getParameter(USERNAME.getName())).thenReturn(USER);
         when(request.getParameter(PASSWORD.getName())).thenReturn(PASS);
 
         Mappings actualMapping = command.execute(request, response);
 
-        verify(facade).getUserByUsernameAndPassword(any(User.class));
+        verify(facade).getUserByUsernameAndPassword(argThat(userArgumentMatcher));
 
         Map<String, String> errors = new HashMap<>();
         errors.put("user", "User with such username doesn't exist.");
@@ -139,6 +138,7 @@ public class LoginCommandTest {
         assertEquals(ERROR, actualMapping);
     }
 
+    @Test
     @Ignore
     public void execute_SetsErrorsInMap_WhenSendRequestsInMultithreading() {
 

@@ -64,7 +64,7 @@ public class RegistrationFacade {
         boolean clientDetailsAdded = clientDetailsService.add(clientDetails);
         UserAccount userAccount = new UserAccount();
         userAccount.setUserId(userId);
-        userAccount.setValidity(DateValidity.setValidity());
+        userAccount.setValidity(DateValidity.getValidity());
         userAccount.setCredit(false);
         userAccount.setDeposit(false);
         boolean userAccountAdded = userAccountService.add(userAccount);
