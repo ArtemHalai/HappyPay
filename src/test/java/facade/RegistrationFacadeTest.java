@@ -80,4 +80,19 @@ public class RegistrationFacadeTest {
 
         assertEquals(expectedUserId, userId);
     }
+
+    @Test
+    public void addClientDetails_ReturnsNegativeUserId_WhenUserAndClientDetailsAddedUnsuccessfully() {
+        int expectedUserId = -1;
+
+        when(clientDetails.getUsername()).thenReturn(USERNAME);
+        when(clientDetails.getPassword()).thenReturn(PASS);
+        when(userService.isUserExist(USERNAME)).thenReturn(false);
+        when(userService.addUser(argThat(new UserArgumentMatcher()))).thenReturn(expectedUserId);
+        when(clientDetailsService.add(clientDetails)).thenReturn(false);
+
+        int userId = registrationFacade.addClientDetails(clientDetails);
+
+        assertEquals(expectedUserId, userId);
+    }
 }

@@ -8,6 +8,6 @@ public class UserAccountArgumentMatcher extends ArgumentMatcher<UserAccount> {
     public boolean matches(Object argument) {
         int userId = 1;
         UserAccount userAccount = (UserAccount) argument;
-        return userAccount.getUserId() == 1 && !userAccount.isCredit() && !userAccount.isDeposit();
+        return userAccount.getUserId() == userId && !userAccount.isCredit() && !userAccount.isDeposit();
     }
 }
