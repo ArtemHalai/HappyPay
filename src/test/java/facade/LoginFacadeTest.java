@@ -2,6 +2,7 @@ package facade;
 
 import factories.JDBCConnectionFactory;
 import model.User;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -36,9 +37,13 @@ public class LoginFacadeTest {
     private static final String USERNAME = "username";
     private static final String PASS = "12345678";
 
+    @Before
+    public void setUp() {
+        when(connectionFactory.getConnection()).thenReturn(connection);
+    }
+
     @Test
     public void getUserByUsernameAndPassword_ReturnsUser_WhenUserExistsInDatabase() {
-        when(connectionFactory.getConnection()).thenReturn(connection);
         when(userService.getUserByUsernameAndPassword(USERNAME, PASS)).thenReturn(user);
 
         User userByUsernameAndPassword = loginFacade.getUserByUsernameAndPassword(USERNAME, PASS);
@@ -50,7 +55,6 @@ public class LoginFacadeTest {
 
     @Test
     public void getUserByUsernameAndPassword_ReturnsNull_WhenUserIsNotExistingInDatabase() {
-        when(connectionFactory.getConnection()).thenReturn(connection);
         when(userService.getUserByUsernameAndPassword(USERNAME, PASS)).thenReturn(null);
 
         User userByUsernameAndPassword = loginFacade.getUserByUsernameAndPassword(USERNAME, PASS);

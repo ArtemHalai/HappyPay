@@ -56,7 +56,7 @@ public class RegistrationCommand implements Command {
             registrationFacade.setClientDetailsService(ServiceFactory.getInstance().getClientDetailsService());
             registrationFacade.setUserService(ServiceFactory.getInstance().getUserService());
             registrationFacade.setUserAccountService(ServiceFactory.getInstance().getUserAccountService());
-            int userId = registrationFacade.addUser(clientDetails);
+            int userId = registrationFacade.addClientDetails(clientDetails);
 
             if (userId > 0) {
                 HttpSession session = request.getSession();
