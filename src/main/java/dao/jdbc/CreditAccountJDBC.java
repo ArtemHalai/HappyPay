@@ -5,7 +5,6 @@ import dao.mappers.CreditAccountMapper;
 import dao.mappers.Mapper;
 import lombok.extern.log4j.Log4j;
 import model.CreditAccount;
-import org.apache.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -22,10 +21,10 @@ public class CreditAccountJDBC implements CreditAccountDAO {
 
     @Override
     public boolean add(CreditAccount creditAccount) {
-
         String add = "INSERT INTO credit_accounts (user_id, currency, credit_limit, rate, " +
                 "arrears, interest_charges, account_number) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
+
         try (PreparedStatement statement = connection.prepareStatement(add)) {
             statement.setInt(1, creditAccount.getUserId());
             statement.setString(2, creditAccount.getCurrency());
@@ -35,10 +34,11 @@ public class CreditAccountJDBC implements CreditAccountDAO {
             statement.setDouble(6, creditAccount.getInterestCharges());
             statement.setLong(7, creditAccount.getAccountNumber());
             int generated = statement.executeUpdate();
-            if (generated > 0)
+            if (generated > 0) {
                 return true;
+            }
         } catch (SQLException e) {
-            log.error("SQLException occurred in CreditAccountJDBC.class at add() method");
+            log.error("Could not add CreditAccount", e);
         }
         return false;
     }
@@ -46,14 +46,16 @@ public class CreditAccountJDBC implements CreditAccountDAO {
     @Override
     public boolean updateBalanceById(double amount, int userId) {
         String updateBalance = "UPDATE credit_accounts SET credit_limit = ? WHERE user_id = ?";
+
         try (PreparedStatement statement = connection.prepareStatement(updateBalance)) {
             statement.setDouble(1, amount);
             statement.setInt(2, userId);
             int generated = statement.executeUpdate();
-            if (generated > 0)
+            if (generated > 0) {
                 return true;
+            }
         } catch (SQLException e) {
-            log.error("SQLException occurred in DepositAccountJDBC.class at updateBalanceById() method");
+            log.error("Could not update balance by id", e);
         }
         return false;
     }
@@ -61,14 +63,16 @@ public class CreditAccountJDBC implements CreditAccountDAO {
     @Override
     public boolean payArrears(double amount, int userId) {
         String payArrears = "UPDATE credit_accounts SET arrears = ? WHERE user_id = ?";
+
         try (PreparedStatement statement = connection.prepareStatement(payArrears)) {
             statement.setDouble(1, amount);
             statement.setInt(2, userId);
             int generated = statement.executeUpdate();
-            if (generated > 0)
+            if (generated > 0) {
                 return true;
+            }
         } catch (SQLException e) {
-            log.error("SQLException occurred in CreditAccountJDBC.class at payArrears() method");
+            log.error("Could not pay arrears", e);
         }
         return false;
     }
@@ -87,7 +91,7 @@ public class CreditAccountJDBC implements CreditAccountDAO {
                 list.add(creditAccount);
             }
         } catch (SQLException e) {
-            log.error("SQLException occurred in CreditAccountJDBC.class at getAll() method");
+            log.error("Could not get all credit accounts", e);
         }
         return list;
     }
@@ -95,14 +99,16 @@ public class CreditAccountJDBC implements CreditAccountDAO {
     @Override
     public boolean updateInterestCharges(double amount, int userId) {
         String payArrears = "UPDATE credit_accounts SET interest_charges = ? WHERE user_id = ?";
+
         try (PreparedStatement statement = connection.prepareStatement(payArrears)) {
             statement.setDouble(1, amount);
             statement.setInt(2, userId);
             int generated = statement.executeUpdate();
-            if (generated > 0)
+            if (generated > 0) {
                 return true;
+            }
         } catch (SQLException e) {
-            log.error("SQLException occurred in CreditAccountJDBC.class at updateInterestCharges() method");
+            log.error("Could not update interest charges", e);
         }
         return false;
     }
@@ -114,13 +120,15 @@ public class CreditAccountJDBC implements CreditAccountDAO {
         creditAccount.setUserId(-1);
 
         String getById = "SELECT * FROM credit_accounts WHERE user_id = ?";
+
         try (PreparedStatement statement = connection.prepareStatement(getById)) {
             statement.setInt(1, id);
             ResultSet rs = statement.executeQuery();
-            if (rs.next())
+            if (rs.next()) {
                 creditAccount = creditAccountMapper.getEntity(rs);
+            }
         } catch (SQLException e) {
-            log.error("SQLException occurred in CreditAccountJDBC.class at getById() method");
+            log.error("Could not get CreditAccount by id", e);
         }
         return creditAccount;
     }

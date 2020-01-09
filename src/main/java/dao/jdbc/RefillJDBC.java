@@ -6,7 +6,6 @@ import dao.mappers.OperationMapper;
 import dao.mappers.RefillMapper;
 import lombok.extern.log4j.Log4j;
 import model.*;
-import org.apache.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -35,10 +34,11 @@ public class RefillJDBC implements RefillDAO {
             statement.setInt(4, paginationDTO.getPageSize() * (paginationDTO.getPage() - 1));
             ResultSet rs = statement.executeQuery();
             Mapper<RefillOperation> refillMapper = new RefillMapper();
-            while (rs.next())
+            while (rs.next()) {
                 list.add(refillMapper.getEntity(rs));
+            }
         } catch (SQLException e) {
-            log.error("SQLException occurred in RefillJDBC.class at getRefillOperations() method");
+            log.error("Could not get refill operations", e);
         }
         paginationDTO.setList(list);
         paginationDTO.setCount(count(paginationDTO.getUserId()));
@@ -53,17 +53,17 @@ public class RefillJDBC implements RefillDAO {
             statement.setInt(1, userId);
             statement.setString(2, REFILL_DEPOSIT.getName());
             ResultSet rs = statement.executeQuery();
-            if (rs.next())
+            if (rs.next()) {
                 total = rs.getInt(TOTAL.getName());
+            }
         } catch (SQLException e) {
-            log.error("SQLException occurred in RefillJDBC.class at count() method");
+            log.error("Could not count by id", e);
         }
         return total;
     }
 
     @Override
     public boolean add(RefillOperation refillOperation) {
-
         String addOperation = "INSERT INTO refill_operation (user_id, amount, sender_account_type, operation_type) VALUES (?, ?, ?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(addOperation)) {
             statement.setInt(1, refillOperation.getUserId());
@@ -71,10 +71,11 @@ public class RefillJDBC implements RefillDAO {
             statement.setString(3, refillOperation.getSenderAccountType());
             statement.setString(4, refillOperation.getOperationType());
             int generated = statement.executeUpdate();
-            if (generated > 0)
+            if (generated > 0) {
                 return true;
+            }
         } catch (SQLException e) {
-            log.error("SQLException occurred in RefillJDBC.class at add() method");
+            log.error("Could not add RefillOperation", e);
         }
         return false;
     }
@@ -88,10 +89,11 @@ public class RefillJDBC implements RefillDAO {
             statement.setInt(2, allOperationsDTO.getPageSize());
             ResultSet rs = statement.executeQuery();
             Mapper<OperationsData> operationMapper = new OperationMapper();
-            while (rs.next())
+            while (rs.next()) {
                 list.add(operationMapper.getEntity(rs));
+            }
         } catch (SQLException e) {
-            log.error("SQLException occurred in RefillJDBC.class at getLimitOperations() method");
+            log.error("Could not get limit operations", e);
         }
         AllOperationsDTO operationsDTO = new AllOperationsDTO();
         operationsDTO.setUserId(allOperationsDTO.getUserId());
@@ -110,10 +112,11 @@ public class RefillJDBC implements RefillDAO {
         try (PreparedStatement statement = connection.prepareStatement(getById)) {
             statement.setInt(1, id);
             ResultSet rs = statement.executeQuery();
-            if (rs.next())
+            if (rs.next()) {
                 refillOperation = refillOperationMapper.getEntity(rs);
+            }
         } catch (SQLException e) {
-            log.error("SQLException occurred in RefillJDBC.class at getById() method");
+            log.error("Could not get RefillOperation by id", e);
         }
         return refillOperation;
     }

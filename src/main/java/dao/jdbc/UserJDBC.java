@@ -25,10 +25,11 @@ public class UserJDBC implements UserDAO {
         try (PreparedStatement statement = connection.prepareStatement(isUserExist)) {
             statement.setString(1, username);
             ResultSet rs = statement.executeQuery();
-            if (rs.next())
+            if (rs.next()) {
                 obj = userMapper.getEntity(rs);
+            }
         } catch (SQLException e) {
-            log.error("SQLException occurred in UserJDBC.class at isUserExist() method");
+            log.error("Could not get User by username", e);
         }
         return obj;
     }
@@ -44,10 +45,11 @@ public class UserJDBC implements UserDAO {
             statement.executeUpdate();
 
             ResultSet rs = statement.getGeneratedKeys();
-            if (rs.next())
+            if (rs.next()) {
                 userId = rs.getInt(1);
+            }
         } catch (SQLException e) {
-            log.error("SQLException occurred in UserJDBC.class from add() method");
+            log.error("Could not add User", e);
         }
         return userId;
     }
@@ -63,11 +65,11 @@ public class UserJDBC implements UserDAO {
         try (PreparedStatement statement = connection.prepareStatement(getById)) {
             statement.setInt(1, id);
             ResultSet rs = statement.executeQuery();
-
-            if (rs.next())
+            if (rs.next()) {
                 user = userMapper.getEntity(rs);
+            }
         } catch (SQLException e) {
-            log.error("SQLException occurred in UserJDBC.class at getById() method");
+            log.error("Could not get User by id", e);
         }
         return user;
     }

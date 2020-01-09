@@ -8,7 +8,6 @@ import lombok.extern.log4j.Log4j;
 import model.AllOperationsDTO;
 import model.OperationsData;
 import model.TransferOperation;
-import org.apache.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -35,10 +34,11 @@ public class TransferJDBC implements TransferDAO {
             statement.setDouble(3, transferOperation.getAmount());
             statement.setString(4, transferOperation.getOperationType());
             int generated = statement.executeUpdate();
-            if (generated > 0)
+            if (generated > 0) {
                 return true;
+            }
         } catch (SQLException e) {
-            log.error("SQLException occurred in TransferJDBC.class at create() method");
+            log.error("Could not add TransferOperation", e);
         }
         return false;
     }
@@ -50,10 +50,11 @@ public class TransferJDBC implements TransferDAO {
         try (PreparedStatement statement = connection.prepareStatement(count)) {
             statement.setInt(1, userId);
             ResultSet rs = statement.executeQuery();
-            if (rs.next())
+            if (rs.next()) {
                 total = rs.getInt(TOTAL.getName());
+            }
         } catch (SQLException e) {
-            log.error("SQLException occurred in TransferJDBC.class at count() method");
+            log.error("Could not count by id", e);
         }
         return total;
     }
@@ -67,10 +68,11 @@ public class TransferJDBC implements TransferDAO {
             statement.setInt(2, allOperationsDTO.getPageSize());
             ResultSet rs = statement.executeQuery();
             Mapper<OperationsData> operationMapper = new OperationMapper();
-            while (rs.next())
+            while (rs.next()) {
                 list.add(operationMapper.getEntity(rs));
+            }
         } catch (SQLException e) {
-            log.error("SQLException occurred in TransferJDBC.class at getLimitOperations() method");
+            log.error("Could not get limit operations", e);
         }
         AllOperationsDTO operationsDTO = new AllOperationsDTO();
         operationsDTO.setUserId(allOperationsDTO.getUserId());
@@ -89,10 +91,11 @@ public class TransferJDBC implements TransferDAO {
         try (PreparedStatement statement = connection.prepareStatement(getById)) {
             statement.setInt(1, id);
             ResultSet rs = statement.executeQuery();
-            if (rs.next())
+            if (rs.next()) {
                 transferOperation = transferMapper.getEntity(rs);
+            }
         } catch (SQLException e) {
-            log.error("SQLException occurred in UserAccountJDBC.class at getById() method");
+            log.error("Could not get TransferOperation by id", e);
         }
         return transferOperation;
     }

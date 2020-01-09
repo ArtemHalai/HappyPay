@@ -4,15 +4,11 @@ import dao.intefaces.UserAccountDAO;
 import dao.mappers.Mapper;
 import dao.mappers.UserAccountMapper;
 import lombok.extern.log4j.Log4j;
-import model.RefillOperation;
 import model.UserAccount;
-import org.apache.log4j.Logger;
 import util.DateValidity;
 
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 @Log4j
 public class UserAccountJDBC implements UserAccountDAO {
@@ -34,10 +30,11 @@ public class UserAccountJDBC implements UserAccountDAO {
             statement.setBoolean(3, userAccount.isDeposit());
             statement.setBoolean(4, userAccount.isCredit());
             int generated = statement.executeUpdate();
-            if (generated > 0)
+            if (generated > 0) {
                 return true;
+            }
         } catch (SQLException e) {
-            log.error("SQLException occurred in UserAccountJDBC.class at add() method");
+            log.error("Could not add UserAccount", e);
         }
         return false;
     }
@@ -49,10 +46,11 @@ public class UserAccountJDBC implements UserAccountDAO {
             statement.setDouble(1, amount);
             statement.setInt(2, userId);
             int generated = statement.executeUpdate();
-            if (generated > 0)
+            if (generated > 0) {
                 return true;
+            }
         } catch (SQLException e) {
-            log.error("SQLException occurred in UserAccountJDBC.class at updateBalanceById() method");
+            log.error("Could not update balance by id", e);
         }
         return false;
     }
@@ -67,11 +65,11 @@ public class UserAccountJDBC implements UserAccountDAO {
         try (PreparedStatement statement = connection.prepareStatement(getById)) {
             statement.setInt(1, id);
             ResultSet rs = statement.executeQuery();
-
-            if (rs.next())
+            if (rs.next()) {
                 userAccount = userAccountMapper.getEntity(rs);
+            }
         } catch (SQLException e) {
-            log.error("SQLException occurred in UserAccountJDBC.class at getById() method");
+            log.error("Could not get UserAccount by id", e);
         }
         return userAccount;
     }
@@ -83,10 +81,11 @@ public class UserAccountJDBC implements UserAccountDAO {
             statement.setBoolean(1, decision);
             statement.setInt(2, id);
             int generated = statement.executeUpdate();
-            if (generated > 0)
+            if (generated > 0) {
                 return true;
+            }
         } catch (SQLException e) {
-            log.error("SQLException occurred in UserAccountJDBC.class at updateCreditStatusById() method");
+            log.error("Could not update credit status by id", e);
         }
         return false;
     }
@@ -98,10 +97,11 @@ public class UserAccountJDBC implements UserAccountDAO {
             statement.setDate(1, DateValidity.getValidity(), Calendar.getInstance());
             statement.setLong(2, userId);
             int generated = statement.executeUpdate();
-            if (generated > 0)
+            if (generated > 0) {
                 return true;
+            }
         } catch (SQLException e) {
-            log.error("SQLException occurred in UserAccountJDBC.class at updateTerm() method");
+            log.error("Could not update term by id", e);
         }
         return false;
     }
@@ -117,10 +117,11 @@ public class UserAccountJDBC implements UserAccountDAO {
         try (PreparedStatement statement = connection.prepareStatement(getById)) {
             statement.setLong(1, recipientAccountNumber);
             ResultSet rs = statement.executeQuery();
-            if (rs.next())
+            if (rs.next()) {
                 userAccount = userAccountMapper.getEntity(rs);
+            }
         } catch (SQLException e) {
-            log.error("SQLException occurred in UserAccountJDBC.class at getByAccountNumber() method");
+            log.error("Could not get UserAccount by account number", e);
         }
         return userAccount;
     }
@@ -132,10 +133,11 @@ public class UserAccountJDBC implements UserAccountDAO {
             statement.setDouble(1, amount);
             statement.setLong(2, recipientAccountNumber);
             int generated = statement.executeUpdate();
-            if (generated > 0)
+            if (generated > 0) {
                 return true;
+            }
         } catch (SQLException e) {
-            log.error("SQLException occurred in UserAccountJDBC.class at updateByAccount() method");
+            log.error("Could not update balance by account number", e);
         }
         return false;
     }
@@ -147,10 +149,11 @@ public class UserAccountJDBC implements UserAccountDAO {
             statement.setBoolean(1, decision);
             statement.setInt(2, userId);
             int generated = statement.executeUpdate();
-            if (generated > 0)
+            if (generated > 0) {
                 return true;
+            }
         } catch (SQLException e) {
-            log.error("SQLException occurred in UserAccountJDBC.class at updateDepositStatusById() method");
+            log.error("Could not update deposit status by id", e);
         }
         return false;
     }

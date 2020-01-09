@@ -8,7 +8,6 @@ import lombok.extern.log4j.Log4j;
 import model.AllOperationsDTO;
 import model.BillPaymentOperation;
 import model.OperationsData;
-import org.apache.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -27,9 +26,9 @@ public class BillPaymentJDBC implements BillPaymentDAO {
 
     @Override
     public boolean add(BillPaymentOperation billPaymentOperation) {
-
         String add = "INSERT INTO bill_payment_operation (user_id, bill_number, purpose, amount, operation_type) " +
                 "VALUES (?, ?, ?, ?, ?)";
+
         try (PreparedStatement statement = connection.prepareStatement(add)) {
             statement.setInt(1, billPaymentOperation.getUserId());
             statement.setLong(2, billPaymentOperation.getBillNumber());
@@ -37,10 +36,11 @@ public class BillPaymentJDBC implements BillPaymentDAO {
             statement.setDouble(4, billPaymentOperation.getAmount());
             statement.setString(5, billPaymentOperation.getOperationType());
             int generated = statement.executeUpdate();
-            if (generated > 0)
+            if (generated > 0) {
                 return true;
+            }
         } catch (SQLException e) {
-            log.error("SQLException occurred in BillPaymentJDBC.class at add() method");
+            log.error("Could not add BillPaymentOperation", e);
         }
         return false;
     }
@@ -48,14 +48,16 @@ public class BillPaymentJDBC implements BillPaymentDAO {
     @Override
     public int count(int userId) {
         String count = "SELECT COUNT(*) AS total FROM bill_payment_operation WHERE user_id = ?";
+
         int total = 0;
         try (PreparedStatement statement = connection.prepareStatement(count)) {
             statement.setInt(1, userId);
             ResultSet rs = statement.executeQuery();
-            if (rs.next())
+            if (rs.next()) {
                 total = rs.getInt(TOTAL.getName());
+            }
         } catch (SQLException e) {
-            log.error("SQLException occurred in BillPaymentJDBC.class at count() method");
+            log.error("Could not count by userId", e);
         }
         return total;
     }
@@ -63,16 +65,18 @@ public class BillPaymentJDBC implements BillPaymentDAO {
     @Override
     public AllOperationsDTO getLimitOperations(AllOperationsDTO allOperationsDTO) {
         String getOperations = "SELECT * FROM bill_payment_operation WHERE user_id = ? ORDER BY date DESC LIMIT ?";
+
         List<OperationsData> list = new ArrayList<>();
         try (PreparedStatement statement = connection.prepareStatement(getOperations)) {
             statement.setInt(1, allOperationsDTO.getUserId());
             statement.setInt(2, allOperationsDTO.getPageSize());
             ResultSet rs = statement.executeQuery();
             Mapper<OperationsData> operationMapper = new OperationMapper();
-            while (rs.next())
+            while (rs.next()) {
                 list.add(operationMapper.getEntity(rs));
+            }
         } catch (SQLException e) {
-            log.error("SQLException occurred in BillPaymentJDBC.class at getLimitOperations() method");
+            log.error("Could not getLimitOperations", e);
         }
         AllOperationsDTO operationsDTO = new AllOperationsDTO();
         operationsDTO.setUserId(allOperationsDTO.getUserId());
@@ -87,13 +91,15 @@ public class BillPaymentJDBC implements BillPaymentDAO {
         billPaymentOperation.setUserId(-1);
 
         String getById = "SELECT * FROM bill_payment_operation WHERE user_id = ?";
+
         try (PreparedStatement statement = connection.prepareStatement(getById)) {
             statement.setInt(1, id);
             ResultSet rs = statement.executeQuery();
-            if (rs.next())
+            if (rs.next()) {
                 billPaymentOperation = billPaymentMapper.getEntity(rs);
+            }
         } catch (SQLException e) {
-            log.error("SQLException occurred in BillPaymentJDBC.class at getById() method");
+            log.error("Could not get BillPaymentOperation by id", e);
         }
         return billPaymentOperation;
     }

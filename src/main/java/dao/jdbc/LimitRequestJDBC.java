@@ -7,7 +7,6 @@ import dao.mappers.Mapper;
 import lombok.extern.log4j.Log4j;
 import model.LimitRequest;
 import model.LimitRequestAdmin;
-import org.apache.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -30,16 +29,18 @@ public class LimitRequestJDBC implements LimitRequestDAO {
     public boolean add(LimitRequest limitRequest) {
         String add = "INSERT INTO limit_request (user_id, amount, decision, operation_date) " +
                 "VALUES (?, ?, ?, ?)";
+
         try (PreparedStatement statement = connection.prepareStatement(add)) {
             statement.setInt(1, limitRequest.getUserId());
             statement.setDouble(2, limitRequest.getAmount());
             statement.setBoolean(3, limitRequest.isDecision());
             statement.setDate(4, limitRequest.getOperationDate(), Calendar.getInstance());
             int generated = statement.executeUpdate();
-            if (generated > 0)
+            if (generated > 0) {
                 return true;
+            }
         } catch (SQLException e) {
-            log.error("SQLException occurred in LimitRequestJDBC.class at add() method");
+            log.error("Could not add LimitRequest", e);
         }
         return false;
     }
@@ -55,15 +56,13 @@ public class LimitRequestJDBC implements LimitRequestDAO {
         try (PreparedStatement statement = connection.prepareStatement(findAll)) {
             statement.setBoolean(1, decision);
             ResultSet rs = statement.executeQuery();
-
             Mapper<LimitRequestAdmin> limitRequestAdminMapper = new LimitRequestAdminMapper();
-
             while (rs.next()) {
                 LimitRequestAdmin limitRequest = limitRequestAdminMapper.getEntity(rs);
                 list.add(limitRequest);
             }
         } catch (SQLException e) {
-            log.error("SQLException occurred in LimitRequestJDBC.class at findAllByDecision() method");
+            log.error("Could not find all LimitRequestAdmin objects by decision", e);
         }
         return list;
     }
@@ -71,14 +70,16 @@ public class LimitRequestJDBC implements LimitRequestDAO {
     @Override
     public boolean updateDecision(boolean decision, int userId) {
         String updateDecision = "UPDATE limit_request SET decision = ? WHERE user_id = ?";
+
         try (PreparedStatement statement = connection.prepareStatement(updateDecision)) {
             statement.setBoolean(1, decision);
             statement.setInt(2, userId);
             int generated = statement.executeUpdate();
-            if (generated > 0)
+            if (generated > 0) {
                 return true;
+            }
         } catch (SQLException e) {
-            log.error("SQLException occurred in LimitRequestJDBC.class at updateDecision() method");
+            log.error("Could not update decision by id", e);
         }
         return false;
     }
@@ -86,13 +87,15 @@ public class LimitRequestJDBC implements LimitRequestDAO {
     @Override
     public boolean deleteRequest(int userId) {
         String deleteRequest = "DELETE FROM limit_request WHERE user_id = ?";
+
         try (PreparedStatement statement = connection.prepareStatement(deleteRequest)) {
             statement.setInt(1, userId);
             int generated = statement.executeUpdate();
-            if (generated > 0)
+            if (generated > 0) {
                 return true;
+            }
         } catch (SQLException e) {
-            log.error("SQLException occurred in LimitRequestJDBC.class at deleteRequest() method");
+            log.error("Could not delete request by id", e);
         }
         return false;
     }
@@ -104,13 +107,15 @@ public class LimitRequestJDBC implements LimitRequestDAO {
         limitRequest.setUserId(-1);
 
         String getById = "SELECT * FROM limit_request WHERE user_id = ?";
+
         try (PreparedStatement statement = connection.prepareStatement(getById)) {
             statement.setInt(1, id);
             ResultSet rs = statement.executeQuery();
-            if (rs.next())
+            if (rs.next()) {
                 limitRequest = limitRequestMapper.getEntity(rs);
+            }
         } catch (SQLException e) {
-            log.error("SQLException occurred in LimitRequestJDBC.class at getById() method");
+            log.error("Could not get LimitRequest by id", e);
         }
         return limitRequest;
     }

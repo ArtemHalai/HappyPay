@@ -5,7 +5,6 @@ import dao.mappers.DepositAccountMapper;
 import dao.mappers.Mapper;
 import lombok.extern.log4j.Log4j;
 import model.DepositAccount;
-import org.apache.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -25,9 +24,9 @@ public class DepositAccountJDBC implements DepositAccountDAO {
 
     @Override
     public boolean add(DepositAccount depositAccount) {
-
         String add = "INSERT INTO deposit_accounts (user_id, balance, currency, deposit_term, rate, term, start_date)" +
                 " VALUES (?, ?, ?, ?, ?, ?, ?)";
+
         try (PreparedStatement statement = connection.prepareStatement(add)) {
             statement.setInt(1, depositAccount.getUserId());
             statement.setDouble(2, depositAccount.getBalance());
@@ -37,11 +36,11 @@ public class DepositAccountJDBC implements DepositAccountDAO {
             statement.setDate(6, depositAccount.getTerm(), Calendar.getInstance());
             statement.setDate(7, depositAccount.getStartDate(), Calendar.getInstance());
             int generated = statement.executeUpdate();
-
-            if (generated > 0)
+            if (generated > 0) {
                 return true;
+            }
         } catch (SQLException e) {
-            log.error("SQLException occurred in DepositAccountJDBC.class at add() method");
+            log.error("Could not add DepositAccount", e);
         }
         return false;
     }
@@ -49,14 +48,16 @@ public class DepositAccountJDBC implements DepositAccountDAO {
     @Override
     public boolean updateBalanceById(double amount, int userId) {
         String updateBalance = "UPDATE deposit_accounts SET balance = ? WHERE user_id = ?";
+
         try (PreparedStatement statement = connection.prepareStatement(updateBalance)) {
             statement.setDouble(1, amount);
             statement.setInt(2, userId);
             int generated = statement.executeUpdate();
-            if (generated > 0)
+            if (generated > 0) {
                 return true;
+            }
         } catch (SQLException e) {
-            log.error("SQLException occurred in DepositAccountJDBC.class at updateBalanceById() method");
+            log.error("Could not update balance by id", e);
         }
         return false;
     }
@@ -65,13 +66,15 @@ public class DepositAccountJDBC implements DepositAccountDAO {
     public boolean deleteDepositAccount(int userId) {
         if (count(userId) > 0) {
             String delete = "DELETE FROM deposit_accounts WHERE user_id = ?";
+
             try (PreparedStatement statement = connection.prepareStatement(delete)) {
                 statement.setInt(1, userId);
                 int generated = statement.executeUpdate();
-                if (generated > 0)
+                if (generated > 0) {
                     return true;
+                }
             } catch (SQLException e) {
-                log.error("SQLException occurred in DepositAccountJDBC.class at deleteDepositAccount() method");
+                log.error("Could not delete deposit account by id", e);
             }
             return false;
         }
@@ -81,14 +84,16 @@ public class DepositAccountJDBC implements DepositAccountDAO {
     @Override
     public int count(int userId) {
         String count = "SELECT COUNT(*) AS total FROM deposit_accounts WHERE user_id = ?";
+
         int total = 0;
         try (PreparedStatement statement = connection.prepareStatement(count)) {
             statement.setInt(1, userId);
             ResultSet rs = statement.executeQuery();
-            if (rs.next())
+            if (rs.next()) {
                 total = rs.getInt(TOTAL.getName());
+            }
         } catch (SQLException e) {
-            log.error("SQLException occurred in DepositAccountJDBC.class at count() method");
+            log.error("Could not count by id", e);
         }
         return total;
     }
@@ -107,7 +112,7 @@ public class DepositAccountJDBC implements DepositAccountDAO {
                 list.add(depositAccount);
             }
         } catch (SQLException e) {
-            log.error("SQLException occurred in DepositAccountJDBC.class at getAll() method");
+            log.error("Could not get all DepositAccount objects", e);
         }
         return list;
     }
@@ -118,13 +123,15 @@ public class DepositAccountJDBC implements DepositAccountDAO {
         DepositAccount depositAccount = new DepositAccount();
         depositAccount.setUserId(-1);
         String getById = "SELECT * FROM deposit_accounts WHERE user_id = ?";
+
         try (PreparedStatement statement = connection.prepareStatement(getById)) {
             statement.setInt(1, id);
             ResultSet rs = statement.executeQuery();
-            if (rs.next())
+            if (rs.next()) {
                 depositAccount = depositAccountMapper.getEntity(rs);
+            }
         } catch (SQLException e) {
-            log.error("SQLException occurred in DepositAccountJDBC.class at getById() method");
+            log.error("Could not get DepositAccount by id", e);
         }
         return depositAccount;
     }
