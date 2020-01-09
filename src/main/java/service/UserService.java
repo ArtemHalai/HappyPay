@@ -4,8 +4,6 @@ import dao.intefaces.UserDAO;
 import model.User;
 import util.PasswordEncryption;
 
-import static enums.Role.ADMIN;
-
 public class UserService {
 
     private UserDAO userDAO;

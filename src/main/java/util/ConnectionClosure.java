@@ -1,13 +1,12 @@
 package util;
 
-import org.apache.log4j.Logger;
+import lombok.extern.log4j.Log4j;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
+@Log4j
 public class ConnectionClosure {
-
-    private static final Logger log = Logger.getLogger(ConnectionClosure.class);
 
     public static void close(Connection connection) {
         try {

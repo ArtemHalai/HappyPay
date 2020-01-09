@@ -27,7 +27,7 @@ public class UserServiceTest {
     private final String USERNAME = "USERNAME";
 
     @Test
-    public void getUserByUsernameAndPassword() {
+    public void getUserByUsernameAndPassword_ReturnsUserObject_WhenUserExists() {
         user.setUsername(USERNAME);
         when(dao.isUserExist(USERNAME)).thenReturn(null);
         User userByUsernameAndPassword = service.getUserByUsernameAndPassword(user);
@@ -36,7 +36,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void isUserExist() {
+    public void isUserExist_ReturnsTrue_WhenUserWithCurrentUsernameIsNotEqualNull() {
         when(dao.isUserExist(USERNAME)).thenReturn(user);
         boolean userExist = service.isUserExist(USERNAME);
         verify(dao).isUserExist(USERNAME);
@@ -44,10 +44,10 @@ public class UserServiceTest {
     }
 
     @Test
-    public void addUser() {
+    public void addUser_ReturnsGeneratedUserId_WhenUserAddedSuccessfully() {
         when(dao.add(user)).thenReturn(1);
-        int i = service.addUser(user);
+        int userId = service.addUser(user);
         verify(dao).add(user);
-        assertEquals(1, i);
+        assertEquals(1, userId);
     }
 }

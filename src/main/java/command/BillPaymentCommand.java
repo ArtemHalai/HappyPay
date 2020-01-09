@@ -61,18 +61,18 @@ public class BillPaymentCommand implements Command {
             request.setAttribute(ERRORS.getName(), errors);
             return ERROR;
         } else {
-            Mappings billPayed = makeBillPayment(userId, amount, billNumber, purpose);
-            if (billPayed.equals(ERROR)) {
+            boolean billPayed = makeBillPayment(userId, amount, billNumber, purpose);
+            if (!billPayed) {
                 errors.put(ACCOUNT.getName(), ACCOUNT_ERROR.getName());
                 request.setAttribute(ERRORS.getName(), errors);
                 return ERROR;
             } else {
-                return billPayed;
+                return SUCCESSFUL;
             }
         }
     }
 
-    private Mappings makeBillPayment(int userId, double amount, long billNumber, String purpose) {
+    private boolean makeBillPayment(int userId, double amount, long billNumber, String purpose) {
         log.info("Client pays bill from his account with amount: " + amount);
         BillPaymentOperation billPaymentOperation = new BillPaymentOperation();
         billPaymentOperation.setAmount(amount);
@@ -80,10 +80,7 @@ public class BillPaymentCommand implements Command {
         billPaymentOperation.setUserId(userId);
         billPaymentOperation.setPurpose(purpose);
         billPaymentFacade.setBillPaymentService(ServiceFactory.getInstance().getBillPaymentService());
-        boolean payed = billPaymentFacade.payBill(billPaymentOperation);
-        if (payed) {
-            return SUCCESSFUL;
-        }
-        return ERROR;
+
+        return billPaymentFacade.payBill(billPaymentOperation);
     }
 }
