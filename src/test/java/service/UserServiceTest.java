@@ -25,12 +25,35 @@ public class UserServiceTest {
     private UserService service;
 
     private final String USERNAME = "USERNAME";
+    private final String PASS = "12345678";
 
     @Test
     public void getUserByUsernameAndPassword_ReturnsUserObject_WhenUserExists() {
-        user.setUsername(USERNAME);
+        String hashedPassword = "$2$11$1812gH1234yU4321Ea543uAZ7ro0jUrCz4OupZD/nOKpOMo3CAKAm";
+
+        user.setPassword(hashedPassword);
+        when(dao.isUserExist(USERNAME)).thenReturn(user);
+        User userByUsernameAndPassword = service.getUserByUsernameAndPassword(USERNAME, PASS);
+        verify(dao).isUserExist(USERNAME);
+        assertEquals(user, userByUsernameAndPassword);
+    }
+
+    @Test
+    public void getUserByUsernameAndPassword_ReturnsNull_WhenUserIsNotExisting() {
         when(dao.isUserExist(USERNAME)).thenReturn(null);
-        User userByUsernameAndPassword = service.getUserByUsernameAndPassword(user);
+        User userByUsernameAndPassword = service.getUserByUsernameAndPassword(USERNAME, PASS);
+        verify(dao).isUserExist(USERNAME);
+        assertNull(userByUsernameAndPassword);
+    }
+
+    @Test
+    public void getUserByUsernameAndPassword_ReturnsNull_WhenUserEnteredWrongPassword() {
+        String hashedPassword = "$2$11$1812gH1234yU4321Ea543uAZ7ro0jUrCz4OupZD/nOKpOMo3CAKAm";
+        String enteredPassword = "111111111";
+
+        user.setPassword(hashedPassword);
+        when(dao.isUserExist(USERNAME)).thenReturn(user);
+        User userByUsernameAndPassword = service.getUserByUsernameAndPassword(USERNAME, enteredPassword);
         verify(dao).isUserExist(USERNAME);
         assertNull(userByUsernameAndPassword);
     }

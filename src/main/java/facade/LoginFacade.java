@@ -27,13 +27,13 @@ public class LoginFacade {
         this.userService = userService;
     }
 
-    public User getUserByUsernameAndPassword(User user) {
+    public User getUserByUsernameAndPassword(String username, String password) {
         User exist = null;
         try (Connection connection = connectionFactory.getConnection()) {
             userService.setUserDAO(factory.getUserDAO(connection, USER_JDBC));
-            exist = userService.getUserByUsernameAndPassword(user);
+            exist = userService.getUserByUsernameAndPassword(username, password);
         } catch (SQLException e) {
-            log.error("SQLException occurred in LoginFacade.class at getUserByUsernameAndPassword() method");
+            log.error("Could not get user =[{" + username + "}]", e);
         }
         return exist;
     }

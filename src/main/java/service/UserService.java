@@ -12,10 +12,11 @@ public class UserService {
         this.userDAO = userDAO;
     }
 
-    public User getUserByUsernameAndPassword(User user) {
-        User userExist = userDAO.isUserExist(user.getUsername());
+    public User getUserByUsernameAndPassword(String username, String password) {
+
+        User userExist = userDAO.isUserExist(username);
         if (userExist != null) {
-            boolean exist = PasswordEncryption.checkPassword(user.getPassword(), userExist.getPassword());
+            boolean exist = PasswordEncryption.checkPassword(password, userExist.getPassword());
             if (exist) {
                 return userExist;
             }
