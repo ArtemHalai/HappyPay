@@ -24,19 +24,22 @@ public class CreditAccountCommand implements Command {
     @Override
     public Mappings execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
+
         if (CheckRoleAndId.check(session)) {
             int userId = (int) session.getAttribute(USER_ID.getName());
             creditAccountFacade.setCreditAccountService(ServiceFactory.getInstance().getCreditAccountService());
             creditAccountFacade.setUserAccountService(ServiceFactory.getInstance().getUserAccountService());
             UserAccount userAccount = creditAccountFacade.getUserAccount(userId);
-            if (userAccount.getValidity() == null || !DateValidity.valid(userAccount.getValidity()))
+            if (userAccount.getValidity() == null || !DateValidity.valid(userAccount.getValidity())) {
                 return CLIENT_ACCOUNTS;
+            }
 
             log.info("Client requests credit account");
             CreditAccount creditAccount = creditAccountFacade.getCreditAccount(userId);
             session.setAttribute(CREDIT_ACCOUNT.getName(), creditAccount);
-            if (creditAccount.getUserId() > 0)
+            if (creditAccount.getUserId() > 0) {
                 return CREDIT;
+            }
             return CREDIT_REQUEST;
         }
         return LOGIN_VIEW;
