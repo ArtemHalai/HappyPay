@@ -2,22 +2,19 @@ package facade;
 
 import factories.DaoFactory;
 import factories.JDBCConnectionFactory;
-import model.CreditAccount;
-import model.DepositAccount;
+import lombok.extern.log4j.Log4j;
 import model.UserAccount;
-import service.CreditAccountService;
-import service.DepositAccountService;
 import service.UserAccountService;
-import util.ConnectionClosure;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 import static enums.DAOEnum.*;
 
+@Log4j
 public class UserAccountFacade {
 
     private UserAccountService userAccountService;
-    private Connection connection;
     private DaoFactory factory;
     private JDBCConnectionFactory connectionFactory;
 
@@ -31,10 +28,13 @@ public class UserAccountFacade {
     }
 
     public UserAccount getUserAccount(int userId) {
-        connection = connectionFactory.getConnection();
-        userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
-        UserAccount userAccount = userAccountService.getById(userId);
-        ConnectionClosure.close(connection);
+        UserAccount userAccount = new UserAccount();
+        try (Connection connection = connectionFactory.getConnection()) {
+            userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
+            userAccount = userAccountService.getById(userId);
+        } catch (SQLException e) {
+            log.error("Could not get user account");
+        }
         return userAccount;
     }
 }
