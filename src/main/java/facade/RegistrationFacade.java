@@ -48,10 +48,13 @@ public class RegistrationFacade {
             userService.setUserDAO(factory.getUserDAO(connection, USER_JDBC));
             clientDetailsService.setClientDetailsDAO(factory.getClientDetailsDAO(connection, CLIENT_DETAILS_JDBC));
             userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
-            if (userService.isUserExist(clientDetails.getUsername())) {
-                connection.rollback();
-            } else {
-                return addNewUser(clientDetails, connection);
+            if (!userService.isUserExist(clientDetails.getUsername())) {
+                try {
+                    return addNewUser(clientDetails, connection);
+                } catch (SQLException e) {
+                    connection.rollback();
+                    log.error("Could not add ClientDetails object", e);
+                }
             }
         } catch (SQLException e) {
             log.error("Could not add ClientDetails object", e);
@@ -63,30 +66,24 @@ public class RegistrationFacade {
         int userId;
         int unsuccessful = -1;
 
-        try {
-            User user = new User();
-            user.setUsername(clientDetails.getUsername());
-            user.setPassword(clientDetails.getPassword());
+        User user = new User();
+        user.setUsername(clientDetails.getUsername());
+        user.setPassword(clientDetails.getPassword());
 
-            userId = userService.addUser(user);
-            clientDetails.setUserId(userId);
-            boolean clientDetailsAdded = clientDetailsService.add(clientDetails);
+        userId = userService.addUser(user);
+        clientDetails.setUserId(userId);
+        boolean clientDetailsAdded = clientDetailsService.add(clientDetails);
 
-            UserAccount userAccount = new UserAccount();
-            userAccount.setUserId(userId);
-            userAccount.setValidity(DateValidity.getValidity());
-            userAccount.setCredit(false);
-            userAccount.setDeposit(false);
+        UserAccount userAccount = new UserAccount();
+        userAccount.setUserId(userId);
+        userAccount.setValidity(DateValidity.getValidity());
+        userAccount.setCredit(false);
+        userAccount.setDeposit(false);
 
-            boolean userAccountAdded = userAccountService.add(userAccount);
-            if (userId > 0 && clientDetailsAdded && userAccountAdded) {
-                connection.commit();
-                return userId;
-            }
-        } catch (Exception e) {
-            connection.rollback();
-            log.error("Could not add ClientDetails object", e);
-            return unsuccessful;
+        boolean userAccountAdded = userAccountService.add(userAccount);
+        if (userId > 0 && clientDetailsAdded && userAccountAdded) {
+            connection.commit();
+            return userId;
         }
         connection.rollback();
         return unsuccessful;
