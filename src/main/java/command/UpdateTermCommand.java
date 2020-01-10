@@ -23,20 +23,23 @@ public class UpdateTermCommand implements Command {
     @Override
     public Mappings execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
-        if (!CheckRoleAndId.check(session))
+        if (!CheckRoleAndId.check(session)) {
             return LOGIN_VIEW;
+        }
 
         int userId = (int) session.getAttribute(USER_ID.getName());
 
         updateTermFacade.setUserAccountService(ServiceFactory.getInstance().getUserAccountService());
         UserAccount userAccount = updateTermFacade.getUserAccount(userId);
-        if (userAccount.getValidity() != null && DateValidity.valid(userAccount.getValidity()))
+        if (userAccount.getValidity() != null && DateValidity.valid(userAccount.getValidity())) {
             return CLIENT_ACCOUNTS;
+        }
 
         log.info("Client updates term of account");
 
-        if (updateTermFacade.updateTerm(userId))
+        if (updateTermFacade.updateTerm(userId)) {
             return SUCCESSFUL;
+        }
         return CLIENT_ACCOUNTS;
     }
 }

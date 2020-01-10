@@ -26,18 +26,21 @@ public class RefillListClientCommand implements Command {
     @Override
     public Mappings execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
-        if (!CheckRoleAndId.check(session))
+        if (!CheckRoleAndId.check(session)) {
             return LOGIN_VIEW;
+        }
 
         int userId = (int) session.getAttribute(USER_ID.getName());
         refillListClientFacade.setUserAccountService(ServiceFactory.getInstance().getUserAccountService());
         UserAccount userAccount = refillListClientFacade.getUserAccount(userId);
-        if (userAccount.getValidity() == null || !DateValidity.valid(userAccount.getValidity()))
+        if (userAccount.getValidity() == null || !DateValidity.valid(userAccount.getValidity())) {
             return CLIENT_ACCOUNTS;
+        }
 
         int page = 1;
-        if (request.getParameter(PAGE.getName()) != null)
+        if (request.getParameter(PAGE.getName()) != null) {
             page = Integer.parseInt(request.getParameter(PAGE.getName()));
+        }
 
         RefillPaginationDTO paginationDTO = new RefillPaginationDTO();
         paginationDTO.setUserId(userId);

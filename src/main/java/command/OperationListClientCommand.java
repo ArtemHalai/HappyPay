@@ -26,15 +26,17 @@ public class OperationListClientCommand implements Command {
     @Override
     public Mappings execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
-        if (!CheckRoleAndId.check(session))
+        if (!CheckRoleAndId.check(session)) {
             return LOGIN_VIEW;
+        }
 
         int userId = (int) session.getAttribute(USER_ID.getName());
 
         refillListClientFacade.setUserAccountService(ServiceFactory.getInstance().getUserAccountService());
         UserAccount userAccount = refillListClientFacade.getUserAccount(userId);
-        if (userAccount.getValidity() == null || !DateValidity.valid(userAccount.getValidity()))
+        if (userAccount.getValidity() == null || !DateValidity.valid(userAccount.getValidity())) {
             return CLIENT_ACCOUNTS;
+        }
 
         AllOperationsDTO allOperationsDTO = new AllOperationsDTO();
         allOperationsDTO.setUserId(userId);
@@ -43,10 +45,11 @@ public class OperationListClientCommand implements Command {
         refillListClientFacade.setBillPaymentService(ServiceFactory.getInstance().getBillPaymentService());
         refillListClientFacade.setTransferService(ServiceFactory.getInstance().getTransferService());
         AllOperationsDTO paginationDTO = refillListClientFacade.getAllOperations(allOperationsDTO);
-        if (!paginationDTO.getList().isEmpty())
+        if (!paginationDTO.getList().isEmpty()) {
             request.setAttribute(OPERATION_LIST_CLIENT.getName(), paginationDTO.getList());
-        else
+        } else {
             request.setAttribute(ERRORS.getName(), NO_OPERATION_ERROR.getName());
+        }
 
         return OPERATION_LIST_CLIENT;
     }

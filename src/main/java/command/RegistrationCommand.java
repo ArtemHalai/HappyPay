@@ -27,8 +27,6 @@ public class RegistrationCommand implements Command {
 
     private RegistrationFacade registrationFacade = new RegistrationFacade();
 
-    private Map<String, String> errors;
-
     @Override
     public Mappings execute(HttpServletRequest request, HttpServletResponse response) {
         String name = request.getParameter(NAME.getName());
@@ -38,8 +36,9 @@ public class RegistrationCommand implements Command {
         String phoneNumber = request.getParameter(PHONE_NUMBER.getName());
         String birthday = request.getParameter(BIRTHDAY.getName());
 
-        if (name == null)
+        if (name == null) {
             return REGISTRATION_VIEW;
+        }
 
         ClientDetails clientDetails = new ClientDetails();
         clientDetails.setName(name);
@@ -49,7 +48,8 @@ public class RegistrationCommand implements Command {
         clientDetails.setPhoneNumber(phoneNumber);
         clientDetails.setBirthday(DateParser.parse(birthday));
 
-        if (validation(clientDetails)) {
+        Map<String, String> errors = validation(clientDetails);
+        if (!errors.isEmpty()) {
             request.setAttribute(ERRORS.getName(), errors);
             return ERROR;
         } else {
@@ -72,9 +72,8 @@ public class RegistrationCommand implements Command {
         }
     }
 
-    private boolean validation(ClientDetails clientDetails) {
+    private Map<String, String> validation(ClientDetails clientDetails) {
         Validator registrationValidator = new RegistrationValidator(clientDetails);
-        errors = registrationValidator.validate();
-        return !errors.isEmpty();
+        return registrationValidator.validate();
     }
 }

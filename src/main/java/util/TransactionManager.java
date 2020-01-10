@@ -1,7 +1,6 @@
 package util;
 
 import lombok.extern.log4j.Log4j;
-import org.apache.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.SQLException;

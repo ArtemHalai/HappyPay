@@ -33,20 +33,26 @@ public class PayArrearsCommand implements Command {
     @Override
     public Mappings execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
-        if (!CheckRoleAndId.check(session))
+
+        if (!CheckRoleAndId.check(session)) {
             return LOGIN_VIEW;
+        }
+
         int userId = (int) session.getAttribute(USER_ID.getName());
         payArrearsFacade.setUserAccountService(ServiceFactory.getInstance().getUserAccountService());
         UserAccount userAccount = payArrearsFacade.getUserAccount(userId);
-        if (userAccount.getValidity() == null || !DateValidity.valid(userAccount.getValidity()))
+        if (userAccount.getValidity() == null || !DateValidity.valid(userAccount.getValidity())) {
             return CLIENT_ACCOUNTS;
+        }
 
         payArrearsFacade.setCreditAccountService(ServiceFactory.getInstance().getCreditAccountService());
-        if (!payArrearsFacade.checkArrears(userId))
+        if (!payArrearsFacade.checkArrears(userId)) {
             return CREDIT;
+        }
 
-        if (request.getParameter(AMOUNT.getName()) == null)
+        if (request.getParameter(AMOUNT.getName()) == null) {
             return PAY_ARREARS;
+        }
 
         double amount = Double.parseDouble(request.getParameter(AMOUNT.getName()));
         if (amount <= 0) {
@@ -57,8 +63,9 @@ public class PayArrearsCommand implements Command {
         }
         log.info("Client pays credit arrears");
         boolean payedArrears = payArrearsFacade.payArrears(userId, amount);
-        if (payedArrears)
+        if (payedArrears) {
             return CLIENT_ACCOUNTS;
+        }
         errors.put(NOT_ENOUGH_AMOUNT.getName(), NOT_ENOUGH_ERROR.getName());
         return PAY_ARREARS;
     }

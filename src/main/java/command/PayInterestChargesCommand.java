@@ -32,20 +32,26 @@ public class PayInterestChargesCommand implements Command {
     @Override
     public Mappings execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
-        if (!CheckRoleAndId.check(session))
+
+        if (!CheckRoleAndId.check(session)) {
             return LOGIN_VIEW;
+        }
+
         int userId = (int) session.getAttribute(USER_ID.getName());
         payInterestChargesFacade.setUserAccountService(ServiceFactory.getInstance().getUserAccountService());
         UserAccount userAccount = payInterestChargesFacade.getUserAccount(userId);
-        if (userAccount.getValidity() == null || !DateValidity.valid(userAccount.getValidity()))
+        if (userAccount.getValidity() == null || !DateValidity.valid(userAccount.getValidity())) {
             return CLIENT_ACCOUNTS;
+        }
 
         payInterestChargesFacade.setCreditAccountService(ServiceFactory.getInstance().getCreditAccountService());
-        if (!payInterestChargesFacade.checkInterestCharges(userId))
+        if (!payInterestChargesFacade.checkInterestCharges(userId)) {
             return CREDIT;
+        }
 
-        if (request.getParameter(AMOUNT.getName()) == null)
+        if (request.getParameter(AMOUNT.getName()) == null) {
             return PAY_INTEREST_CHARGES;
+        }
 
         double amount = Double.parseDouble(request.getParameter(AMOUNT.getName()));
         if (amount <= 0) {
@@ -56,8 +62,9 @@ public class PayInterestChargesCommand implements Command {
         }
         log.info("Client pays interest charges");
         boolean payedInterest = payInterestChargesFacade.payInterestCharges(userId, amount);
-        if (payedInterest)
+        if (payedInterest) {
             return CLIENT_ACCOUNTS;
+        }
         errors.put(NOT_ENOUGH_AMOUNT.getName(), NOT_ENOUGH_ERROR.getName());
         return PAY_INTEREST_CHARGES;
     }

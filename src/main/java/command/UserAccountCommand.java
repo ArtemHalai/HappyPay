@@ -30,10 +30,11 @@ public class UserAccountCommand implements Command {
             log.info("Client requests his accounts");
             userAccountFacade.setUserAccountService(ServiceFactory.getInstance().getUserAccountService());
             UserAccount userAccount = userAccountFacade.getUserAccount(userId);
-            if (userAccount.getValidity() != null && DateValidity.valid(userAccount.getValidity()))
+            if (userAccount.getValidity() != null && DateValidity.valid(userAccount.getValidity())) {
                 session.setAttribute(CLIENT_ACCOUNTS.getName(), userAccount);
-            else
+            } else {
                 request.setAttribute(ERRORS.getName(), VALIDITY_ERROR.getName());
+            }
             return CLIENT_ACCOUNTS;
         }
         return LOGIN_VIEW;
