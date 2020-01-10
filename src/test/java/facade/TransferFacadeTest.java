@@ -103,7 +103,7 @@ public class TransferFacadeTest {
     }
 
     @Test
-    public void getUserAccount_ReturnsFalse_WhenBillWasNotPayed() {
+    public void getUserAccount_ReturnsUserAccount_WhenUserExistsForGivenId() {
         when(userAccountService.getById(USER_ID)).thenReturn(userAccount);
 
         UserAccount actualUserAccount = transferFacade.getUserAccount(USER_ID);
