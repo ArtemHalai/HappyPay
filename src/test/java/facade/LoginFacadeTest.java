@@ -48,8 +48,6 @@ public class LoginFacadeTest {
 
         User userByUsernameAndPassword = loginFacade.getUserByUsernameAndPassword(USERNAME, PASS);
 
-        verify(userService).getUserByUsernameAndPassword(USERNAME, PASS);
-
         assertEquals(user, userByUsernameAndPassword);
     }
 
@@ -58,8 +56,6 @@ public class LoginFacadeTest {
         when(userService.getUserByUsernameAndPassword(USERNAME, PASS)).thenReturn(null);
 
         User userByUsernameAndPassword = loginFacade.getUserByUsernameAndPassword(USERNAME, PASS);
-
-        verify(userService).getUserByUsernameAndPassword(USERNAME, PASS);
 
         assertNull(userByUsernameAndPassword);
     }

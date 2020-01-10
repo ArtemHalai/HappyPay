@@ -33,7 +33,7 @@ public class LoginFacade {
             userService.setUserDAO(factory.getUserDAO(connection, USER_JDBC));
             exist = userService.getUserByUsernameAndPassword(username, password);
         } catch (SQLException e) {
-            log.error("Could not get user =[{" + username + "}]", e);
+            log.error("Could not get user", e);
         }
         return exist;
     }

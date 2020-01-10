@@ -59,28 +59,36 @@ public class RegistrationFacade {
         return userId;
     }
 
-    private int addNewUser(ClientDetails clientDetails, Connection connection) {
+    private int addNewUser(ClientDetails clientDetails, Connection connection) throws SQLException {
         int userId;
         int unsuccessful = -1;
 
-        User user = new User();
-        user.setUsername(clientDetails.getUsername());
-        user.setPassword(clientDetails.getPassword());
+        try {
+            User user = new User();
+            user.setUsername(clientDetails.getUsername());
+            user.setPassword(clientDetails.getPassword());
 
-        userId = userService.addUser(user);
-        clientDetails.setUserId(userId);
-        boolean clientDetailsAdded = clientDetailsService.add(clientDetails);
-        UserAccount userAccount = new UserAccount();
-        userAccount.setUserId(userId);
-        userAccount.setValidity(DateValidity.getValidity());
-        userAccount.setCredit(false);
-        userAccount.setDeposit(false);
-        boolean userAccountAdded = userAccountService.add(userAccount);
-        if (userId > 0 && clientDetailsAdded && userAccountAdded) {
-            TransactionManager.commitTransaction(connection);
-            return userId;
+            userId = userService.addUser(user);
+            clientDetails.setUserId(userId);
+            boolean clientDetailsAdded = clientDetailsService.add(clientDetails);
+
+            UserAccount userAccount = new UserAccount();
+            userAccount.setUserId(userId);
+            userAccount.setValidity(DateValidity.getValidity());
+            userAccount.setCredit(false);
+            userAccount.setDeposit(false);
+
+            boolean userAccountAdded = userAccountService.add(userAccount);
+            if (userId > 0 && clientDetailsAdded && userAccountAdded) {
+                connection.commit();
+                return userId;
+            }
+        } catch (Exception e) {
+            connection.rollback();
+            log.error("Could not add ClientDetails object", e);
+            return unsuccessful;
         }
-        TransactionManager.rollbackTransaction(connection);
+        connection.rollback();
         return unsuccessful;
     }
 }

@@ -24,8 +24,8 @@ public class UserServiceTest {
     @InjectMocks
     private UserService service;
 
-    private final String USERNAME = "USERNAME";
-    private final String PASS = "12345678";
+    private static final String USERNAME = "USERNAME";
+    private static final String PASS = "12345678";
 
     @Test
     public void getUserByUsernameAndPassword_ReturnsUserObject_WhenUserExists() {
@@ -34,7 +34,6 @@ public class UserServiceTest {
         user.setPassword(hashedPassword);
         when(dao.isUserExist(USERNAME)).thenReturn(user);
         User userByUsernameAndPassword = service.getUserByUsernameAndPassword(USERNAME, PASS);
-        verify(dao).isUserExist(USERNAME);
         assertEquals(user, userByUsernameAndPassword);
     }
 
@@ -42,19 +41,17 @@ public class UserServiceTest {
     public void getUserByUsernameAndPassword_ReturnsNull_WhenUserIsNotExisting() {
         when(dao.isUserExist(USERNAME)).thenReturn(null);
         User userByUsernameAndPassword = service.getUserByUsernameAndPassword(USERNAME, PASS);
-        verify(dao).isUserExist(USERNAME);
         assertNull(userByUsernameAndPassword);
     }
 
     @Test
     public void getUserByUsernameAndPassword_ReturnsNull_WhenUserEnteredWrongPassword() {
         String hashedPassword = "$2$11$1812gH1234yU4321Ea543uAZ7ro0jUrCz4OupZD/nOKpOMo3CAKAm";
-        String enteredPassword = "111111111";
+        String enteredWrongPassword = "111111111";
 
         user.setPassword(hashedPassword);
         when(dao.isUserExist(USERNAME)).thenReturn(user);
-        User userByUsernameAndPassword = service.getUserByUsernameAndPassword(USERNAME, enteredPassword);
-        verify(dao).isUserExist(USERNAME);
+        User userByUsernameAndPassword = service.getUserByUsernameAndPassword(USERNAME, enteredWrongPassword);
         assertNull(userByUsernameAndPassword);
     }
 
@@ -62,7 +59,6 @@ public class UserServiceTest {
     public void isUserExist_ReturnsTrue_WhenUserWithCurrentUsernameIsNotEqualNull() {
         when(dao.isUserExist(USERNAME)).thenReturn(user);
         boolean userExist = service.isUserExist(USERNAME);
-        verify(dao).isUserExist(USERNAME);
         assertTrue(userExist);
     }
 
@@ -70,7 +66,6 @@ public class UserServiceTest {
     public void addUser_ReturnsGeneratedUserId_WhenUserAddedSuccessfully() {
         when(dao.add(user)).thenReturn(1);
         int userId = service.addUser(user);
-        verify(dao).add(user);
         assertEquals(1, userId);
     }
 }

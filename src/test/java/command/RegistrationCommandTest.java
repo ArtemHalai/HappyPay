@@ -48,10 +48,17 @@ public class RegistrationCommandTest {
     @Before
     public void setUp() {
         when(request.getSession()).thenReturn(session);
+        when(request.getParameter(NAME.getName())).thenReturn(INPUT_NAME);
+        when(request.getParameter(SURNAME.getName())).thenReturn(INPUT_SURNAME);
+        when(request.getParameter(USERNAME.getName())).thenReturn(INPUT_USERNAME);
+        when(request.getParameter(PASSWORD.getName())).thenReturn(INPUT_PASSWORD);
+        when(request.getParameter(PHONE_NUMBER.getName())).thenReturn(INPUT_PHONE_NUMBER);
+        when(request.getParameter(BIRTHDAY.getName())).thenReturn(INPUT_BIRTHDAY);
     }
 
     @Test
     public void execute_ReturnsRegistrationViewMapping_WhenUserInputsAreEmpty() {
+        when(request.getParameter(NAME.getName())).thenReturn(null);
         Mappings actualMapping = command.execute(request, response);
         assertEquals(REGISTRATION_VIEW, actualMapping);
     }
@@ -60,12 +67,7 @@ public class RegistrationCommandTest {
     public void execute_ReturnsErrorMapping_WhenUserHasErrorsInInputForm() {
         String wrongPassword = "1";
 
-        when(request.getParameter(NAME.getName())).thenReturn(INPUT_NAME);
-        when(request.getParameter(SURNAME.getName())).thenReturn(INPUT_SURNAME);
-        when(request.getParameter(USERNAME.getName())).thenReturn(INPUT_USERNAME);
         when(request.getParameter(PASSWORD.getName())).thenReturn(wrongPassword);
-        when(request.getParameter(PHONE_NUMBER.getName())).thenReturn(INPUT_PHONE_NUMBER);
-        when(request.getParameter(BIRTHDAY.getName())).thenReturn(INPUT_BIRTHDAY);
 
         Mappings actualMapping = command.execute(request, response);
         assertEquals(ERROR, actualMapping);
@@ -74,13 +76,6 @@ public class RegistrationCommandTest {
     @Test
     public void execute_ReturnsErrorMapping_WhenUserAlreadyExists() {
         int userId = -1;
-
-        when(request.getParameter(NAME.getName())).thenReturn(INPUT_NAME);
-        when(request.getParameter(SURNAME.getName())).thenReturn(INPUT_SURNAME);
-        when(request.getParameter(USERNAME.getName())).thenReturn(INPUT_USERNAME);
-        when(request.getParameter(PASSWORD.getName())).thenReturn(INPUT_PASSWORD);
-        when(request.getParameter(PHONE_NUMBER.getName())).thenReturn(INPUT_PHONE_NUMBER);
-        when(request.getParameter(BIRTHDAY.getName())).thenReturn(INPUT_BIRTHDAY);
 
         when(facade.addClientDetails(argThat(new ClientDetailsArgumentMatcher()))).thenReturn(userId);
 
@@ -91,13 +86,6 @@ public class RegistrationCommandTest {
     @Test
     public void execute_ReturnsHomeMapping_WhenUserRegisteredSuccessfully() {
         int userId = 1;
-
-        when(request.getParameter(NAME.getName())).thenReturn(INPUT_NAME);
-        when(request.getParameter(SURNAME.getName())).thenReturn(INPUT_SURNAME);
-        when(request.getParameter(USERNAME.getName())).thenReturn(INPUT_USERNAME);
-        when(request.getParameter(PASSWORD.getName())).thenReturn(INPUT_PASSWORD);
-        when(request.getParameter(PHONE_NUMBER.getName())).thenReturn(INPUT_PHONE_NUMBER);
-        when(request.getParameter(BIRTHDAY.getName())).thenReturn(INPUT_BIRTHDAY);
 
         when(facade.addClientDetails(argThat(new ClientDetailsArgumentMatcher()))).thenReturn(userId);
 
