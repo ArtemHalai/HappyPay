@@ -31,7 +31,7 @@ public class DepositAccountCommand implements Command {
             DepositAccount depositAccount = depositAccountFacade.getDepositAccount(userId);
 
             depositAccountFacade.setUserAccountService(ServiceFactory.getInstance().getUserAccountService());
-            UserAccount userAccount = depositAccountFacade.getUserAccount((Integer) session.getAttribute(USER_ID.getName()));
+            UserAccount userAccount = depositAccountFacade.getUserAccount(userId);
             if (userAccount.getValidity() == null || !DateValidity.valid(userAccount.getValidity()))
                 return CLIENT_ACCOUNTS;
 

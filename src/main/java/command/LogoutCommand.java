@@ -14,8 +14,9 @@ public class LogoutCommand implements Command {
     @Override
     public Mappings execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
-        if (session.getAttribute(ROLE.getName()) != null)
+        if (session.getAttribute(ROLE.getName()) != null) {
             session.invalidate();
+        }
         return HOME;
     }
 }

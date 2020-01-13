@@ -1,7 +1,8 @@
-package facade;
+package util;
 
 import factories.DaoFactory;
 import factories.JDBCConnectionFactory;
+import factories.ServiceFactory;
 import lombok.extern.log4j.Log4j;
 import model.UserAccount;
 import service.UserAccountService;
@@ -9,25 +10,22 @@ import service.UserAccountService;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import static enums.DAOEnum.*;
+import static enums.DAOEnum.USER_ACCOUNT_JDBC;
 
 @Log4j
-public class UserAccountFacade {
+public class UserAccountGetter {
 
-    private UserAccountService userAccountService;
-    private DaoFactory factory;
-    private JDBCConnectionFactory connectionFactory;
+    private static UserAccountService userAccountService;
+    private static DaoFactory factory;
+    private static JDBCConnectionFactory connectionFactory;
 
-    public UserAccountFacade() {
+    static {
         factory = DaoFactory.getInstance();
         connectionFactory = JDBCConnectionFactory.getInstance();
+        userAccountService = ServiceFactory.getInstance().getUserAccountService();
     }
 
-    public void setUserAccountService(UserAccountService userAccountService) {
-        this.userAccountService = userAccountService;
-    }
-
-    public UserAccount getUserAccount(int userId) {
+    public static UserAccount getUserAccount(int userId) {
         UserAccount userAccount = new UserAccount();
         try (Connection connection = connectionFactory.getConnection()) {
             userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));

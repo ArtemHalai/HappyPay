@@ -2,22 +2,24 @@ package facade;
 
 import factories.DaoFactory;
 import factories.JDBCConnectionFactory;
+import lombok.extern.log4j.Log4j;
 import model.LimitRequest;
 import model.UserAccount;
 import service.LimitRequestService;
 import service.UserAccountService;
-import util.ConnectionClosure;
+import util.UserAccountGetter;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 import static enums.DAOEnum.LIMIT_JDBC;
 import static enums.DAOEnum.USER_ACCOUNT_JDBC;
 
+@Log4j
 public class LimitRequestFacade {
 
     private LimitRequestService limitRequestService;
     private UserAccountService userAccountService;
-    private Connection connection;
     private DaoFactory factory;
     private JDBCConnectionFactory connectionFactory;
 
@@ -35,22 +37,19 @@ public class LimitRequestFacade {
     }
 
     public boolean addLimitRequest(LimitRequest limitRequest) {
-        connection = connectionFactory.getConnection();
-        limitRequestService.setLimitRequestDAO(factory.getLimitRequestDAO(connection, LIMIT_JDBC));
-        LimitRequest limit = limitRequestService.getById(limitRequest.getUserId());
-        if (limit.getUserId() < 0 && limitRequestService.add(limitRequest)) {
-            ConnectionClosure.close(connection);
-            return true;
+        try (Connection connection = connectionFactory.getConnection()) {
+            limitRequestService.setLimitRequestDAO(factory.getLimitRequestDAO(connection, LIMIT_JDBC));
+            LimitRequest limit = limitRequestService.getById(limitRequest.getUserId());
+            if (limit.getUserId() < 0 && limitRequestService.add(limitRequest)) {
+                return true;
+            }
+        } catch (SQLException e) {
+            log.error("Could not add limit request", e);
         }
-        ConnectionClosure.close(connection);
         return false;
     }
 
     public UserAccount getUserAccount(int userId) {
-        connection = connectionFactory.getConnection();
-        userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
-        UserAccount userAccount = userAccountService.getById(userId);
-        ConnectionClosure.close(connection);
-        return userAccount;
+        return UserAccountGetter.getUserAccount(userId);
     }
 }

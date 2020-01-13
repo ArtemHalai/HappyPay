@@ -99,13 +99,4 @@ public class TransferFacadeTest {
 
         assertFalse(unsuccessfulTransfer);
     }
-
-    @Test
-    public void getUserAccount_ReturnsUserAccount_WhenUserExistsForGivenId() {
-        when(userAccountService.getById(USER_ID)).thenReturn(userAccount);
-
-        UserAccount actualUserAccount = transferFacade.getUserAccount(USER_ID);
-
-        assertEquals(userAccount, actualUserAccount);
-    }
 }

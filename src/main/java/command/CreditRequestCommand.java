@@ -39,7 +39,7 @@ public class CreditRequestCommand implements Command {
         int userId = (int) session.getAttribute(USER_ID.getName());
         creditRequestFacade.setUserAccountService(ServiceFactory.getInstance().getUserAccountService());
 
-        UserAccount userAccount = creditRequestFacade.getUserAccount((Integer) session.getAttribute(USER_ID.getName()));
+        UserAccount userAccount = creditRequestFacade.getUserAccount(userId);
         if (userAccount.getValidity() == null || !DateValidity.valid(userAccount.getValidity()))
             return CLIENT_ACCOUNTS;
 

@@ -2,6 +2,7 @@ package facade;
 
 import factories.DaoFactory;
 import factories.JDBCConnectionFactory;
+import lombok.extern.log4j.Log4j;
 import model.DepositAccount;
 import model.RefillOperation;
 import model.UserAccount;
@@ -12,6 +13,7 @@ import service.UserAccountService;
 import util.ConnectionClosure;
 import util.DateValidity;
 import util.TransactionManager;
+import util.UserAccountGetter;
 
 import java.sql.Connection;
 import java.util.List;
@@ -22,6 +24,7 @@ import static enums.DAOEnum.*;
 import static enums.DepositEnum.YEAR;
 import static enums.OperationType.REFILL_DEPOSIT;
 
+@Log4j
 public class DepositAccountFacade {
 
     private DepositAccountService depositAccountService;
@@ -142,10 +145,6 @@ public class DepositAccountFacade {
     }
 
     public UserAccount getUserAccount(int userId) {
-        connection = connectionFactory.getConnection();
-        userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
-        UserAccount userAccount = userAccountService.getById(userId);
-        ConnectionClosure.close(connection);
-        return userAccount;
+        return UserAccountGetter.getUserAccount(userId);
     }
 }

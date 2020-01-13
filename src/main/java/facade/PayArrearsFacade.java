@@ -8,6 +8,7 @@ import model.UserAccount;
 import service.CreditAccountService;
 import service.UserAccountService;
 import util.TransactionManager;
+import util.UserAccountGetter;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -100,13 +101,6 @@ public class PayArrearsFacade {
     }
 
     public UserAccount getUserAccount(int userId) {
-        UserAccount userAccount = new UserAccount();
-        try (Connection connection = connectionFactory.getConnection()) {
-            userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
-            userAccount = userAccountService.getById(userId);
-        } catch (SQLException e) {
-            log.error("Could not get user account", e);
-        }
-        return userAccount;
+        return UserAccountGetter.getUserAccount(userId);
     }
 }

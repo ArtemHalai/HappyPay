@@ -2,18 +2,21 @@ package facade;
 
 import factories.DaoFactory;
 import factories.JDBCConnectionFactory;
+import lombok.extern.log4j.Log4j;
 import model.CreditApprovementOperation;
 import model.CreditRequest;
 import model.UserAccount;
 import service.CreditApprovementService;
 import service.UserAccountService;
 import util.ConnectionClosure;
+import util.UserAccountGetter;
 
 import java.sql.Connection;
 
 import static enums.DAOEnum.CREDIT_APPROVEMENT_JDBC;
 import static enums.DAOEnum.USER_ACCOUNT_JDBC;
 
+@Log4j
 public class CreditRequestFacade {
 
     private UserAccountService userAccountService;
@@ -60,10 +63,6 @@ public class CreditRequestFacade {
     }
 
     public UserAccount getUserAccount(int userId) {
-        connection = connectionFactory.getConnection();
-        userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
-        UserAccount userAccount = userAccountService.getById(userId);
-        ConnectionClosure.close(connection);
-        return userAccount;
+        return UserAccountGetter.getUserAccount(userId);
     }
 }

@@ -7,7 +7,7 @@ import model.CreditAccount;
 import model.UserAccount;
 import model.calculation.CreditCalculator;
 import service.CreditAccountService;
-import service.UserAccountService;
+import util.UserAccountGetter;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -15,13 +15,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static enums.DAOEnum.CREDIT_ACCOUNT_JDBC;
-import static enums.DAOEnum.USER_ACCOUNT_JDBC;
 
 @Log4j
 public class CreditAccountFacade {
 
     private CreditAccountService creditAccountService;
-    private UserAccountService userAccountService;
     private DaoFactory factory;
     private JDBCConnectionFactory connectionFactory;
 
@@ -32,10 +30,6 @@ public class CreditAccountFacade {
 
     public void setCreditAccountService(CreditAccountService creditAccountService) {
         this.creditAccountService = creditAccountService;
-    }
-
-    public void setUserAccountService(UserAccountService userAccountService) {
-        this.userAccountService = userAccountService;
     }
 
     public CreditAccount getCreditAccount(int userId) {
@@ -86,13 +80,6 @@ public class CreditAccountFacade {
     }
 
     public UserAccount getUserAccount(int userId) {
-        UserAccount userAccount = new UserAccount();
-        try (Connection connection = connectionFactory.getConnection()) {
-            userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
-            userAccount = userAccountService.getById(userId);
-        } catch (SQLException e) {
-            log.error("Could not get user account", e);
-        }
-        return userAccount;
+        return UserAccountGetter.getUserAccount(userId);
     }
 }

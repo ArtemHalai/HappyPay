@@ -2,19 +2,20 @@ package facade;
 
 import factories.DaoFactory;
 import factories.JDBCConnectionFactory;
+import lombok.extern.log4j.Log4j;
 import model.UserAccount;
-import service.DepositAccountService;
 import service.UserAccountService;
-import util.ConnectionClosure;
+import util.UserAccountGetter;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 import static enums.DAOEnum.USER_ACCOUNT_JDBC;
 
+@Log4j
 public class UpdateTermFacade {
 
     private UserAccountService userAccountService;
-    private Connection connection;
     private DaoFactory factory;
     private JDBCConnectionFactory connectionFactory;
 
@@ -28,22 +29,19 @@ public class UpdateTermFacade {
     }
 
     public boolean updateTerm(int userId) {
-        connection = connectionFactory.getConnection();
-        userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
-        boolean updated = userAccountService.updateTerm(userId);
-        if (updated) {
-            ConnectionClosure.close(connection);
-            return true;
+        try(Connection connection = connectionFactory.getConnection()) {
+            userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
+            boolean updated = userAccountService.updateTerm(userId);
+            if (updated) {
+                return true;
+            }
+        }catch (SQLException e){
+            log.error("Could not update term", e);
         }
-        ConnectionClosure.close(connection);
         return false;
     }
 
     public UserAccount getUserAccount(int userId) {
-        connection = connectionFactory.getConnection();
-        userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
-        UserAccount userAccount = userAccountService.getById(userId);
-        ConnectionClosure.close(connection);
-        return userAccount;
+        return UserAccountGetter.getUserAccount(userId);
     }
 }

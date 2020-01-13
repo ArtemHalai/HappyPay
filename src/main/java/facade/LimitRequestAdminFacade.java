@@ -2,8 +2,6 @@ package facade;
 
 import factories.DaoFactory;
 import factories.JDBCConnectionFactory;
-import model.CreditAccount;
-import model.LimitRequest;
 import model.LimitRequestAdmin;
 import service.CreditAccountService;
 import service.LimitRequestService;

@@ -153,13 +153,4 @@ public class RefillFacadeTest {
 
         assertEquals(allOperationsDTO.getList(), operationsDTO.getList());
     }
-
-    @Test
-    public void getUserAccount_ReturnsUserAccount_WhenUserExistsForGivenId() {
-        when(userAccountService.getById(USER_ID)).thenReturn(userAccount);
-
-        UserAccount actualUserAccount = refillFacade.getUserAccount(USER_ID);
-
-        assertEquals(userAccount, actualUserAccount);
-    }
 }

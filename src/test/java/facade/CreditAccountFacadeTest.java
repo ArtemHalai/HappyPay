@@ -2,7 +2,6 @@ package facade;
 
 import factories.JDBCConnectionFactory;
 import model.CreditAccount;
-import model.UserAccount;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,7 +9,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import service.CreditAccountService;
-import service.UserAccountService;
 
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -34,13 +32,7 @@ public class CreditAccountFacadeTest {
     private CreditAccountService creditAccountService;
 
     @Mock
-    private UserAccountService userAccountService;
-
-    @Mock
     private JDBCConnectionFactory connectionFactory;
-
-    @Mock
-    private UserAccount userAccount;
 
     @Mock
     private CreditAccount creditAccount;
@@ -122,14 +114,5 @@ public class CreditAccountFacadeTest {
         boolean interestChargesUpdated = creditAccountFacade.updateInterestCharges(creditAccount);
 
         assertFalse(interestChargesUpdated);
-    }
-
-    @Test
-    public void getUserAccount_ReturnsUserAccount_WhenUserExistsForGivenId() {
-        when(userAccountService.getById(USER_ID)).thenReturn(userAccount);
-
-        UserAccount actualUserAccount = creditAccountFacade.getUserAccount(USER_ID);
-
-        assertEquals(userAccount, actualUserAccount);
     }
 }

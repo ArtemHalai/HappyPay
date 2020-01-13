@@ -34,8 +34,9 @@ public class RefillCommand implements Command {
             return LOGIN_VIEW;
         }
 
+        int userId = (int) session.getAttribute(USER_ID.getName());
         refillFacade.setUserAccountService(ServiceFactory.getInstance().getUserAccountService());
-        UserAccount userAccount = refillFacade.getUserAccount((Integer) session.getAttribute(USER_ID.getName()));
+        UserAccount userAccount = refillFacade.getUserAccount(userId);
         if (userAccount.getValidity() == null || !DateValidity.valid(userAccount.getValidity())) {
             return CLIENT_ACCOUNTS;
         }

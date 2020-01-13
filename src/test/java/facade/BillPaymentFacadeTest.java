@@ -101,13 +101,4 @@ public class BillPaymentFacadeTest {
         verify(connection).rollback();
         assertFalse(billPayed);
     }
-
-    @Test
-    public void getUserAccount_ReturnsUserAccount_WhenUserExistsForGivenId() {
-        when(userAccountService.getById(USER_ID)).thenReturn(userAccount);
-
-        UserAccount actualUserAccount = billPaymentFacade.getUserAccount(USER_ID);
-
-        assertEquals(userAccount, actualUserAccount);
-    }
 }
