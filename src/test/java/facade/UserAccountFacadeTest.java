@@ -18,6 +18,8 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class UserAccountFacadeTest {
 
+    private static final int USER_ID = 1;
+
     @Mock
     private UserAccountService userAccountService;
 
@@ -32,8 +34,6 @@ public class UserAccountFacadeTest {
 
     @InjectMocks
     private UserAccountFacade userAccountFacade;
-
-    private static final int USER_ID = 1;
 
     @Before
     public void setUp() {

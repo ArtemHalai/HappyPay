@@ -14,6 +14,7 @@ import static enums.DAOEnum.USER_JDBC;
 @Log4j
 public class LoginFacade {
 
+    private static final String ERROR = "Could not get user with username: %s";
     private UserService userService;
     private DaoFactory factory;
     private JDBCConnectionFactory connectionFactory;
@@ -33,7 +34,7 @@ public class LoginFacade {
             userService.setUserDAO(factory.getUserDAO(connection, USER_JDBC));
             exist = userService.getUserByUsernameAndPassword(username, password);
         } catch (SQLException e) {
-            log.error("Could not get user", e);
+            log.error(String.format(ERROR, username), e);
         }
         return exist;
     }

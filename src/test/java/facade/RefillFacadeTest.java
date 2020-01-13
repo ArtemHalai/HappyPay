@@ -21,6 +21,10 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class RefillFacadeTest {
 
+    private static final int USER_ID = 1;
+    private static final int PAGE_SIZE = 10;
+    private static final double AMOUNT = 100.99;
+
     @Mock
     private CreditAccountService creditAccountService;
 
@@ -49,9 +53,6 @@ public class RefillFacadeTest {
     private CreditAccount creditAccount;
 
     @Mock
-    private TransferOperation transferOperation;
-
-    @Mock
     private RefillPaginationDTO refillPaginationDTO;
 
     @Mock
@@ -63,8 +64,6 @@ public class RefillFacadeTest {
     @InjectMocks
     private RefillFacade refillFacade;
 
-    private static final int USER_ID = 1;
-
     @Before
     public void setUp() {
         when(connectionFactory.getConnection()).thenReturn(connection);
@@ -72,7 +71,6 @@ public class RefillFacadeTest {
 
     @Test
     public void refill_ReturnsTrue_WhenRefillOperationWasSuccessful() {
-        double amount = 100.99;
         double balance = 11111.99;
         double creditLimit = 1001.99;
         double arrears = 0;
@@ -83,12 +81,12 @@ public class RefillFacadeTest {
         when(userAccount.getUserId()).thenReturn(USER_ID);
         when(userAccount.isCredit()).thenReturn(true);
         when(userAccount.getBalance()).thenReturn(balance);
-        when(refillOperation.getAmount()).thenReturn(amount);
+        when(refillOperation.getAmount()).thenReturn(AMOUNT);
         when(creditAccount.getLimit()).thenReturn(creditLimit);
         when(creditAccount.getArrears()).thenReturn(arrears);
-        when(creditAccountService.updateBalanceById(creditLimit - amount, USER_ID)).thenReturn(true);
-        when(creditAccountService.updateArrears(arrears + amount, USER_ID)).thenReturn(true);
-        when(userAccountService.updateBalanceById(balance + amount, USER_ID)).thenReturn(true);
+        when(creditAccountService.updateBalanceById(creditLimit - AMOUNT, USER_ID)).thenReturn(true);
+        when(creditAccountService.updateArrears(arrears + AMOUNT, USER_ID)).thenReturn(true);
+        when(userAccountService.updateBalanceById(balance + AMOUNT, USER_ID)).thenReturn(true);
         when(refillService.add(refillOperation)).thenReturn(true);
 
         boolean successfulRefill = refillFacade.refill(refillOperation);
@@ -98,7 +96,6 @@ public class RefillFacadeTest {
 
     @Test
     public void refill_ReturnsFalse_WhenRefillOperationWasNotSuccessful() {
-        double amount = 100.99;
         double creditLimit = 1.99;
 
         when(refillOperation.getUserId()).thenReturn(USER_ID);
@@ -106,7 +103,7 @@ public class RefillFacadeTest {
         when(creditAccountService.getById(USER_ID)).thenReturn(creditAccount);
         when(userAccount.getUserId()).thenReturn(USER_ID);
         when(userAccount.isCredit()).thenReturn(true);
-        when(refillOperation.getAmount()).thenReturn(amount);
+        when(refillOperation.getAmount()).thenReturn(AMOUNT);
         when(creditAccount.getLimit()).thenReturn(creditLimit);
 
         boolean unsuccessfulRefill = refillFacade.refill(refillOperation);
@@ -125,13 +122,11 @@ public class RefillFacadeTest {
 
     @Test
     public void getAllOperations_ReturnsAllOperationsDTOContainingListWithOperationsDataObjectsLessThanTen_WhenPassAllOperationsDTOContainingNecessaryDataForThis() {
-        int pageSize = 10;
-
         when(refillService.getAllOperations(allOperationsDTO)).thenReturn(allOperationsDTO);
         when(billPaymentService.getAllOperations(allOperationsDTO)).thenReturn(allOperationsDTO);
         when(transferService.getAllOperations(allOperationsDTO)).thenReturn(allOperationsDTO);
         when(allOperationsDTO.getUserId()).thenReturn(USER_ID);
-        when(allOperationsDTO.getPageSize()).thenReturn(pageSize);
+        when(allOperationsDTO.getPageSize()).thenReturn(PAGE_SIZE);
 
         AllOperationsDTO operationsDTO = refillFacade.getAllOperations(allOperationsDTO);
 
@@ -140,10 +135,8 @@ public class RefillFacadeTest {
 
     @Test
     public void getAllOperations_ReturnsAllOperationsDTOContainingListWithOperationsDataObjectsMoreThanOrEqualTen_WhenPassAllOperationsDTOContainingNecessaryDataForThis() {
-        int pageSize = 10;
-
         List<OperationsData> operationsData = new ArrayList<>();
-        for (int i = 0; i < pageSize; i++) {
+        for (int i = 0; i < PAGE_SIZE; i++) {
             OperationsData operation = new OperationsData();
             operation.setDate(new Date(System.currentTimeMillis()));
             operationsData.add(operation);
@@ -153,7 +146,7 @@ public class RefillFacadeTest {
         when(billPaymentService.getAllOperations(allOperationsDTO)).thenReturn(allOperationsDTO);
         when(transferService.getAllOperations(allOperationsDTO)).thenReturn(allOperationsDTO);
         when(allOperationsDTO.getUserId()).thenReturn(USER_ID);
-        when(allOperationsDTO.getPageSize()).thenReturn(pageSize);
+        when(allOperationsDTO.getPageSize()).thenReturn(PAGE_SIZE);
         when(allOperationsDTO.getList()).thenReturn(operationsData);
 
         AllOperationsDTO operationsDTO = refillFacade.getAllOperations(allOperationsDTO);

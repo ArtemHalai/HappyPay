@@ -23,6 +23,13 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class CreditAccountFacadeTest {
 
+    private static final int USER_ID = 1;
+    private static final double ARREARS = 100;
+    private static final double RATE = 13.1;
+    private static final double INTEREST_CHARGES = 1380.1;
+    private static final int DAYS = Calendar.getInstance().getActualMaximum(Calendar.DAY_OF_YEAR);
+    private static final double AMOUNT =  RATE / 100 / DAYS * 1 * ARREARS;
+
     @Mock
     private CreditAccountService creditAccountService;
 
@@ -43,11 +50,6 @@ public class CreditAccountFacadeTest {
 
     @InjectMocks
     private CreditAccountFacade creditAccountFacade;
-
-    private static final int USER_ID = 1;
-    private static final double ARREARS = 100;
-    private static final double RATE = 13.1;
-    private static final double INTEREST_CHARGES = 1380.1;
 
     @Before
     public void setUp() {
@@ -97,11 +99,8 @@ public class CreditAccountFacadeTest {
 
     @Test
     public void updateInterestCharges_ReturnsTrue_WhenInterestChargesWereUpdated() {
-        int days = Calendar.getInstance().getActualMaximum(Calendar.DAY_OF_YEAR);
-        double amount = RATE / 100 / days * 1 * ARREARS;
-
         setCreditAccountMockToReturnNecessaryData();
-        when(creditAccountService.updateInterestCharges(INTEREST_CHARGES + amount, USER_ID)).thenReturn(true);
+        when(creditAccountService.updateInterestCharges(INTEREST_CHARGES + AMOUNT, USER_ID)).thenReturn(true);
 
         boolean interestChargesUpdated = creditAccountFacade.updateInterestCharges(creditAccount);
 
@@ -117,11 +116,8 @@ public class CreditAccountFacadeTest {
 
     @Test
     public void updateInterestCharges_ReturnsFalse_WhenInterestChargesWereNotUpdated() {
-        int days = Calendar.getInstance().getActualMaximum(Calendar.DAY_OF_YEAR);
-        double amount = RATE / 100 / days * 1 * ARREARS;
-
         setCreditAccountMockToReturnNecessaryData();
-        when(creditAccountService.updateInterestCharges(INTEREST_CHARGES + amount, USER_ID)).thenReturn(false);
+        when(creditAccountService.updateInterestCharges(INTEREST_CHARGES + AMOUNT, USER_ID)).thenReturn(false);
 
         boolean interestChargesUpdated = creditAccountFacade.updateInterestCharges(creditAccount);
 

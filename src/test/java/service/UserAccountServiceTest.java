@@ -80,15 +80,6 @@ public class UserAccountServiceTest {
     }
 
     @Test
-    public void payById() {
-        userAccount.setBalance(100);
-        when(dao.getById(1)).thenReturn(userAccount);
-        UserAccount account = service.payById(1, 110);
-        verify(dao).getById(1);
-        assertNull(account);
-    }
-
-    @Test
     public void updateByAccount() {
         when(dao.updateByAccount(10.1, 11111111)).thenReturn(true);
         boolean updateByAccount = service.updateByAccount(10.1, 11111111);

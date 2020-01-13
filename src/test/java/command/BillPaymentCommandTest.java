@@ -28,6 +28,8 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class BillPaymentCommandTest {
 
+    private static final int USER_TEST_ID = 1;
+
     @Mock
     private BillPaymentFacade facade;
 
@@ -45,8 +47,6 @@ public class BillPaymentCommandTest {
 
     @InjectMocks
     private BillPaymentCommand command;
-
-    private static final int USER_TEST_ID = 1;
 
     @Before
     public void setUp() {

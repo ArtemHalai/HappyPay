@@ -14,12 +14,19 @@ import service.UserAccountService;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.sql.SQLException;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BillPaymentFacadeTest {
+
+    private static final int USER_ID = 1;
+    private static final double AMOUNT = 100.99;
+    private static final double USER_BALANCE = 1001.99;
+    private static final Date DATE = new Date(System.currentTimeMillis() + 100000);
 
     @Mock
     private BillPaymentService billPaymentService;
@@ -42,8 +49,6 @@ public class BillPaymentFacadeTest {
     @InjectMocks
     private BillPaymentFacade billPaymentFacade;
 
-    private static final int USER_ID = 1;
-
     @Before
     public void setUp() {
         when(connectionFactory.getConnection()).thenReturn(connection);
@@ -51,16 +56,13 @@ public class BillPaymentFacadeTest {
 
     @Test
     public void payBill_ReturnsTrue_WhenBillWasPayed() {
-        double amount = 100.99;
-        double userBalance = 1000.99;
-        Date date = new Date(System.currentTimeMillis() + 100);
-
         when(billPaymentOperation.getUserId()).thenReturn(USER_ID);
-        when(billPaymentOperation.getAmount()).thenReturn(amount);
-        when(userAccountService.payById(USER_ID, amount)).thenReturn(userAccount);
-        when(userAccount.getValidity()).thenReturn(date);
-        when(userAccount.getBalance()).thenReturn(userBalance);
-        when(userAccountService.updateBalanceById(userBalance, USER_ID)).thenReturn(true);
+        when(billPaymentOperation.getAmount()).thenReturn(AMOUNT);
+        when(userAccountService.getById(USER_ID)).thenReturn(userAccount);
+        when(userAccount.getValidity()).thenReturn(DATE);
+        when(userAccount.getBalance()).thenReturn(USER_BALANCE);
+        when(userAccount.getUserId()).thenReturn(USER_ID);
+        when(userAccountService.updateBalanceById(USER_BALANCE, USER_ID)).thenReturn(true);
         when(billPaymentService.add(billPaymentOperation)).thenReturn(true);
 
         boolean billPayed = billPaymentFacade.payBill(billPaymentOperation);
@@ -70,14 +72,33 @@ public class BillPaymentFacadeTest {
 
     @Test
     public void payBill_ReturnsFalse_WhenBillWasNotPayed() {
-        double amount = 100.99;
+        Date invalidDate = new Date(System.currentTimeMillis() - 1000);
 
         when(billPaymentOperation.getUserId()).thenReturn(USER_ID);
-        when(billPaymentOperation.getAmount()).thenReturn(amount);
-        when(userAccountService.payById(USER_ID, amount)).thenReturn(null);
+        when(billPaymentOperation.getAmount()).thenReturn(AMOUNT);
+        when(userAccountService.getById(USER_ID)).thenReturn(userAccount);
+        when(userAccount.getUserId()).thenReturn(USER_ID);
+        when(userAccount.getValidity()).thenReturn(invalidDate);
 
         boolean billPayed = billPaymentFacade.payBill(billPaymentOperation);
 
+        assertFalse(billPayed);
+    }
+
+    @Test
+    public void payBill_ThrowsException_WhenAddBillPaymentOperation() throws SQLException {
+        when(billPaymentOperation.getUserId()).thenReturn(USER_ID);
+        when(billPaymentOperation.getAmount()).thenReturn(AMOUNT);
+        when(userAccountService.getById(USER_ID)).thenReturn(userAccount);
+        when(userAccount.getValidity()).thenReturn(DATE);
+        when(userAccount.getBalance()).thenReturn(USER_BALANCE);
+        when(userAccount.getUserId()).thenReturn(USER_ID);
+        when(userAccountService.updateBalanceById(USER_BALANCE, USER_ID)).thenReturn(true);
+        when(billPaymentService.add(billPaymentOperation)).thenThrow(new RuntimeException());
+
+        boolean billPayed = billPaymentFacade.payBill(billPaymentOperation);
+
+        verify(connection).rollback();
         assertFalse(billPayed);
     }
 

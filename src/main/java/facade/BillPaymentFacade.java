@@ -7,7 +7,6 @@ import model.BillPaymentOperation;
 import model.UserAccount;
 import service.BillPaymentService;
 import service.UserAccountService;
-import util.ConnectionClosure;
 import util.TransactionManager;
 
 import java.sql.Connection;
@@ -41,18 +40,39 @@ public class BillPaymentFacade {
             TransactionManager.setRepeatableRead(connection);
             billPaymentService.setBillPaymentDAO(factory.getBillPaymentDAO(connection, BILL_PAYMENT_JDBC));
             userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
-            UserAccount userAccount = userAccountService.payById(billPaymentOperation.getUserId(), billPaymentOperation.getAmount());
-            if (userAccount != null && userAccount.getValidity().getTime() > System.currentTimeMillis()) {
-                boolean updated = userAccountService.updateBalanceById(userAccount.getBalance(), billPaymentOperation.getUserId());
-                boolean added = billPaymentService.add(billPaymentOperation);
-                if (updated && added) {
-                    connection.commit();
-                    return true;
-                }
+            UserAccount userAccount = userAccountService.getById(billPaymentOperation.getUserId());
+
+            boolean checkedAndUpdated = checkAndUpdateBalance(billPaymentOperation, connection, userAccount);
+            if (checkedAndUpdated) {
+                return true;
             }
             connection.rollback();
         } catch (SQLException e) {
             log.error("Could not make bill payment", e);
+        }
+        return false;
+    }
+
+    private boolean checkAndUpdateBalance(BillPaymentOperation billPaymentOperation, Connection connection, UserAccount userAccount) throws SQLException {
+        if (userAccount.getUserId() > 0 && userAccount.getValidity().getTime() > System.currentTimeMillis()) {
+            boolean updated;
+            boolean added;
+            try {
+                if (userAccount.getBalance() >= billPaymentOperation.getAmount()) {
+                    userAccount.setBalance(userAccount.getBalance() - billPaymentOperation.getAmount());
+                } else {
+                    return false;
+                }
+                updated = userAccountService.updateBalanceById(userAccount.getBalance(), billPaymentOperation.getUserId());
+                added = billPaymentService.add(billPaymentOperation);
+            } catch (Exception e) {
+                log.error("Could not make bill payment", e);
+                return false;
+            }
+            if (updated && added) {
+                connection.commit();
+                return true;
+            }
         }
         return false;
     }

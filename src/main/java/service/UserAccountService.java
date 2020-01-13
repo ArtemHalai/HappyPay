@@ -39,15 +39,6 @@ public class UserAccountService {
         return userAccountDAO.getByAccountNumber(recipientAccountNumber);
     }
 
-    public UserAccount payById(int userId, double amount) {
-        UserAccount userAccount = userAccountDAO.getById(userId);
-        if (userAccount.getBalance() >= amount) {
-            userAccount.setBalance(userAccount.getBalance() - amount);
-            return userAccount;
-        }
-        return null;
-    }
-
     public boolean updateByAccount(double amount, long recipientAccountNumber) {
         return userAccountDAO.updateByAccount(amount, recipientAccountNumber);
     }

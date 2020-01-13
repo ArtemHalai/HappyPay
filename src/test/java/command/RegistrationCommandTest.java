@@ -23,6 +23,13 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class RegistrationCommandTest {
 
+    private static final String INPUT_NAME = "name";
+    private static final String INPUT_SURNAME = "surname";
+    private static final String INPUT_USERNAME = "username";
+    private static final String INPUT_PASSWORD = "12345678";
+    private static final String INPUT_PHONE_NUMBER = "+380000000000";
+    private static final String INPUT_BIRTHDAY = "999-01-10";
+
     @Mock
     private RegistrationFacade facade;
 
@@ -37,13 +44,6 @@ public class RegistrationCommandTest {
 
     @InjectMocks
     private RegistrationCommand command;
-
-    private static final String INPUT_NAME = "name";
-    private static final String INPUT_SURNAME = "surname";
-    private static final String INPUT_USERNAME = "username";
-    private static final String INPUT_PASSWORD = "12345678";
-    private static final String INPUT_PHONE_NUMBER = "+380000000000";
-    private static final String INPUT_BIRTHDAY = "999-01-10";
 
     @Before
     public void setUp() {

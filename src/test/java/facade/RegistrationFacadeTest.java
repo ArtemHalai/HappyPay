@@ -23,6 +23,9 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class RegistrationFacadeTest {
 
+    private static final String USERNAME = "USERNAME";
+    private static final String PASS = "11111111";
+
     @Mock
     private ClientDetailsService clientDetailsService;
 
@@ -43,9 +46,6 @@ public class RegistrationFacadeTest {
 
     @InjectMocks
     private RegistrationFacade registrationFacade;
-
-    private static final String USERNAME = "USERNAME";
-    private static final String PASS = "11111111";
 
     @Before
     public void setUp() {

@@ -30,6 +30,9 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class LoginCommandTest {
 
+    private static final String USER = "USERNAME";
+    private static final String PASS = "11111111";
+
     @Mock
     private LoginFacade facade;
 
@@ -47,9 +50,6 @@ public class LoginCommandTest {
 
     @InjectMocks
     private LoginCommand command;
-
-    private static final String USER = "USERNAME";
-    private static final String PASS = "11111111";
 
     @Before
     public void setUp() {

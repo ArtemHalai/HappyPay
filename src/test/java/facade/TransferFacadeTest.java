@@ -21,6 +21,12 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class TransferFacadeTest {
 
+    private static final int USER_ID = 1;
+    private static final long RECIPIENT_ACCOUNT_NUMBER = 12345678;
+    private static final double BALANCE = 1001.99;
+    private static final double AMOUNT = 100.99;
+    private static final Date DATE = new Date(System.currentTimeMillis() + 100000);
+
     @Mock
     private TransferService transferService;
 
@@ -45,8 +51,6 @@ public class TransferFacadeTest {
     @InjectMocks
     private TransferFacade transferFacade;
 
-    private static final int USER_ID = 1;
-
     @Before
     public void setUp() {
         when(connectionFactory.getConnection()).thenReturn(connection);
@@ -54,22 +58,20 @@ public class TransferFacadeTest {
 
     @Test
     public void transfer_ReturnsTrue_WhenTransferWasSuccessful() {
-        long recipientAccountNumber = 12345678;
-        double amount = 100.99;
-        double balance = 1001.99;
-        Date date = new Date(System.currentTimeMillis() + 100);
+        int userId = 4;
 
-        when(transferOperation.getRecipientAccountNumber()).thenReturn(recipientAccountNumber);
+        when(transferOperation.getRecipientAccountNumber()).thenReturn(RECIPIENT_ACCOUNT_NUMBER);
         when(transferOperation.getUserId()).thenReturn(USER_ID);
-        when(transferOperation.getAmount()).thenReturn(amount);
-        when(userAccountService.getByAccountNumber(recipientAccountNumber)).thenReturn(recipientUserAccount);
-        when(userAccountService.payById(USER_ID, amount)).thenReturn(userAccount);
+        when(transferOperation.getAmount()).thenReturn(AMOUNT);
+        when(userAccountService.getByAccountNumber(RECIPIENT_ACCOUNT_NUMBER)).thenReturn(recipientUserAccount);
+        when(userAccountService.getById(USER_ID)).thenReturn(userAccount);
+        when(userAccount.getUserId()).thenReturn(userId);
         when(recipientUserAccount.getUserId()).thenReturn(USER_ID);
-        when(userAccount.getValidity()).thenReturn(date);
-        when(userAccount.getBalance()).thenReturn(balance);
-        when(recipientUserAccount.getBalance()).thenReturn(balance);
-        when(userAccountService.updateBalanceById(balance, USER_ID)).thenReturn(true);
-        when(userAccountService.updateByAccount(balance + amount, recipientAccountNumber)).thenReturn(true);
+        when(userAccount.getValidity()).thenReturn(DATE);
+        when(userAccount.getBalance()).thenReturn(BALANCE);
+        when(recipientUserAccount.getBalance()).thenReturn(BALANCE);
+        when(userAccountService.updateBalanceById(BALANCE, USER_ID)).thenReturn(true);
+        when(userAccountService.updateByAccount(BALANCE + AMOUNT, RECIPIENT_ACCOUNT_NUMBER)).thenReturn(true);
         when(transferService.add(transferOperation)).thenReturn(true);
 
         boolean successfulTransfer = transferFacade.transfer(transferOperation);
@@ -79,22 +81,18 @@ public class TransferFacadeTest {
 
     @Test
     public void transfer_ReturnsFalse_WhenTransferWasNotSuccessful() {
-        long recipientAccountNumber = 12345678;
-        double amount = 100.99;
-        double balance = 1001.99;
-        Date date = new Date(System.currentTimeMillis() + 100);
-
-        when(transferOperation.getRecipientAccountNumber()).thenReturn(recipientAccountNumber);
+        when(transferOperation.getRecipientAccountNumber()).thenReturn(RECIPIENT_ACCOUNT_NUMBER);
         when(transferOperation.getUserId()).thenReturn(USER_ID);
-        when(transferOperation.getAmount()).thenReturn(amount);
-        when(userAccountService.getByAccountNumber(recipientAccountNumber)).thenReturn(recipientUserAccount);
-        when(userAccountService.payById(USER_ID, amount)).thenReturn(userAccount);
+        when(transferOperation.getAmount()).thenReturn(AMOUNT);
+        when(userAccountService.getByAccountNumber(RECIPIENT_ACCOUNT_NUMBER)).thenReturn(recipientUserAccount);
+        when(userAccountService.getById(USER_ID)).thenReturn(userAccount);
+        when(userAccount.getUserId()).thenReturn(USER_ID);
         when(recipientUserAccount.getUserId()).thenReturn(USER_ID);
-        when(userAccount.getValidity()).thenReturn(date);
-        when(userAccount.getBalance()).thenReturn(balance);
-        when(recipientUserAccount.getBalance()).thenReturn(balance);
-        when(userAccountService.updateBalanceById(balance, USER_ID)).thenReturn(true);
-        when(userAccountService.updateByAccount(balance + amount, recipientAccountNumber)).thenReturn(true);
+        when(userAccount.getValidity()).thenReturn(DATE);
+        when(userAccount.getBalance()).thenReturn(BALANCE);
+        when(recipientUserAccount.getBalance()).thenReturn(BALANCE);
+        when(userAccountService.updateBalanceById(BALANCE, USER_ID)).thenReturn(true);
+        when(userAccountService.updateByAccount(BALANCE + AMOUNT, RECIPIENT_ACCOUNT_NUMBER)).thenReturn(true);
         when(transferService.add(transferOperation)).thenReturn(false);
 
         boolean unsuccessfulTransfer = transferFacade.transfer(transferOperation);
