@@ -8,10 +8,10 @@ import model.CreditRequest;
 import model.UserAccount;
 import service.CreditApprovementService;
 import service.UserAccountService;
-import util.ConnectionClosure;
 import util.UserAccountGetter;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 import static enums.DAOEnum.CREDIT_APPROVEMENT_JDBC;
 import static enums.DAOEnum.USER_ACCOUNT_JDBC;
@@ -21,7 +21,6 @@ public class CreditRequestFacade {
 
     private UserAccountService userAccountService;
     private CreditApprovementService creditApprovementService;
-    private Connection connection;
     private DaoFactory factory;
     private JDBCConnectionFactory connectionFactory;
 
@@ -39,26 +38,28 @@ public class CreditRequestFacade {
     }
 
     public boolean createCreditRequest(CreditRequest creditRequest) {
-        connection = connectionFactory.getConnection();
-        creditApprovementService.setCreditApprovementDAO(factory.getCreditApprovementDAO(connection, CREDIT_APPROVEMENT_JDBC));
+        try (Connection connection = connectionFactory.getConnection()) {
+            creditApprovementService.setCreditApprovementDAO(factory.getCreditApprovementDAO(connection, CREDIT_APPROVEMENT_JDBC));
 
-        CreditApprovementOperation operation = creditApprovementService.getById(creditRequest.getUserId());
-        if (operation.getUserId() < 0 && creditApprovementService.createCreditRequest(creditRequest)) {
-            ConnectionClosure.close(connection);
-            return true;
+            CreditApprovementOperation operation = creditApprovementService.getById(creditRequest.getUserId());
+            if (operation.getUserId() < 0 && creditApprovementService.createCreditRequest(creditRequest)) {
+                return true;
+            }
+        } catch (SQLException e) {
+            log.error("Could not create credit request", e);
         }
-        ConnectionClosure.close(connection);
         return false;
     }
 
     public boolean checkCredit(int userId) {
-        connection = connectionFactory.getConnection();
-        userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
-        if (userAccountService.getById(userId).isCredit()) {
-            ConnectionClosure.close(connection);
-            return false;
+        try (Connection connection = connectionFactory.getConnection()) {
+            userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
+            if (userAccountService.getById(userId).isCredit()) {
+                return false;
+            }
+        } catch (SQLException e) {
+            log.error("Could not check credit", e);
         }
-        ConnectionClosure.close(connection);
         return true;
     }
 
