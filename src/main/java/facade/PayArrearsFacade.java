@@ -43,12 +43,8 @@ public class PayArrearsFacade {
             creditAccountService.setCreditAccountDAO(factory.getCreditAccountDAO(connection, CREDIT_ACCOUNT_JDBC));
             UserAccount userAccount = userAccountService.getById(userId);
 
-            if (userAccount.getUserId() > 0 && userAccount.isCredit()) {
-                if (userAccount.getBalance() >= amount) {
-                    userAccount.setBalance(userAccount.getBalance() - amount);
-                } else {
-                    return false;
-                }
+            if (userAccount.getUserId() > 0 && userAccount.isCredit() && userAccount.getBalance() >= amount) {
+                userAccount.setBalance(userAccount.getBalance() - amount);
 
                 CreditAccount creditAccount = creditAccountService.getById(userId);
 
@@ -56,8 +52,10 @@ public class PayArrearsFacade {
                 if (checkedAndUpdated) {
                     return true;
                 }
+                connection.rollback();
+            } else {
+                return false;
             }
-            connection.rollback();
         } catch (SQLException e) {
             log.error("Could not pay arrears", e);
         }
