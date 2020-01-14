@@ -71,7 +71,7 @@ public class PayArrearsFacadeTest {
     }
 
     @Test
-    public void payArrears_ReturnsTrue_WhenArrearsMoreThanGivenAmountAndPayed() {
+    public void payArrears_ReturnsTrue_WhenArrearsMoreThanOrEqualToGivenAmountAndPayed() {
         when(userAccountService.getById(USER_ID)).thenReturn(userAccount);
         when(userAccount.getUserId()).thenReturn(USER_ID);
         when(userAccount.isCredit()).thenReturn(true);
