@@ -10,12 +10,13 @@ import model.calculation.DepositCalculator;
 import service.DepositAccountService;
 import service.RefillService;
 import service.UserAccountService;
-import util.ConnectionClosure;
 import util.DateValidity;
 import util.TransactionManager;
 import util.UserAccountGetter;
 
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static enums.AccountDetails.RATE;
@@ -30,7 +31,6 @@ public class DepositAccountFacade {
     private DepositAccountService depositAccountService;
     private UserAccountService userAccountService;
     private RefillService refillService;
-    private Connection connection;
     private DaoFactory factory;
     private JDBCConnectionFactory connectionFactory;
 
@@ -52,63 +52,75 @@ public class DepositAccountFacade {
     }
 
     public DepositAccount getDepositAccount(int userId) {
-        connection = connectionFactory.getConnection();
-        depositAccountService.setDepositAccountDAO(factory.getDepositAccountDAO(connection, DEPOSIT_ACCOUNT_JDBC));
-        DepositAccount depositAccount = depositAccountService.getById(userId);
-        ConnectionClosure.close(connection);
+        DepositAccount depositAccount = new DepositAccount();
+        depositAccount.setUserId(-1);
+        try (Connection connection = connectionFactory.getConnection()) {
+            depositAccountService.setDepositAccountDAO(factory.getDepositAccountDAO(connection, DEPOSIT_ACCOUNT_JDBC));
+            depositAccount = depositAccountService.getById(userId);
+        } catch (SQLException e) {
+            log.error("Could not get deposit account", e);
+        }
         return depositAccount;
     }
 
     public boolean transferMoneyToAccountBalance(DepositAccount depositAccount) {
-        connection = connectionFactory.getConnection();
-        TransactionManager.setRepeatableRead(connection);
-        depositAccountService.setDepositAccountDAO(factory.getDepositAccountDAO(connection, DEPOSIT_ACCOUNT_JDBC));
-        userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
-        UserAccount userAccount = userAccountService.getById(depositAccount.getUserId());
-        DepositCalculator depositCalculator =
-                new DepositCalculator(depositAccount);
-        double amount = depositCalculator.calculate();
+        try (Connection connection = connectionFactory.getConnection()) {
+            TransactionManager.setRepeatableRead(connection);
+            depositAccountService.setDepositAccountDAO(factory.getDepositAccountDAO(connection, DEPOSIT_ACCOUNT_JDBC));
+            userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
+            UserAccount userAccount = userAccountService.getById(depositAccount.getUserId());
+            DepositCalculator depositCalculator =
+                    new DepositCalculator(depositAccount);
+            double amount = depositCalculator.calculate();
 
-        if (userAccount.getUserId() > 0) {
-            boolean updatedAccountBalance =
-                    userAccountService.updateBalanceById(userAccount.getBalance() + amount, depositAccount.getUserId());
-            boolean updatedDepositStatus = userAccountService.updateDepositStatusById(depositAccount.getUserId(), false);
-            boolean deleted = depositAccountService.deleteDepositAccount(depositAccount.getUserId());
+            if (userAccount.getUserId() > 0) {
+                boolean updatedAccountBalance =
+                        userAccountService.updateBalanceById(userAccount.getBalance() + amount, depositAccount.getUserId());
+                boolean updatedDepositStatus = userAccountService.updateDepositStatusById(depositAccount.getUserId(), false);
+                boolean deleted = depositAccountService.deleteDepositAccount(depositAccount.getUserId());
 
-            if (updatedAccountBalance && updatedDepositStatus && deleted) {
-                TransactionManager.commitTransaction(connection);
-                return true;
+                if (updatedAccountBalance && updatedDepositStatus && deleted) {
+                    connection.commit();
+                    return true;
+                }
             }
+            connection.rollback();
+        } catch (SQLException e) {
+            log.error("Could not transfer money to account balance", e);
         }
-        TransactionManager.rollbackTransaction(connection);
         return false;
     }
 
     public boolean checkDeposit(int userId) {
-        connection = connectionFactory.getConnection();
-        userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
-        if (userAccountService.getById(userId).isDeposit()) {
-            ConnectionClosure.close(connection);
-            return false;
+        try (Connection connection = connectionFactory.getConnection()) {
+            userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
+            if (userAccountService.getById(userId).isDeposit()) {
+                return false;
+            }
+        } catch (SQLException e) {
+            log.error("Could not check deposit", e);
         }
-        ConnectionClosure.close(connection);
         return true;
     }
 
     public boolean openDeposit(int userId, double balance) {
-        connection = connectionFactory.getConnection();
-        TransactionManager.setRepeatableRead(connection);
-        userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
-        depositAccountService.setDepositAccountDAO(factory.getDepositAccountDAO(connection, DEPOSIT_ACCOUNT_JDBC));
-        refillService.setRefillDAO(factory.getRefillDAO(connection, REFILL_JDBC));
-        UserAccount userAccount = userAccountService.getById(userId);
-        if (userAccount.getUserId() > 0 && userAccount.getBalance() >= balance && !userAccount.isDeposit())
-            if (depositCreator(userId, balance, userAccount)) return true;
-        TransactionManager.rollbackTransaction(connection);
+        try (Connection connection = connectionFactory.getConnection()) {
+            TransactionManager.setRepeatableRead(connection);
+            userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
+            depositAccountService.setDepositAccountDAO(factory.getDepositAccountDAO(connection, DEPOSIT_ACCOUNT_JDBC));
+            refillService.setRefillDAO(factory.getRefillDAO(connection, REFILL_JDBC));
+            UserAccount userAccount = userAccountService.getById(userId);
+            if (userAccount.getUserId() > 0 && userAccount.getBalance() >= balance && !userAccount.isDeposit() && depositCreator(userId, balance, userAccount, connection)) {
+                return true;
+            }
+            connection.rollback();
+        } catch (SQLException e) {
+            log.error("Could not open deposit", e);
+        }
         return false;
     }
 
-    private boolean depositCreator(int userId, double balance, UserAccount userAccount) {
+    private boolean depositCreator(int userId, double balance, UserAccount userAccount, Connection connection) throws SQLException {
         boolean deleted = depositAccountService.deleteDepositAccount(userId);
         if (deleted) {
             DepositAccount depositAccount = new DepositAccount();
@@ -129,7 +141,7 @@ public class DepositAccountFacade {
             refillOperation.setSenderAccountType(MAIN_ACCOUNT.getName());
             boolean refillAdded = refillService.add(refillOperation);
             if (added && updated && refillAdded && updateBalance) {
-                TransactionManager.commitTransaction(connection);
+                connection.commit();
                 return true;
             }
         }
@@ -137,10 +149,13 @@ public class DepositAccountFacade {
     }
 
     public List<DepositAccount> getAll() {
-        connection = connectionFactory.getConnection();
-        depositAccountService.setDepositAccountDAO(factory.getDepositAccountDAO(connection, DEPOSIT_ACCOUNT_JDBC));
-        List<DepositAccount> list = depositAccountService.getAll();
-        ConnectionClosure.close(connection);
+        List<DepositAccount> list = new ArrayList<>();
+        try (Connection connection = connectionFactory.getConnection()) {
+            depositAccountService.setDepositAccountDAO(factory.getDepositAccountDAO(connection, DEPOSIT_ACCOUNT_JDBC));
+            list = depositAccountService.getAll();
+        } catch (SQLException e) {
+            log.error("Could not get all deposit accounts", e);
+        }
         return list;
     }
 
