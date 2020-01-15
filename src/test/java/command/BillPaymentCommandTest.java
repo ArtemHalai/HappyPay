@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
 
 import static enums.Fields.*;
 import static enums.Mappings.*;
@@ -80,8 +80,7 @@ public class BillPaymentCommandTest {
     }
 
     private void setValidityToUserAccount() {
-        long addedTimeToPassDateValidity = 100;
-        userAccount.setValidity(new Date(System.currentTimeMillis() + addedTimeToPassDateValidity));
+        userAccount.setValidity(LocalDateTime.now().plusHours(1));
         when(facade.getUserAccount(USER_TEST_ID)).thenReturn(userAccount);
     }
 

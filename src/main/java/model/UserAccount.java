@@ -2,12 +2,12 @@ package model;
 
 import lombok.Data;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
 
 @Data
 public class UserAccount {
     protected int userId;
-    private Date validity;
+    private LocalDateTime validity;
     private double balance;
     private boolean deposit;
     private boolean credit;

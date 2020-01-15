@@ -10,6 +10,7 @@ import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.sql.Date;
+import java.time.LocalDateTime;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -19,13 +20,13 @@ public class UserAccountServiceTest {
 
     @Mock
     private UserAccountDAO dao;
-    
+
     @Spy
     UserAccount userAccount;
 
     @InjectMocks
     private UserAccountService service;
-    
+
     @Test
     public void add() {
         UserAccount userAccount = new UserAccount();
@@ -62,7 +63,7 @@ public class UserAccountServiceTest {
 
     @Test
     public void updateTerm() {
-        userAccount.setValidity(new Date(System.currentTimeMillis() - 100));
+        userAccount.setValidity(LocalDateTime.now().minusHours(1));
         when(dao.getById(1)).thenReturn(userAccount);
         when(dao.updateTerm(1)).thenReturn(false);
         boolean updatedTerm = service.updateTerm(1);

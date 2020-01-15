@@ -6,6 +6,7 @@ import dao.mappers.UserAccountMapper;
 import lombok.extern.log4j.Log4j;
 import model.UserAccount;
 import util.DateValidity;
+import util.SqlDateLocalDateTimeConverter;
 
 import java.sql.*;
 import java.util.Calendar;
@@ -25,8 +26,10 @@ public class UserAccountJDBC implements UserAccountDAO {
         String addUserAccount = "INSERT INTO user_account (user_id, validity, deposit, credit) " +
                 "VALUES (?, ?, ?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(addUserAccount)) {
+            Timestamp timestamp = Timestamp.valueOf(userAccount.getValidity());
+
             statement.setInt(1, userAccount.getUserId());
-            statement.setDate(2, userAccount.getValidity(), Calendar.getInstance());
+            statement.setDate(2, new Date(timestamp.getTime()), Calendar.getInstance());
             statement.setBoolean(3, userAccount.isDeposit());
             statement.setBoolean(4, userAccount.isCredit());
             int generated = statement.executeUpdate();
@@ -94,7 +97,9 @@ public class UserAccountJDBC implements UserAccountDAO {
     public boolean updateTerm(int userId) {
         String updateTerm = "UPDATE user_account SET validity = ? WHERE user_id = ?";
         try (PreparedStatement statement = connection.prepareStatement(updateTerm)) {
-            statement.setDate(1, DateValidity.getValidity(), Calendar.getInstance());
+            Date date = SqlDateLocalDateTimeConverter.convertLocalDateTimeToSqlDate(DateValidity.getValidity());
+
+            statement.setDate(1, date, Calendar.getInstance());
             statement.setLong(2, userId);
             int generated = statement.executeUpdate();
             if (generated > 0) {
