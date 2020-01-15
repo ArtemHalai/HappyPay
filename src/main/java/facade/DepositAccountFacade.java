@@ -13,6 +13,7 @@ import service.UserAccountService;
 import util.DateValidity;
 import util.TransactionManager;
 import util.UserAccountGetter;
+import util.UserAccountValidity;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -73,7 +74,7 @@ public class DepositAccountFacade {
                     new DepositCalculator(depositAccount);
             double amount = depositCalculator.calculate();
 
-            if (userAccount.getUserId() > 0) {
+            if (UserAccountValidity.userIdIsValid(userAccount)) {
                 boolean updatedAccountBalance =
                         userAccountService.updateBalanceById(userAccount.getBalance() + amount, depositAccount.getUserId());
                 boolean updatedDepositStatus = userAccountService.updateDepositStatusById(depositAccount.getUserId(), false);
@@ -110,7 +111,7 @@ public class DepositAccountFacade {
             depositAccountService.setDepositAccountDAO(factory.getDepositAccountDAO(connection, DEPOSIT_ACCOUNT_JDBC));
             refillService.setRefillDAO(factory.getRefillDAO(connection, REFILL_JDBC));
             UserAccount userAccount = userAccountService.getById(userId);
-            if (userAccount.getUserId() > 0 && userAccount.getBalance() >= balance && !userAccount.isDeposit() && depositCreator(userId, balance, userAccount, connection)) {
+            if (UserAccountValidity.userIdIsValid(userAccount) && userAccount.getBalance() >= balance && !userAccount.isDeposit() && depositCreator(userId, balance, userAccount, connection)) {
                 return true;
             }
             connection.rollback();

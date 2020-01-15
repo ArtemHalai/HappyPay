@@ -19,6 +19,7 @@ import static enums.DAOEnum.CREDIT_ACCOUNT_JDBC;
 @Log4j
 public class CreditAccountFacade {
 
+    private static final String ERROR = "Could not get credit account for user with id: %d";
     private CreditAccountService creditAccountService;
     private DaoFactory factory;
     private JDBCConnectionFactory connectionFactory;
@@ -38,7 +39,7 @@ public class CreditAccountFacade {
             creditAccountService.setCreditAccountDAO(factory.getCreditAccountDAO(connection, CREDIT_ACCOUNT_JDBC));
             creditAccount = creditAccountService.getById(userId);
         } catch (SQLException e) {
-            log.error("Could not get credit account", e);
+            log.error(String.format(ERROR, userId), e);
         }
         return creditAccount;
     }
@@ -61,7 +62,7 @@ public class CreditAccountFacade {
                 return false;
             }
         } catch (SQLException e) {
-            log.error("Could not check arrears", e);
+            log.error(String.format("Could not check arrears for user with id: %d", userId), e);
         }
         return true;
     }
@@ -74,7 +75,7 @@ public class CreditAccountFacade {
             double amount = creditCalculator.calculate();
             updated = creditAccountService.updateInterestCharges(creditAccount.getInterestCharges() + amount, creditAccount.getUserId());
         } catch (SQLException e) {
-            log.error("Could not update interest charges", e);
+            log.error(String.format("Could not update interest charges for user with id: %d", creditAccount.getUserId()), e);
         }
         return updated;
     }

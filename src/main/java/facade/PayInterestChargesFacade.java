@@ -9,6 +9,7 @@ import service.CreditAccountService;
 import service.UserAccountService;
 import util.TransactionManager;
 import util.UserAccountGetter;
+import util.UserAccountValidity;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -56,7 +57,7 @@ public class PayInterestChargesFacade {
             creditAccountService.setCreditAccountDAO(factory.getCreditAccountDAO(connection, CREDIT_ACCOUNT_JDBC));
             UserAccount userAccount = userAccountService.getById(userId);
 
-            if (userAccount.getUserId() > 0 && userAccount.isCredit() && userAccount.getBalance() >= amount) {
+            if (UserAccountValidity.userIdIsValid(userAccount) && userAccount.isCredit() && userAccount.getBalance() >= amount) {
                 userAccount.setBalance(userAccount.getBalance() - amount);
 
                 CreditAccount creditAccount = creditAccountService.getById(userId);
@@ -77,18 +78,20 @@ public class PayInterestChargesFacade {
 
     private boolean checkAndUpdateInterestCharges(int userId, double amount, Connection connection, UserAccount userAccount, CreditAccount creditAccount) {
         try {
-            if (creditAccount.getInterestCharges() < amount && creditAccountService.updateInterestCharges(0, userId)) {
+            if (creditAccount.getInterestCharges() < amount) {
+                boolean updatedInterestCharges = creditAccountService.updateInterestCharges(0, userId);
                 double returnAmount = amount - creditAccount.getInterestCharges();
                 boolean updatedBalance = userAccountService.updateBalanceById(userAccount.getBalance() + returnAmount, userId);
-                if (updatedBalance) {
+                if (updatedBalance && updatedInterestCharges) {
                     connection.commit();
                     return true;
                 }
             }
 
-            if (creditAccount.getInterestCharges() >= amount && creditAccountService.updateInterestCharges(creditAccount.getInterestCharges() - amount, userId)) {
+            if (creditAccount.getInterestCharges() >= amount) {
+                boolean updatedInterestCharges = creditAccountService.updateInterestCharges(creditAccount.getInterestCharges() - amount, userId);
                 boolean updatedBalance = userAccountService.updateBalanceById(userAccount.getBalance(), userId);
-                if (updatedBalance) {
+                if (updatedBalance && updatedInterestCharges) {
                     connection.commit();
                     return true;
                 }

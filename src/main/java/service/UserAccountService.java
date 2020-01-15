@@ -2,6 +2,7 @@ package service;
 
 import dao.intefaces.UserAccountDAO;
 import model.UserAccount;
+import util.UserAccountValidity;
 
 public class UserAccountService {
 
@@ -29,7 +30,7 @@ public class UserAccountService {
 
     public boolean updateTerm(int userId) {
         UserAccount userAccount = userAccountDAO.getById(userId);
-        if (userAccount.getValidity().getTime() > System.currentTimeMillis()) {
+        if (UserAccountValidity.userAccountIsValid(userAccount)) {
             return false;
         }
         return userAccountDAO.updateTerm(userId);

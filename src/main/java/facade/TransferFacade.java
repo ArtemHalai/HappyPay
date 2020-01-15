@@ -9,6 +9,7 @@ import service.TransferService;
 import service.UserAccountService;
 import util.TransactionManager;
 import util.UserAccountGetter;
+import util.UserAccountValidity;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -18,6 +19,7 @@ import static enums.DAOEnum.*;
 @Log4j
 public class TransferFacade {
 
+    private static final String ERROR = "Could not make transfer for user with id: %d, and recipient account number: %d";
     private TransferService transferService;
     private UserAccountService userAccountService;
     private DaoFactory factory;
@@ -44,53 +46,44 @@ public class TransferFacade {
             UserAccount recipientAccount = userAccountService.getByAccountNumber(transferOperation.getRecipientAccountNumber());
             UserAccount userAccount = userAccountService.getById(transferOperation.getUserId());
 
-            boolean checkedAndUpdated = checkAndUpdateBalance(transferOperation, connection, recipientAccount, userAccount);
+            boolean checkedAndUpdated = checkAndUpdateBalance(transferOperation, recipientAccount, userAccount);
             if (checkedAndUpdated) {
+                connection.commit();
                 return true;
             }
             connection.rollback();
         } catch (SQLException e) {
-            log.error("Could not make transfer", e);
+            log.error(String.format(ERROR, transferOperation.getUserId(), transferOperation.getRecipientAccountNumber()), e);
         }
         return false;
     }
 
-    private boolean checkAndUpdateBalance(TransferOperation transferOperation, Connection connection, UserAccount recipientAccount, UserAccount userAccount) throws SQLException {
-        if (userAccount.getUserId() > 0 && recipientAccount.getUserId() > 0 && userAccount.getValidity().getTime() > System.currentTimeMillis()) {
-            boolean updated = false;
-            boolean updatedRecipient = false;
+    private boolean checkAndUpdateBalance(TransferOperation transferOperation, UserAccount recipientAccount, UserAccount userAccount) {
+        if (UserAccountValidity.userIdAndValidityAreValid(userAccount) && recipientAccount.getUserId() > 0
+                && userAccount.getBalance() >= transferOperation.getAmount()) {
             try {
-                if (userAccount.getBalance() >= transferOperation.getAmount()) {
-                    userAccount.setBalance(userAccount.getBalance() - transferOperation.getAmount());
-                } else {
-                    return false;
-                }
-                updated = userAccountService.updateBalanceById(userAccount.getBalance(), transferOperation.getUserId());
-                updatedRecipient = userAccountService.updateByAccount(recipientAccount.getBalance() + transferOperation.getAmount(),
+                userAccount.setBalance(userAccount.getBalance() - transferOperation.getAmount());
+                boolean updated = userAccountService.updateBalanceById(userAccount.getBalance(), transferOperation.getUserId());
+                boolean updatedRecipient = userAccountService.updateByAccount(recipientAccount.getBalance() + transferOperation.getAmount(),
                         transferOperation.getRecipientAccountNumber());
+                if (isTransferSuccessful(transferOperation, updated, updatedRecipient)) {
+                    return true;
+                }
             } catch (Exception e) {
-                connection.rollback();
-                log.error("Could not make transfer", e);
-            }
-            if (isTransferSuccessful(transferOperation, updated, updatedRecipient, connection)) {
-                connection.commit();
-                return true;
+                log.error(String.format(ERROR, transferOperation.getUserId(), transferOperation.getRecipientAccountNumber()), e);
             }
         }
         return false;
     }
 
-    private boolean isTransferSuccessful(TransferOperation transferOperation, boolean updated, boolean updatedRecipient,
-                                         Connection connection) throws SQLException {
-        boolean added;
+    private boolean isTransferSuccessful(TransferOperation transferOperation, boolean updated, boolean updatedRecipient) {
         try {
-            added = transferService.add(transferOperation);
+            boolean added = transferService.add(transferOperation);
+            return updated && added && updatedRecipient;
         } catch (Exception e) {
-            connection.rollback();
-            log.error("Could not make transfer", e);
+            log.error(String.format(ERROR, transferOperation.getUserId(), transferOperation.getRecipientAccountNumber()), e);
             return false;
         }
-        return updated && added && updatedRecipient;
     }
 
     public UserAccount getUserAccount(int userId) {

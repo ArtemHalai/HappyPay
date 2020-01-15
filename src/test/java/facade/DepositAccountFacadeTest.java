@@ -69,6 +69,22 @@ public class DepositAccountFacadeTest {
         when(connectionFactory.getConnection()).thenReturn(connection);
         when(userAccountService.getById(USER_ID)).thenReturn(userAccount);
         when(userAccount.getUserId()).thenReturn(USER_ID);
+        when(depositAccount.getBalance()).thenReturn(BALANCE);
+        when(depositAccount.getDepositEnum()).thenReturn(YEAR);
+        when(depositAccount.getRate()).thenReturn(RATE);
+        when(depositAccount.getUserId()).thenReturn(USER_ID);
+        when(depositAccount.getStartDate()).thenReturn(START_DATE);
+        when(depositAccount.getTerm()).thenReturn(TERM);
+        when(userAccount.getBalance()).thenReturn(BALANCE);
+        when(userAccountService.updateBalanceById(BALANCE + AMOUNT, USER_ID)).thenReturn(true);
+        when(userAccountService.updateDepositStatusById(USER_ID, false)).thenReturn(true);
+        when(userAccount.getBalance()).thenReturn(BALANCE);
+        when(userAccount.isDeposit()).thenReturn(false);
+        when(userAccount.getAccountNumber()).thenReturn(ACCOUNT_NUMBER);
+        when(depositAccountService.deleteDepositAccount(USER_ID)).thenReturn(true);
+        when(depositAccountService.add(argThat(new DepositAccountArgumentMatcher()))).thenReturn(true);
+        when(userAccountService.updateDepositStatusById(USER_ID, true)).thenReturn(true);
+        when(userAccountService.updateBalanceById(0, USER_ID)).thenReturn(true);
     }
 
     @Test
@@ -82,17 +98,6 @@ public class DepositAccountFacadeTest {
 
     @Test
     public void transferMoneyToAccountBalance_ReturnsTrue_WhenMoneyTransferredSuccessfully() {
-        when(depositAccount.getBalance()).thenReturn(BALANCE);
-        when(depositAccount.getDepositEnum()).thenReturn(YEAR);
-        when(depositAccount.getRate()).thenReturn(RATE);
-        when(depositAccount.getUserId()).thenReturn(USER_ID);
-        when(depositAccount.getStartDate()).thenReturn(START_DATE);
-        when(depositAccount.getTerm()).thenReturn(TERM);
-        when(userAccount.getBalance()).thenReturn(BALANCE);
-        when(userAccountService.updateBalanceById(BALANCE + AMOUNT, USER_ID)).thenReturn(true);
-        when(userAccountService.updateDepositStatusById(USER_ID, false)).thenReturn(true);
-        when(depositAccountService.deleteDepositAccount(USER_ID)).thenReturn(true);
-
         boolean moneyTransferred = depositAccountFacade.transferMoneyToAccountBalance(depositAccount);
 
         assertTrue(moneyTransferred);
@@ -100,15 +105,6 @@ public class DepositAccountFacadeTest {
 
     @Test
     public void transferMoneyToAccountBalance_ReturnsFalse_WhenMoneyTransferredUnsuccessfully() {
-        when(depositAccount.getBalance()).thenReturn(BALANCE);
-        when(depositAccount.getDepositEnum()).thenReturn(YEAR);
-        when(depositAccount.getRate()).thenReturn(RATE);
-        when(depositAccount.getUserId()).thenReturn(USER_ID);
-        when(depositAccount.getStartDate()).thenReturn(START_DATE);
-        when(depositAccount.getTerm()).thenReturn(TERM);
-        when(userAccount.getBalance()).thenReturn(BALANCE);
-        when(userAccountService.updateBalanceById(BALANCE + AMOUNT, USER_ID)).thenReturn(true);
-        when(userAccountService.updateDepositStatusById(USER_ID, false)).thenReturn(true);
         when(depositAccountService.deleteDepositAccount(USER_ID)).thenReturn(false);
 
         boolean moneyTransferred = depositAccountFacade.transferMoneyToAccountBalance(depositAccount);
@@ -127,8 +123,6 @@ public class DepositAccountFacadeTest {
 
     @Test
     public void checkDeposit_ReturnsTrue_WhenUserDoesNotHaveDepositAccount() {
-        when(userAccount.isDeposit()).thenReturn(false);
-
         boolean hasDepositAccount = depositAccountFacade.checkDeposit(USER_ID);
 
         assertTrue(hasDepositAccount);
@@ -136,7 +130,6 @@ public class DepositAccountFacadeTest {
 
     @Test
     public void openDeposit_ReturnsTrue_WhenDepositAccountWasCreatedForGivenBalance() {
-        openDepositSetter();
         when(refillService.add(argThat(new RefillOperationArgumentMatcher()))).thenReturn(true);
 
         boolean openDeposit = depositAccountFacade.openDeposit(USER_ID, BALANCE);
@@ -144,19 +137,8 @@ public class DepositAccountFacadeTest {
         assertTrue(openDeposit);
     }
 
-    private void openDepositSetter() {
-        when(userAccount.getBalance()).thenReturn(BALANCE);
-        when(userAccount.isDeposit()).thenReturn(false);
-        when(userAccount.getAccountNumber()).thenReturn(ACCOUNT_NUMBER);
-        when(depositAccountService.deleteDepositAccount(USER_ID)).thenReturn(true);
-        when(depositAccountService.add(argThat(new DepositAccountArgumentMatcher()))).thenReturn(true);
-        when(userAccountService.updateDepositStatusById(USER_ID, true)).thenReturn(true);
-        when(userAccountService.updateBalanceById(0, USER_ID)).thenReturn(true);
-    }
-
     @Test
     public void openDeposit_ReturnsFalse_WhenDepositAccountWasNotCreatedForGivenBalance() throws SQLException {
-        openDepositSetter();
         when(refillService.add(argThat(new RefillOperationArgumentMatcher()))).thenReturn(false);
 
         boolean openDeposit = depositAccountFacade.openDeposit(USER_ID, BALANCE);

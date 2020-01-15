@@ -46,12 +46,15 @@ public class CreditAccountFacadeTest {
     @Before
     public void setUp() {
         when(connectionFactory.getConnection()).thenReturn(connection);
+        when(creditAccountService.getById(USER_ID)).thenReturn(creditAccount);
+        when(creditAccount.getRate()).thenReturn(RATE);
+        when(creditAccount.getArrears()).thenReturn(ARREARS);
+        when(creditAccount.getInterestCharges()).thenReturn(INTEREST_CHARGES);
+        when(creditAccount.getUserId()).thenReturn(USER_ID);
     }
 
     @Test
     public void getCreditAccount_ReturnsCreditAccount_WhenCreditAccountExistsForGivenUserId() {
-        when(creditAccountService.getById(USER_ID)).thenReturn(creditAccount);
-
         CreditAccount actualCreditAccount = creditAccountFacade.getCreditAccount(USER_ID);
 
         assertEquals(creditAccount, actualCreditAccount);
@@ -71,7 +74,6 @@ public class CreditAccountFacadeTest {
     public void checkArrears_ReturnsFalse_WhenCreditAccountDoesNotHaveArrears() {
         double arrears = 0;
 
-        when(creditAccountService.getById(USER_ID)).thenReturn(creditAccount);
         when(creditAccount.getArrears()).thenReturn(arrears);
 
         boolean noArrears = creditAccountFacade.checkArrears(USER_ID);
@@ -81,9 +83,6 @@ public class CreditAccountFacadeTest {
 
     @Test
     public void checkArrears_ReturnsTrue_WhenCreditAccountHasArrears() {
-        when(creditAccountService.getById(USER_ID)).thenReturn(creditAccount);
-        when(creditAccount.getArrears()).thenReturn(ARREARS);
-
         boolean noArrears = creditAccountFacade.checkArrears(USER_ID);
 
         assertTrue(noArrears);
@@ -91,7 +90,6 @@ public class CreditAccountFacadeTest {
 
     @Test
     public void updateInterestCharges_ReturnsTrue_WhenInterestChargesWereUpdated() {
-        setCreditAccountMockToReturnNecessaryData();
         when(creditAccountService.updateInterestCharges(INTEREST_CHARGES + AMOUNT, USER_ID)).thenReturn(true);
 
         boolean interestChargesUpdated = creditAccountFacade.updateInterestCharges(creditAccount);
@@ -99,16 +97,8 @@ public class CreditAccountFacadeTest {
         assertTrue(interestChargesUpdated);
     }
 
-    public void setCreditAccountMockToReturnNecessaryData() {
-        when(creditAccount.getRate()).thenReturn(RATE);
-        when(creditAccount.getArrears()).thenReturn(ARREARS);
-        when(creditAccount.getInterestCharges()).thenReturn(INTEREST_CHARGES);
-        when(creditAccount.getUserId()).thenReturn(USER_ID);
-    }
-
     @Test
     public void updateInterestCharges_ReturnsFalse_WhenInterestChargesWereNotUpdated() {
-        setCreditAccountMockToReturnNecessaryData();
         when(creditAccountService.updateInterestCharges(INTEREST_CHARGES + AMOUNT, USER_ID)).thenReturn(false);
 
         boolean interestChargesUpdated = creditAccountFacade.updateInterestCharges(creditAccount);

@@ -49,6 +49,13 @@ public class PayArrearsFacadeTest {
     @Before
     public void setUp() {
         when(connectionFactory.getConnection()).thenReturn(connection);
+        when(userAccountService.getById(USER_ID)).thenReturn(userAccount);
+        when(userAccount.getUserId()).thenReturn(USER_ID);
+        when(userAccount.isCredit()).thenReturn(true);
+        when(userAccount.getBalance()).thenReturn(BALANCE);
+        when(creditAccountService.getById(USER_ID)).thenReturn(creditAccount);
+        when(creditAccount.getArrears()).thenReturn(ARREARS);
+        when(creditAccountService.updateArrears(ARREARS - AMOUNT, USER_ID)).thenReturn(true);
     }
 
     @Test
@@ -56,11 +63,6 @@ public class PayArrearsFacadeTest {
         double arrears = 11.99;
         double returnAmount = AMOUNT - arrears;
 
-        when(userAccountService.getById(USER_ID)).thenReturn(userAccount);
-        when(userAccount.getUserId()).thenReturn(USER_ID);
-        when(userAccount.isCredit()).thenReturn(true);
-        when(userAccount.getBalance()).thenReturn(BALANCE);
-        when(creditAccountService.getById(USER_ID)).thenReturn(creditAccount);
         when(creditAccount.getArrears()).thenReturn(arrears);
         when(creditAccountService.updateArrears(0, USER_ID)).thenReturn(true);
         when(userAccountService.updateBalanceById(BALANCE + returnAmount, USER_ID)).thenReturn(true);
@@ -72,13 +74,6 @@ public class PayArrearsFacadeTest {
 
     @Test
     public void payArrears_ReturnsTrue_WhenArrearsMoreThanOrEqualToGivenAmountAndPayed() {
-        when(userAccountService.getById(USER_ID)).thenReturn(userAccount);
-        when(userAccount.getUserId()).thenReturn(USER_ID);
-        when(userAccount.isCredit()).thenReturn(true);
-        when(userAccount.getBalance()).thenReturn(BALANCE);
-        when(creditAccountService.getById(USER_ID)).thenReturn(creditAccount);
-        when(creditAccount.getArrears()).thenReturn(ARREARS);
-        when(creditAccountService.updateArrears(ARREARS - AMOUNT, USER_ID)).thenReturn(true);
         when(userAccountService.updateBalanceById(BALANCE, USER_ID)).thenReturn(true);
 
         boolean arrearsPayed = payArrearsFacade.payArrears(USER_ID, AMOUNT);
@@ -88,13 +83,6 @@ public class PayArrearsFacadeTest {
 
     @Test
     public void payArrears_ReturnsFalse_WhenArrearsCouldNotBePayed() {
-        when(userAccountService.getById(USER_ID)).thenReturn(userAccount);
-        when(userAccount.getUserId()).thenReturn(USER_ID);
-        when(userAccount.isCredit()).thenReturn(true);
-        when(userAccount.getBalance()).thenReturn(BALANCE);
-        when(creditAccountService.getById(USER_ID)).thenReturn(creditAccount);
-        when(creditAccount.getArrears()).thenReturn(ARREARS);
-        when(creditAccountService.updateArrears(ARREARS - AMOUNT, USER_ID)).thenReturn(true);
         when(userAccountService.updateBalanceById(BALANCE, USER_ID)).thenReturn(false);
 
         boolean arrearsPayed = payArrearsFacade.payArrears(USER_ID, AMOUNT);
@@ -105,7 +93,6 @@ public class PayArrearsFacadeTest {
     @Test
     public void checkArrears_ReturnsFalse_WhenUserDoesNotHaveArrears() {
         double arrears = 0;
-        when(creditAccountService.getById(USER_ID)).thenReturn(creditAccount);
         when(creditAccount.getArrears()).thenReturn(arrears);
 
         boolean hasArrears = payArrearsFacade.checkArrears(USER_ID);
@@ -115,9 +102,6 @@ public class PayArrearsFacadeTest {
 
     @Test
     public void checkArrears_ReturnsTrue_WhenUserHasArrears() {
-        when(creditAccountService.getById(USER_ID)).thenReturn(creditAccount);
-        when(creditAccount.getArrears()).thenReturn(ARREARS);
-
         boolean hasArrears = payArrearsFacade.checkArrears(USER_ID);
 
         assertTrue(hasArrears);

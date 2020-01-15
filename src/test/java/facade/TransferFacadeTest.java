@@ -54,33 +54,6 @@ public class TransferFacadeTest {
     @Before
     public void setUp() {
         when(connectionFactory.getConnection()).thenReturn(connection);
-    }
-
-    @Test
-    public void transfer_ReturnsTrue_WhenTransferWasSuccessful() {
-        int userId = 4;
-
-        when(transferOperation.getRecipientAccountNumber()).thenReturn(RECIPIENT_ACCOUNT_NUMBER);
-        when(transferOperation.getUserId()).thenReturn(USER_ID);
-        when(transferOperation.getAmount()).thenReturn(AMOUNT);
-        when(userAccountService.getByAccountNumber(RECIPIENT_ACCOUNT_NUMBER)).thenReturn(recipientUserAccount);
-        when(userAccountService.getById(USER_ID)).thenReturn(userAccount);
-        when(userAccount.getUserId()).thenReturn(userId);
-        when(recipientUserAccount.getUserId()).thenReturn(USER_ID);
-        when(userAccount.getValidity()).thenReturn(DATE);
-        when(userAccount.getBalance()).thenReturn(BALANCE);
-        when(recipientUserAccount.getBalance()).thenReturn(BALANCE);
-        when(userAccountService.updateBalanceById(BALANCE, USER_ID)).thenReturn(true);
-        when(userAccountService.updateByAccount(BALANCE + AMOUNT, RECIPIENT_ACCOUNT_NUMBER)).thenReturn(true);
-        when(transferService.add(transferOperation)).thenReturn(true);
-
-        boolean successfulTransfer = transferFacade.transfer(transferOperation);
-
-        assertTrue(successfulTransfer);
-    }
-
-    @Test
-    public void transfer_ReturnsFalse_WhenTransferWasNotSuccessful() {
         when(transferOperation.getRecipientAccountNumber()).thenReturn(RECIPIENT_ACCOUNT_NUMBER);
         when(transferOperation.getUserId()).thenReturn(USER_ID);
         when(transferOperation.getAmount()).thenReturn(AMOUNT);
@@ -93,6 +66,22 @@ public class TransferFacadeTest {
         when(recipientUserAccount.getBalance()).thenReturn(BALANCE);
         when(userAccountService.updateBalanceById(BALANCE, USER_ID)).thenReturn(true);
         when(userAccountService.updateByAccount(BALANCE + AMOUNT, RECIPIENT_ACCOUNT_NUMBER)).thenReturn(true);
+    }
+
+    @Test
+    public void transfer_ReturnsTrue_WhenTransferWasSuccessful() {
+        int userId = 4;
+
+        when(userAccount.getUserId()).thenReturn(userId);
+        when(transferService.add(transferOperation)).thenReturn(true);
+
+        boolean successfulTransfer = transferFacade.transfer(transferOperation);
+
+        assertTrue(successfulTransfer);
+    }
+
+    @Test
+    public void transfer_ReturnsFalse_WhenTransferWasNotSuccessful() {
         when(transferService.add(transferOperation)).thenReturn(false);
 
         boolean unsuccessfulTransfer = transferFacade.transfer(transferOperation);

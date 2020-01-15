@@ -50,14 +50,15 @@ public class CreditRequestFacadeTest {
     @Before
     public void setUp() {
         when(connectionFactory.getConnection()).thenReturn(connection);
+        when(creditRequest.getUserId()).thenReturn(USER_ID);
+        when(creditApprovementService.getById(USER_ID)).thenReturn(creditApprovementOperation);
+        when(userAccountService.getById(USER_ID)).thenReturn(userAccount);
     }
 
     @Test
     public void createCreditRequest_ReturnsTrue_WhenCreditRequestWasCreated() {
         int expectedUserId = -1;
 
-        when(creditRequest.getUserId()).thenReturn(USER_ID);
-        when(creditApprovementService.getById(USER_ID)).thenReturn(creditApprovementOperation);
         when(creditApprovementOperation.getUserId()).thenReturn(expectedUserId);
         when(creditApprovementService.createCreditRequest(creditRequest)).thenReturn(true);
 
@@ -68,8 +69,6 @@ public class CreditRequestFacadeTest {
 
     @Test
     public void createCreditRequest_ReturnsFalse_WhenCreditRequestWasNotCreated() {
-        when(creditRequest.getUserId()).thenReturn(USER_ID);
-        when(creditApprovementService.getById(USER_ID)).thenReturn(creditApprovementOperation);
         when(creditApprovementOperation.getUserId()).thenReturn(USER_ID);
 
         boolean requestCreated = creditRequestFacade.createCreditRequest(creditRequest);
@@ -79,7 +78,6 @@ public class CreditRequestFacadeTest {
 
     @Test
     public void checkCredit_ReturnsFalse_WhenUserAlreadyHasCreditAccount() {
-        when(userAccountService.getById(USER_ID)).thenReturn(userAccount);
         when(userAccount.isCredit()).thenReturn(true);
 
         boolean hasCreditAccount = creditRequestFacade.checkCredit(USER_ID);
@@ -89,7 +87,6 @@ public class CreditRequestFacadeTest {
 
     @Test
     public void checkCredit_ReturnsTrue_WhenUserDoesNotHaveCreditAccount() {
-        when(userAccountService.getById(USER_ID)).thenReturn(userAccount);
         when(userAccount.isCredit()).thenReturn(false);
 
         boolean hasCreditAccount = creditRequestFacade.checkCredit(USER_ID);

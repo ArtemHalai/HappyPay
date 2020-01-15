@@ -19,6 +19,7 @@ import static enums.DAOEnum.USER_ACCOUNT_JDBC;
 @Log4j
 public class CreditRequestFacade {
 
+    private static final String ERROR = "Could not create credit request for user with id: %d";
     private UserAccountService userAccountService;
     private CreditApprovementService creditApprovementService;
     private DaoFactory factory;
@@ -46,7 +47,7 @@ public class CreditRequestFacade {
                 return true;
             }
         } catch (SQLException e) {
-            log.error("Could not create credit request", e);
+            log.error(String.format(ERROR, creditRequest.getUserId()), e);
         }
         return false;
     }
@@ -58,7 +59,7 @@ public class CreditRequestFacade {
                 return false;
             }
         } catch (SQLException e) {
-            log.error("Could not check credit", e);
+            log.error(String.format("Could not check credit for user with id: %d", userId), e);
         }
         return true;
     }

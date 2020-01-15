@@ -8,6 +8,7 @@ import model.*;
 import service.*;
 import util.TransactionManager;
 import util.UserAccountGetter;
+import util.UserAccountValidity;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -20,6 +21,7 @@ import static enums.DAOEnum.*;
 @Log4j
 public class RefillFacade {
 
+    private static final String ERROR = "Could not make refill operation for user with id: %d, and sender account type: %s";
     private RefillService refillService;
     private TransferService transferService;
     private BillPaymentService billPaymentService;
@@ -61,7 +63,7 @@ public class RefillFacade {
             userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
             UserAccount userAccount = userAccountService.getById(refillOperation.getUserId());
             CreditAccount creditAccount = creditAccountService.getById(refillOperation.getUserId());
-            if (userAccount.getUserId() > 0 && userAccount.isCredit() && creditAccount.getLimit() >= refillOperation.getAmount()) {
+            if (UserAccountValidity.userIdIsValid(userAccount) && userAccount.isCredit() && creditAccount.getLimit() >= refillOperation.getAmount()) {
                 boolean limitUpdated =
                         creditAccountService.updateBalanceById(creditAccount.getLimit() - refillOperation.getAmount(), refillOperation.getUserId());
                 boolean addArrears =
@@ -77,7 +79,7 @@ public class RefillFacade {
             }
             connection.rollback();
         } catch (SQLException e) {
-            log.error("Could not make refill operation", e);
+            log.error(String.format(ERROR, refillOperation.getUserId(), refillOperation.getSenderAccountType()), e);
         }
         return false;
     }

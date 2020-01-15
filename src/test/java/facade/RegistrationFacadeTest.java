@@ -50,13 +50,15 @@ public class RegistrationFacadeTest {
     @Before
     public void setUp() {
         when(connectionFactory.getConnection()).thenReturn(connection);
+        when(clientDetails.getUsername()).thenReturn(USERNAME);
+        when(clientDetails.getPassword()).thenReturn(PASS);
+        when(userService.isUserExist(USERNAME)).thenReturn(false);
     }
 
     @Test
     public void addClientDetails_ReturnsNegativeUserId_WhenUserAlreadyExists() {
         int expectedUserId = -1;
 
-        when(clientDetails.getUsername()).thenReturn(USERNAME);
         when(userService.isUserExist(USERNAME)).thenReturn(true);
 
         int userId = registrationFacade.addClientDetails(clientDetails);
@@ -67,10 +69,6 @@ public class RegistrationFacadeTest {
     @Test
     public void addClientDetails_ReturnsGeneratedUserId_WhenUserAndClientDetailsAddedSuccessfully() {
         int expectedUserId = 1;
-
-        when(clientDetails.getUsername()).thenReturn(USERNAME);
-        when(clientDetails.getPassword()).thenReturn(PASS);
-        when(userService.isUserExist(USERNAME)).thenReturn(false);
 
         when(userService.addUser(argThat(new UserArgumentMatcher()))).thenReturn(expectedUserId);
         when(clientDetailsService.add(clientDetails)).thenReturn(true);
@@ -85,9 +83,6 @@ public class RegistrationFacadeTest {
     public void addClientDetails_ReturnsNegativeUserId_WhenUserAndClientDetailsAddedUnsuccessfully() {
         int expectedUserId = -1;
 
-        when(clientDetails.getUsername()).thenReturn(USERNAME);
-        when(clientDetails.getPassword()).thenReturn(PASS);
-        when(userService.isUserExist(USERNAME)).thenReturn(false);
         when(userService.addUser(argThat(new UserArgumentMatcher()))).thenReturn(expectedUserId);
         when(clientDetailsService.add(clientDetails)).thenReturn(false);
 

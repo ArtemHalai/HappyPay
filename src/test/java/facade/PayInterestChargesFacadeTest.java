@@ -49,13 +49,19 @@ public class PayInterestChargesFacadeTest {
     @Before
     public void setUp() {
         when(connectionFactory.getConnection()).thenReturn(connection);
+        when(creditAccountService.getById(USER_ID)).thenReturn(creditAccount);
+        when(userAccountService.getById(USER_ID)).thenReturn(userAccount);
+        when(userAccount.getUserId()).thenReturn(USER_ID);
+        when(userAccount.isCredit()).thenReturn(true);
+        when(userAccount.getBalance()).thenReturn(BALANCE);
+        when(creditAccount.getInterestCharges()).thenReturn(INTEREST_CHARGES);
+        when(creditAccountService.updateInterestCharges(INTEREST_CHARGES - AMOUNT, USER_ID)).thenReturn(true);
     }
 
     @Test
     public void checkInterestCharges_ReturnsFalse_WhenUserDoesNotHaveInterestCharges() {
         double interestCharges = 0;
 
-        when(creditAccountService.getById(USER_ID)).thenReturn(creditAccount);
         when(creditAccount.getInterestCharges()).thenReturn(interestCharges);
 
         boolean hasInterestCharges = payInterestChargesFacade.checkInterestCharges(USER_ID);
@@ -65,7 +71,6 @@ public class PayInterestChargesFacadeTest {
 
     @Test
     public void checkInterestCharges_ReturnsTrue_WhenUserHasInterestCharges() {
-        when(creditAccountService.getById(USER_ID)).thenReturn(creditAccount);
         when(creditAccount.getInterestCharges()).thenReturn(INTEREST_CHARGES);
 
         boolean hasInterestCharges = payInterestChargesFacade.checkInterestCharges(USER_ID);
@@ -78,11 +83,6 @@ public class PayInterestChargesFacadeTest {
         double interestCharges = 11.99;
         double returnAmount = AMOUNT - interestCharges;
 
-        when(userAccountService.getById(USER_ID)).thenReturn(userAccount);
-        when(userAccount.getUserId()).thenReturn(USER_ID);
-        when(userAccount.isCredit()).thenReturn(true);
-        when(userAccount.getBalance()).thenReturn(BALANCE);
-        when(creditAccountService.getById(USER_ID)).thenReturn(creditAccount);
         when(creditAccount.getInterestCharges()).thenReturn(interestCharges);
         when(creditAccountService.updateInterestCharges(0, USER_ID)).thenReturn(true);
         when(userAccountService.updateBalanceById(BALANCE + returnAmount, USER_ID)).thenReturn(true);
@@ -94,13 +94,6 @@ public class PayInterestChargesFacadeTest {
 
     @Test
     public void payInterestCharges_ReturnsTrue_WhenInterestChargesMoreThanOrEqualToGivenAmountAndPayed() {
-        when(userAccountService.getById(USER_ID)).thenReturn(userAccount);
-        when(userAccount.getUserId()).thenReturn(USER_ID);
-        when(userAccount.isCredit()).thenReturn(true);
-        when(userAccount.getBalance()).thenReturn(BALANCE);
-        when(creditAccountService.getById(USER_ID)).thenReturn(creditAccount);
-        when(creditAccount.getInterestCharges()).thenReturn(INTEREST_CHARGES);
-        when(creditAccountService.updateInterestCharges(INTEREST_CHARGES - AMOUNT, USER_ID)).thenReturn(true);
         when(userAccountService.updateBalanceById(BALANCE, USER_ID)).thenReturn(true);
 
         boolean interestChargesPayed = payInterestChargesFacade.payInterestCharges(USER_ID, AMOUNT);
@@ -110,13 +103,6 @@ public class PayInterestChargesFacadeTest {
 
     @Test
     public void payInterestCharges_ReturnsFalse_WhenInterestChargesCouldNotBePayed() {
-        when(userAccountService.getById(USER_ID)).thenReturn(userAccount);
-        when(userAccount.getUserId()).thenReturn(USER_ID);
-        when(userAccount.isCredit()).thenReturn(true);
-        when(userAccount.getBalance()).thenReturn(BALANCE);
-        when(creditAccountService.getById(USER_ID)).thenReturn(creditAccount);
-        when(creditAccount.getInterestCharges()).thenReturn(INTEREST_CHARGES);
-        when(creditAccountService.updateInterestCharges(INTEREST_CHARGES - AMOUNT, USER_ID)).thenReturn(true);
         when(userAccountService.updateBalanceById(BALANCE, USER_ID)).thenReturn(false);
 
         boolean interestChargesPayed = payInterestChargesFacade.payInterestCharges(USER_ID, AMOUNT);

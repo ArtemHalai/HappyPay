@@ -52,17 +52,17 @@ public class BillPaymentFacadeTest {
     @Before
     public void setUp() {
         when(connectionFactory.getConnection()).thenReturn(connection);
+        when(billPaymentOperation.getUserId()).thenReturn(USER_ID);
+        when(billPaymentOperation.getAmount()).thenReturn(AMOUNT);
+        when(userAccountService.getById(USER_ID)).thenReturn(userAccount);
+        when(userAccount.getUserId()).thenReturn(USER_ID);
+        when(userAccount.getValidity()).thenReturn(DATE);
+        when(userAccount.getBalance()).thenReturn(USER_BALANCE);
+        when(userAccountService.updateBalanceById(USER_BALANCE, USER_ID)).thenReturn(true);
     }
 
     @Test
     public void payBill_ReturnsTrue_WhenBillWasPayed() {
-        when(billPaymentOperation.getUserId()).thenReturn(USER_ID);
-        when(billPaymentOperation.getAmount()).thenReturn(AMOUNT);
-        when(userAccountService.getById(USER_ID)).thenReturn(userAccount);
-        when(userAccount.getValidity()).thenReturn(DATE);
-        when(userAccount.getBalance()).thenReturn(USER_BALANCE);
-        when(userAccount.getUserId()).thenReturn(USER_ID);
-        when(userAccountService.updateBalanceById(USER_BALANCE, USER_ID)).thenReturn(true);
         when(billPaymentService.add(billPaymentOperation)).thenReturn(true);
 
         boolean billPayed = billPaymentFacade.payBill(billPaymentOperation);
@@ -74,10 +74,6 @@ public class BillPaymentFacadeTest {
     public void payBill_ReturnsFalse_WhenBillWasNotPayed() {
         Date invalidDate = new Date(System.currentTimeMillis() - 1000);
 
-        when(billPaymentOperation.getUserId()).thenReturn(USER_ID);
-        when(billPaymentOperation.getAmount()).thenReturn(AMOUNT);
-        when(userAccountService.getById(USER_ID)).thenReturn(userAccount);
-        when(userAccount.getUserId()).thenReturn(USER_ID);
         when(userAccount.getValidity()).thenReturn(invalidDate);
 
         boolean billPayed = billPaymentFacade.payBill(billPaymentOperation);
@@ -87,13 +83,6 @@ public class BillPaymentFacadeTest {
 
     @Test
     public void payBill_ThrowsException_WhenAddBillPaymentOperation() throws SQLException {
-        when(billPaymentOperation.getUserId()).thenReturn(USER_ID);
-        when(billPaymentOperation.getAmount()).thenReturn(AMOUNT);
-        when(userAccountService.getById(USER_ID)).thenReturn(userAccount);
-        when(userAccount.getValidity()).thenReturn(DATE);
-        when(userAccount.getBalance()).thenReturn(USER_BALANCE);
-        when(userAccount.getUserId()).thenReturn(USER_ID);
-        when(userAccountService.updateBalanceById(USER_BALANCE, USER_ID)).thenReturn(true);
         when(billPaymentService.add(billPaymentOperation)).thenThrow(new RuntimeException());
 
         boolean billPayed = billPaymentFacade.payBill(billPaymentOperation);

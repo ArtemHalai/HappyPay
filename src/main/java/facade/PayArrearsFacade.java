@@ -9,6 +9,7 @@ import service.CreditAccountService;
 import service.UserAccountService;
 import util.TransactionManager;
 import util.UserAccountGetter;
+import util.UserAccountValidity;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -18,6 +19,7 @@ import static enums.DAOEnum.*;
 @Log4j
 public class PayArrearsFacade {
 
+    private static final String ERROR = "Could not pay arrears for user with id: %d";
     private UserAccountService userAccountService;
     private CreditAccountService creditAccountService;
     private DaoFactory factory;
@@ -43,13 +45,14 @@ public class PayArrearsFacade {
             creditAccountService.setCreditAccountDAO(factory.getCreditAccountDAO(connection, CREDIT_ACCOUNT_JDBC));
             UserAccount userAccount = userAccountService.getById(userId);
 
-            if (userAccount.getUserId() > 0 && userAccount.isCredit() && userAccount.getBalance() >= amount) {
+            if (UserAccountValidity.userIdIsValid(userAccount) && userAccount.isCredit() && userAccount.getBalance() >= amount) {
                 userAccount.setBalance(userAccount.getBalance() - amount);
 
                 CreditAccount creditAccount = creditAccountService.getById(userId);
 
                 boolean checkedAndUpdated = checkAndUpdateArrears(userId, amount, connection, userAccount, creditAccount);
                 if (checkedAndUpdated) {
+                    connection.commit();
                     return true;
                 }
                 connection.rollback();
@@ -57,31 +60,32 @@ public class PayArrearsFacade {
                 return false;
             }
         } catch (SQLException e) {
-            log.error("Could not pay arrears", e);
+            log.error(String.format(ERROR, userId), e);
         }
         return false;
     }
 
     private boolean checkAndUpdateArrears(int userId, double amount, Connection connection, UserAccount userAccount, CreditAccount creditAccount) {
         try {
-            if (creditAccount.getArrears() < amount && creditAccountService.updateArrears(0, userId)) {
+            if (creditAccount.getArrears() < amount) {
+                boolean updatedArrears = creditAccountService.updateArrears(0, userId);
                 double returnAmount = amount - creditAccount.getArrears();
                 boolean updatedBalance = userAccountService.updateBalanceById(userAccount.getBalance() + returnAmount, userId);
-                if (updatedBalance) {
+                if (updatedBalance && updatedArrears) {
                     connection.commit();
                     return true;
                 }
             }
 
-            if (creditAccount.getArrears() >= amount && creditAccountService.updateArrears(creditAccount.getArrears() - amount, userId)) {
+            if (creditAccount.getArrears() >= amount) {
+                boolean updatedArrears = creditAccountService.updateArrears(creditAccount.getArrears() - amount, userId);
                 boolean updateBalanceById = userAccountService.updateBalanceById(userAccount.getBalance(), userId);
-                if (updateBalanceById) {
-                    connection.commit();
+                if (updateBalanceById && updatedArrears) {
                     return true;
                 }
             }
         } catch (Exception e) {
-            log.error("Could not pay arrears", e);
+            log.error(String.format(ERROR, userId), e);
         }
         return false;
     }
@@ -93,7 +97,7 @@ public class PayArrearsFacade {
                 return false;
             }
         } catch (SQLException e) {
-            log.error("Could not check arrears", e);
+            log.error(String.format("Could not check arrears for user with id: %d", userId), e);
         }
         return true;
     }

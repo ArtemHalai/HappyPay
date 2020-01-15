@@ -67,6 +67,17 @@ public class RefillFacadeTest {
     @Before
     public void setUp() {
         when(connectionFactory.getConnection()).thenReturn(connection);
+        when(refillOperation.getUserId()).thenReturn(USER_ID);
+        when(userAccountService.getById(USER_ID)).thenReturn(userAccount);
+        when(creditAccountService.getById(USER_ID)).thenReturn(creditAccount);
+        when(userAccount.getUserId()).thenReturn(USER_ID);
+        when(userAccount.isCredit()).thenReturn(true);
+        when(refillOperation.getAmount()).thenReturn(AMOUNT);
+        when(refillService.getAllOperations(allOperationsDTO)).thenReturn(allOperationsDTO);
+        when(billPaymentService.getAllOperations(allOperationsDTO)).thenReturn(allOperationsDTO);
+        when(transferService.getAllOperations(allOperationsDTO)).thenReturn(allOperationsDTO);
+        when(allOperationsDTO.getUserId()).thenReturn(USER_ID);
+        when(allOperationsDTO.getPageSize()).thenReturn(PAGE_SIZE);
     }
 
     @Test
@@ -75,13 +86,7 @@ public class RefillFacadeTest {
         double creditLimit = 1001.99;
         double arrears = 0;
 
-        when(refillOperation.getUserId()).thenReturn(USER_ID);
-        when(userAccountService.getById(USER_ID)).thenReturn(userAccount);
-        when(creditAccountService.getById(USER_ID)).thenReturn(creditAccount);
-        when(userAccount.getUserId()).thenReturn(USER_ID);
-        when(userAccount.isCredit()).thenReturn(true);
         when(userAccount.getBalance()).thenReturn(balance);
-        when(refillOperation.getAmount()).thenReturn(AMOUNT);
         when(creditAccount.getLimit()).thenReturn(creditLimit);
         when(creditAccount.getArrears()).thenReturn(arrears);
         when(creditAccountService.updateBalanceById(creditLimit - AMOUNT, USER_ID)).thenReturn(true);
@@ -98,12 +103,6 @@ public class RefillFacadeTest {
     public void refill_ReturnsFalse_WhenRefillOperationWasNotSuccessful() {
         double creditLimit = 1.99;
 
-        when(refillOperation.getUserId()).thenReturn(USER_ID);
-        when(userAccountService.getById(USER_ID)).thenReturn(userAccount);
-        when(creditAccountService.getById(USER_ID)).thenReturn(creditAccount);
-        when(userAccount.getUserId()).thenReturn(USER_ID);
-        when(userAccount.isCredit()).thenReturn(true);
-        when(refillOperation.getAmount()).thenReturn(AMOUNT);
         when(creditAccount.getLimit()).thenReturn(creditLimit);
 
         boolean unsuccessfulRefill = refillFacade.refill(refillOperation);
@@ -122,12 +121,6 @@ public class RefillFacadeTest {
 
     @Test
     public void getAllOperations_ReturnsAllOperationsDTOContainingListWithOperationsDataObjectsLessThanTen_WhenPassAllOperationsDTOContainingNecessaryDataForThis() {
-        when(refillService.getAllOperations(allOperationsDTO)).thenReturn(allOperationsDTO);
-        when(billPaymentService.getAllOperations(allOperationsDTO)).thenReturn(allOperationsDTO);
-        when(transferService.getAllOperations(allOperationsDTO)).thenReturn(allOperationsDTO);
-        when(allOperationsDTO.getUserId()).thenReturn(USER_ID);
-        when(allOperationsDTO.getPageSize()).thenReturn(PAGE_SIZE);
-
         AllOperationsDTO operationsDTO = refillFacade.getAllOperations(allOperationsDTO);
 
         assertEquals(allOperationsDTO, operationsDTO);
@@ -142,11 +135,6 @@ public class RefillFacadeTest {
             operationsData.add(operation);
         }
 
-        when(refillService.getAllOperations(allOperationsDTO)).thenReturn(allOperationsDTO);
-        when(billPaymentService.getAllOperations(allOperationsDTO)).thenReturn(allOperationsDTO);
-        when(transferService.getAllOperations(allOperationsDTO)).thenReturn(allOperationsDTO);
-        when(allOperationsDTO.getUserId()).thenReturn(USER_ID);
-        when(allOperationsDTO.getPageSize()).thenReturn(PAGE_SIZE);
         when(allOperationsDTO.getList()).thenReturn(operationsData);
 
         AllOperationsDTO operationsDTO = refillFacade.getAllOperations(allOperationsDTO);

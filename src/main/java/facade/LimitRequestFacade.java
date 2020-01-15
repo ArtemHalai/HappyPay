@@ -6,30 +6,24 @@ import lombok.extern.log4j.Log4j;
 import model.LimitRequest;
 import model.UserAccount;
 import service.LimitRequestService;
-import service.UserAccountService;
 import util.UserAccountGetter;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
 import static enums.DAOEnum.LIMIT_JDBC;
-import static enums.DAOEnum.USER_ACCOUNT_JDBC;
 
 @Log4j
 public class LimitRequestFacade {
 
+    private static final String ERROR = "Could not add limit request for user with id: %d";
     private LimitRequestService limitRequestService;
-    private UserAccountService userAccountService;
     private DaoFactory factory;
     private JDBCConnectionFactory connectionFactory;
 
     public LimitRequestFacade() {
         factory = DaoFactory.getInstance();
         connectionFactory = JDBCConnectionFactory.getInstance();
-    }
-
-    public void setUserAccountService(UserAccountService userAccountService) {
-        this.userAccountService = userAccountService;
     }
 
     public void setLimitRequestService(LimitRequestService limitRequestService) {
@@ -44,7 +38,7 @@ public class LimitRequestFacade {
                 return true;
             }
         } catch (SQLException e) {
-            log.error("Could not add limit request", e);
+            log.error(String.format(ERROR, limitRequest.getUserId()), e);
         }
         return false;
     }

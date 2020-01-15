@@ -36,7 +36,6 @@ public class LimitRequestCommand implements Command {
         if (!CheckRoleAndId.check(session))
             return LOGIN_VIEW;
         int userId = (int) session.getAttribute(USER_ID.getName());
-        limitRequestFacade.setUserAccountService(ServiceFactory.getInstance().getUserAccountService());
         UserAccount userAccount = limitRequestFacade.getUserAccount(userId);
         if (userAccount.getValidity() == null || !DateValidity.valid(userAccount.getValidity()))
             return CLIENT_ACCOUNTS;
