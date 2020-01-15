@@ -1,6 +1,5 @@
 package facade;
 
-import factories.DaoFactory;
 import factories.JDBCConnectionFactory;
 import lombok.extern.log4j.Log4j;
 import model.BillPaymentOperation;
@@ -14,19 +13,15 @@ import util.UserAccountValidity;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import static enums.DAOEnum.*;
-
 @Log4j
 public class BillPaymentFacade {
 
     private static final String ERROR = "Could not make bill payment for user with id: %d, and bill number: %d";
     private BillPaymentService billPaymentService;
     private UserAccountService userAccountService;
-    private DaoFactory factory;
     private JDBCConnectionFactory connectionFactory;
 
     public BillPaymentFacade() {
-        factory = DaoFactory.getInstance();
         connectionFactory = JDBCConnectionFactory.getInstance();
     }
 
@@ -41,8 +36,8 @@ public class BillPaymentFacade {
     public boolean payBill(BillPaymentOperation billPaymentOperation) {
         try (Connection connection = connectionFactory.getConnection()) {
             TransactionManager.setRepeatableRead(connection);
-            billPaymentService.setBillPaymentDAO(factory.getBillPaymentDAO(connection, BILL_PAYMENT_JDBC));
-            userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
+            billPaymentService.setDefaultBillPaymentDAO(connection);
+            userAccountService.setDefaultUserAccountDAO(connection);
             UserAccount userAccount = userAccountService.getById(billPaymentOperation.getUserId());
 
             boolean checkedAndUpdated = checkAndUpdateBalance(billPaymentOperation, connection, userAccount);

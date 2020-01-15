@@ -1,6 +1,5 @@
 package facade;
 
-import factories.DaoFactory;
 import factories.JDBCConnectionFactory;
 import lombok.extern.log4j.Log4j;
 import model.CreditAccount;
@@ -14,19 +13,14 @@ import util.UserAccountValidity;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import static enums.DAOEnum.CREDIT_ACCOUNT_JDBC;
-import static enums.DAOEnum.USER_ACCOUNT_JDBC;
-
 @Log4j
 public class PayInterestChargesFacade {
 
     private UserAccountService userAccountService;
     private CreditAccountService creditAccountService;
-    private DaoFactory factory;
     private JDBCConnectionFactory connectionFactory;
 
     public PayInterestChargesFacade() {
-        factory = DaoFactory.getInstance();
         connectionFactory = JDBCConnectionFactory.getInstance();
     }
 
@@ -40,7 +34,7 @@ public class PayInterestChargesFacade {
 
     public boolean checkInterestCharges(int userId) {
         try (Connection connection = connectionFactory.getConnection()) {
-            creditAccountService.setCreditAccountDAO(factory.getCreditAccountDAO(connection, CREDIT_ACCOUNT_JDBC));
+            creditAccountService.setDefaultCreditAccountDAO(connection);
             if (creditAccountService.getById(userId).getInterestCharges() <= 0) {
                 return false;
             }
@@ -53,8 +47,8 @@ public class PayInterestChargesFacade {
     public boolean payInterestCharges(int userId, double amount) {
         try (Connection connection = connectionFactory.getConnection()) {
             TransactionManager.setRepeatableRead(connection);
-            userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
-            creditAccountService.setCreditAccountDAO(factory.getCreditAccountDAO(connection, CREDIT_ACCOUNT_JDBC));
+            userAccountService.setDefaultUserAccountDAO(connection);
+            creditAccountService.setDefaultCreditAccountDAO(connection);
             UserAccount userAccount = userAccountService.getById(userId);
 
             if (UserAccountValidity.userIdIsValid(userAccount) && userAccount.isCredit() && userAccount.getBalance() >= amount) {

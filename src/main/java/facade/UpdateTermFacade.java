@@ -1,6 +1,5 @@
 package facade;
 
-import factories.DaoFactory;
 import factories.JDBCConnectionFactory;
 import lombok.extern.log4j.Log4j;
 import model.UserAccount;
@@ -10,17 +9,13 @@ import util.UserAccountGetter;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import static enums.DAOEnum.USER_ACCOUNT_JDBC;
-
 @Log4j
 public class UpdateTermFacade {
 
     private UserAccountService userAccountService;
-    private DaoFactory factory;
     private JDBCConnectionFactory connectionFactory;
 
     public UpdateTermFacade() {
-        factory = DaoFactory.getInstance();
         connectionFactory = JDBCConnectionFactory.getInstance();
     }
 
@@ -30,7 +25,7 @@ public class UpdateTermFacade {
 
     public boolean updateTerm(int userId) {
         try(Connection connection = connectionFactory.getConnection()) {
-            userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
+            userAccountService.setDefaultUserAccountDAO(connection);
             boolean updated = userAccountService.updateTerm(userId);
             if (updated) {
                 return true;

@@ -1,15 +1,29 @@
 package service;
 
 import dao.intefaces.UserDAO;
+import factories.DaoFactory;
 import model.User;
 import util.PasswordEncryption;
+
+import java.sql.Connection;
+
+import static enums.DAOEnum.USER_JDBC;
 
 public class UserService {
 
     private UserDAO userDAO;
+    private DaoFactory factory;
+
+    public UserService() {
+        factory = DaoFactory.getInstance();
+    }
 
     public void setUserDAO(UserDAO userDAO) {
         this.userDAO = userDAO;
+    }
+
+    public void setDefaultUserDAO(Connection connection) {
+        this.userDAO = factory.getUserDAO(connection, USER_JDBC);
     }
 
     public User getUserByUsernameAndPassword(String username, String password) {

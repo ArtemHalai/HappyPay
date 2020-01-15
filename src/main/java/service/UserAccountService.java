@@ -1,15 +1,29 @@
 package service;
 
 import dao.intefaces.UserAccountDAO;
+import factories.DaoFactory;
 import model.UserAccount;
 import util.UserAccountValidity;
+
+import java.sql.Connection;
+
+import static enums.DAOEnum.USER_ACCOUNT_JDBC;
 
 public class UserAccountService {
 
     private UserAccountDAO userAccountDAO;
+    private DaoFactory factory;
+
+    public UserAccountService() {
+        factory = DaoFactory.getInstance();
+    }
 
     public void setUserAccountDAO(UserAccountDAO userAccountDAO) {
         this.userAccountDAO = userAccountDAO;
+    }
+
+    public void setDefaultUserAccountDAO(Connection connection) {
+        this.userAccountDAO = factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC);
     }
 
     public boolean add(UserAccount userAccount) {

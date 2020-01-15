@@ -1,7 +1,6 @@
 package facade;
 
 import comparator.OperationDateComparator;
-import factories.DaoFactory;
 import factories.JDBCConnectionFactory;
 import lombok.extern.log4j.Log4j;
 import model.*;
@@ -16,8 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static enums.DAOEnum.*;
-
 @Log4j
 public class RefillFacade {
 
@@ -27,11 +24,9 @@ public class RefillFacade {
     private BillPaymentService billPaymentService;
     private CreditAccountService creditAccountService;
     private UserAccountService userAccountService;
-    private DaoFactory factory;
     private JDBCConnectionFactory connectionFactory;
 
     public RefillFacade() {
-        factory = DaoFactory.getInstance();
         connectionFactory = JDBCConnectionFactory.getInstance();
     }
 
@@ -58,9 +53,9 @@ public class RefillFacade {
     public boolean refill(RefillOperation refillOperation) {
         try (Connection connection = connectionFactory.getConnection()) {
             TransactionManager.setRepeatableRead(connection);
-            refillService.setRefillDAO(factory.getRefillDAO(connection, REFILL_JDBC));
-            creditAccountService.setCreditAccountDAO(factory.getCreditAccountDAO(connection, CREDIT_ACCOUNT_JDBC));
-            userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
+            refillService.setDefaultRefillDAO(connection);
+            creditAccountService.setDefaultCreditAccountDAO(connection);
+            userAccountService.setDefaultUserAccountDAO(connection);
             UserAccount userAccount = userAccountService.getById(refillOperation.getUserId());
             CreditAccount creditAccount = creditAccountService.getById(refillOperation.getUserId());
             if (UserAccountValidity.userIdIsValid(userAccount) && userAccount.isCredit() && creditAccount.getLimit() >= refillOperation.getAmount()) {
@@ -86,7 +81,7 @@ public class RefillFacade {
 
     public RefillPaginationDTO getRefillOperations(RefillPaginationDTO paginationDTO) {
         try (Connection connection = connectionFactory.getConnection()) {
-            refillService.setRefillDAO(factory.getRefillDAO(connection, REFILL_JDBC));
+            refillService.setDefaultRefillDAO(connection);
             paginationDTO = refillService.getRefillOperations(paginationDTO);
         } catch (SQLException e) {
             log.error("Could not get refill operations", e);
@@ -97,9 +92,9 @@ public class RefillFacade {
     public AllOperationsDTO getAllOperations(AllOperationsDTO allOperationsDTO) {
 
         try (Connection connection = connectionFactory.getConnection()) {
-            refillService.setRefillDAO(factory.getRefillDAO(connection, REFILL_JDBC));
-            billPaymentService.setBillPaymentDAO(factory.getBillPaymentDAO(connection, BILL_PAYMENT_JDBC));
-            transferService.setTransferDAO(factory.getTransferDAO(connection, TRANSFER_JDBC));
+            refillService.setDefaultRefillDAO(connection);
+            billPaymentService.setDefaultBillPaymentDAO(connection);
+            transferService.setDefaultTransferDAO(connection);
 
             AllOperationsDTO paginationDTO1 = refillService.getAllOperations(allOperationsDTO);
             AllOperationsDTO paginationDTO2 = billPaymentService.getAllOperations(allOperationsDTO);

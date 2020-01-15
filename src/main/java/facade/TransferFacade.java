@@ -1,6 +1,5 @@
 package facade;
 
-import factories.DaoFactory;
 import factories.JDBCConnectionFactory;
 import lombok.extern.log4j.Log4j;
 import model.TransferOperation;
@@ -14,19 +13,15 @@ import util.UserAccountValidity;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import static enums.DAOEnum.*;
-
 @Log4j
 public class TransferFacade {
 
     private static final String ERROR = "Could not make transfer for user with id: %d, and recipient account number: %d";
     private TransferService transferService;
     private UserAccountService userAccountService;
-    private DaoFactory factory;
     private JDBCConnectionFactory connectionFactory;
 
     public TransferFacade() {
-        factory = DaoFactory.getInstance();
         connectionFactory = JDBCConnectionFactory.getInstance();
     }
 
@@ -41,8 +36,8 @@ public class TransferFacade {
     public boolean transfer(TransferOperation transferOperation) {
         try (Connection connection = connectionFactory.getConnection()) {
             TransactionManager.setRepeatableRead(connection);
-            transferService.setTransferDAO(factory.getTransferDAO(connection, TRANSFER_JDBC));
-            userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
+            transferService.setDefaultTransferDAO(connection);
+            userAccountService.setDefaultUserAccountDAO(connection);
             UserAccount recipientAccount = userAccountService.getByAccountNumber(transferOperation.getRecipientAccountNumber());
             UserAccount userAccount = userAccountService.getById(transferOperation.getUserId());
 

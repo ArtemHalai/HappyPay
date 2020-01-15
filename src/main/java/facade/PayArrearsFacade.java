@@ -1,6 +1,5 @@
 package facade;
 
-import factories.DaoFactory;
 import factories.JDBCConnectionFactory;
 import lombok.extern.log4j.Log4j;
 import model.CreditAccount;
@@ -14,19 +13,15 @@ import util.UserAccountValidity;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import static enums.DAOEnum.*;
-
 @Log4j
 public class PayArrearsFacade {
 
     private static final String ERROR = "Could not pay arrears for user with id: %d";
     private UserAccountService userAccountService;
     private CreditAccountService creditAccountService;
-    private DaoFactory factory;
     private JDBCConnectionFactory connectionFactory;
 
     public PayArrearsFacade() {
-        factory = DaoFactory.getInstance();
         connectionFactory = JDBCConnectionFactory.getInstance();
     }
 
@@ -41,8 +36,8 @@ public class PayArrearsFacade {
     public boolean payArrears(int userId, double amount) {
         try (Connection connection = connectionFactory.getConnection()) {
             TransactionManager.setRepeatableRead(connection);
-            userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
-            creditAccountService.setCreditAccountDAO(factory.getCreditAccountDAO(connection, CREDIT_ACCOUNT_JDBC));
+            userAccountService.setDefaultUserAccountDAO(connection);
+            creditAccountService.setDefaultCreditAccountDAO(connection);
             UserAccount userAccount = userAccountService.getById(userId);
 
             if (UserAccountValidity.userIdIsValid(userAccount) && userAccount.isCredit() && userAccount.getBalance() >= amount) {
@@ -92,7 +87,7 @@ public class PayArrearsFacade {
 
     public boolean checkArrears(int userId) {
         try (Connection connection = connectionFactory.getConnection()) {
-            creditAccountService.setCreditAccountDAO(factory.getCreditAccountDAO(connection, CREDIT_ACCOUNT_JDBC));
+            creditAccountService.setDefaultCreditAccountDAO(connection);
             if (creditAccountService.getById(userId).getArrears() <= 0) {
                 return false;
             }

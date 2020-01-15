@@ -1,18 +1,31 @@
 package service;
 
 import dao.intefaces.CreditApprovementDAO;
+import factories.DaoFactory;
 import model.CreditApprovementOperation;
 import model.CreditRequest;
 import model.CreditRequestAdmin;
 
+import java.sql.Connection;
 import java.util.List;
+
+import static enums.DAOEnum.CREDIT_APPROVEMENT_JDBC;
 
 public class CreditApprovementService {
 
     private CreditApprovementDAO creditApprovementDAO;
+    private DaoFactory factory;
+
+    public CreditApprovementService() {
+        factory = DaoFactory.getInstance();
+    }
 
     public void setCreditApprovementDAO(CreditApprovementDAO creditApprovementDAO) {
         this.creditApprovementDAO = creditApprovementDAO;
+    }
+
+    public void setDefaultCreditApprovementDAO(Connection connection) {
+        this.creditApprovementDAO = factory.getCreditApprovementDAO(connection, CREDIT_APPROVEMENT_JDBC);
     }
 
     public boolean createCreditRequest(CreditRequest request) {

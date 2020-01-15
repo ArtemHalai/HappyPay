@@ -1,6 +1,5 @@
 package facade;
 
-import factories.DaoFactory;
 import factories.JDBCConnectionFactory;
 import lombok.extern.log4j.Log4j;
 import model.UserAccount;
@@ -9,17 +8,14 @@ import service.UserAccountService;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import static enums.DAOEnum.*;
-
 @Log4j
 public class UserAccountFacade {
 
+    private static final String ERROR = "Could not get user account for user with id: %d";
     private UserAccountService userAccountService;
-    private DaoFactory factory;
     private JDBCConnectionFactory connectionFactory;
 
     public UserAccountFacade() {
-        factory = DaoFactory.getInstance();
         connectionFactory = JDBCConnectionFactory.getInstance();
     }
 
@@ -30,10 +26,10 @@ public class UserAccountFacade {
     public UserAccount getUserAccount(int userId) {
         UserAccount userAccount = new UserAccount();
         try (Connection connection = connectionFactory.getConnection()) {
-            userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
+            userAccountService.setDefaultUserAccountDAO(connection);
             userAccount = userAccountService.getById(userId);
         } catch (SQLException e) {
-            log.error("Could not get user account", e);
+            log.error(String.format(ERROR, userId), e);
         }
         return userAccount;
     }

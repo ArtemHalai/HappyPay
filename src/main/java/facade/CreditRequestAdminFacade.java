@@ -1,6 +1,5 @@
 package facade;
 
-import factories.DaoFactory;
 import factories.JDBCConnectionFactory;
 import model.CreditAccount;
 import model.CreditRequestAdmin;
@@ -15,7 +14,6 @@ import java.sql.Connection;
 import java.util.List;
 
 import static enums.AccountDetails.CREDIT_RATE;
-import static enums.DAOEnum.*;
 
 public class CreditRequestAdminFacade {
 
@@ -23,11 +21,9 @@ public class CreditRequestAdminFacade {
     private CreditAccountService creditAccountService;
     private UserAccountService userAccountService;
     private Connection connection;
-    private DaoFactory factory;
     private JDBCConnectionFactory connectionFactory;
 
     public CreditRequestAdminFacade() {
-        factory = DaoFactory.getInstance();
         connectionFactory = JDBCConnectionFactory.getInstance();
     }
 
@@ -45,7 +41,7 @@ public class CreditRequestAdminFacade {
 
     public List<CreditRequestAdmin> findAllByDecision(boolean decision) {
         connection = connectionFactory.getConnection();
-        creditApprovementService.setCreditApprovementDAO(factory.getCreditApprovementDAO(connection, CREDIT_APPROVEMENT_JDBC));
+        creditApprovementService.setDefaultCreditApprovementDAO(connection);
         List<CreditRequestAdmin> list = creditApprovementService.findAllByDecision(decision);
         ConnectionClosure.close(connection);
         return list;
@@ -54,9 +50,9 @@ public class CreditRequestAdminFacade {
     public boolean updateCreditStatus(int userId, boolean decision, double amount) {
         connection = connectionFactory.getConnection();
         TransactionManager.setRepeatableRead(connection);
-        userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
-        creditApprovementService.setCreditApprovementDAO(factory.getCreditApprovementDAO(connection, CREDIT_APPROVEMENT_JDBC));
-        creditAccountService.setCreditAccountDAO(factory.getCreditAccountDAO(connection, CREDIT_ACCOUNT_JDBC));
+        userAccountService.setDefaultUserAccountDAO(connection);
+        creditApprovementService.setDefaultCreditApprovementDAO(connection);
+        creditAccountService.setDefaultCreditAccountDAO(connection);
         UserAccount userAccount = userAccountService.getById(userId);
         CreditAccount creditAccount = new CreditAccount();
         creditAccount.setUserId(userId);
@@ -76,7 +72,7 @@ public class CreditRequestAdminFacade {
 
     public boolean deleteRequest(int userId) {
         connection = connectionFactory.getConnection();
-        creditApprovementService.setCreditApprovementDAO(factory.getCreditApprovementDAO(connection, CREDIT_APPROVEMENT_JDBC));
+        creditApprovementService.setDefaultCreditApprovementDAO(connection);
         boolean deleted = creditApprovementService.deleteRequest(userId);
         ConnectionClosure.close(connection);
         return deleted;

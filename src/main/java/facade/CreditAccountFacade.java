@@ -1,6 +1,5 @@
 package facade;
 
-import factories.DaoFactory;
 import factories.JDBCConnectionFactory;
 import lombok.extern.log4j.Log4j;
 import model.CreditAccount;
@@ -14,18 +13,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static enums.DAOEnum.CREDIT_ACCOUNT_JDBC;
-
 @Log4j
 public class CreditAccountFacade {
 
     private static final String ERROR = "Could not get credit account for user with id: %d";
     private CreditAccountService creditAccountService;
-    private DaoFactory factory;
     private JDBCConnectionFactory connectionFactory;
 
     public CreditAccountFacade() {
-        factory = DaoFactory.getInstance();
         connectionFactory = JDBCConnectionFactory.getInstance();
     }
 
@@ -36,7 +31,7 @@ public class CreditAccountFacade {
     public CreditAccount getCreditAccount(int userId) {
         CreditAccount creditAccount = new CreditAccount();
         try (Connection connection = connectionFactory.getConnection()) {
-            creditAccountService.setCreditAccountDAO(factory.getCreditAccountDAO(connection, CREDIT_ACCOUNT_JDBC));
+            creditAccountService.setDefaultCreditAccountDAO(connection);
             creditAccount = creditAccountService.getById(userId);
         } catch (SQLException e) {
             log.error(String.format(ERROR, userId), e);
@@ -47,7 +42,7 @@ public class CreditAccountFacade {
     public List<CreditAccount> getAll() {
         List<CreditAccount> list = new ArrayList<>();
         try (Connection connection = connectionFactory.getConnection()) {
-            creditAccountService.setCreditAccountDAO(factory.getCreditAccountDAO(connection, CREDIT_ACCOUNT_JDBC));
+            creditAccountService.setDefaultCreditAccountDAO(connection);
             list = creditAccountService.getAll();
         } catch (SQLException e) {
             log.error("Could not get all credit accounts", e);
@@ -57,7 +52,7 @@ public class CreditAccountFacade {
 
     public boolean checkArrears(int userId) {
         try (Connection connection = connectionFactory.getConnection()) {
-            creditAccountService.setCreditAccountDAO(factory.getCreditAccountDAO(connection, CREDIT_ACCOUNT_JDBC));
+            creditAccountService.setDefaultCreditAccountDAO(connection);
             if (creditAccountService.getById(userId).getArrears() <= 0) {
                 return false;
             }
@@ -70,7 +65,7 @@ public class CreditAccountFacade {
     public boolean updateInterestCharges(CreditAccount creditAccount) {
         boolean updated = false;
         try (Connection connection = connectionFactory.getConnection()) {
-            creditAccountService.setCreditAccountDAO(factory.getCreditAccountDAO(connection, CREDIT_ACCOUNT_JDBC));
+            creditAccountService.setDefaultCreditAccountDAO(connection);
             CreditCalculator creditCalculator = new CreditCalculator(creditAccount);
             double amount = creditCalculator.calculate();
             updated = creditAccountService.updateInterestCharges(creditAccount.getInterestCharges() + amount, creditAccount.getUserId());

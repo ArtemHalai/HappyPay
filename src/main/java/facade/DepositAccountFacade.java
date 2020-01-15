@@ -1,6 +1,5 @@
 package facade;
 
-import factories.DaoFactory;
 import factories.JDBCConnectionFactory;
 import lombok.extern.log4j.Log4j;
 import model.DepositAccount;
@@ -22,7 +21,6 @@ import java.util.List;
 
 import static enums.AccountDetails.RATE;
 import static enums.AccountType.MAIN_ACCOUNT;
-import static enums.DAOEnum.*;
 import static enums.DepositEnum.YEAR;
 import static enums.OperationType.REFILL_DEPOSIT;
 
@@ -32,11 +30,9 @@ public class DepositAccountFacade {
     private DepositAccountService depositAccountService;
     private UserAccountService userAccountService;
     private RefillService refillService;
-    private DaoFactory factory;
     private JDBCConnectionFactory connectionFactory;
 
     public DepositAccountFacade() {
-        factory = DaoFactory.getInstance();
         connectionFactory = JDBCConnectionFactory.getInstance();
     }
 
@@ -56,7 +52,7 @@ public class DepositAccountFacade {
         DepositAccount depositAccount = new DepositAccount();
         depositAccount.setUserId(-1);
         try (Connection connection = connectionFactory.getConnection()) {
-            depositAccountService.setDepositAccountDAO(factory.getDepositAccountDAO(connection, DEPOSIT_ACCOUNT_JDBC));
+            depositAccountService.setDefaultDepositAccountDAO(connection);
             depositAccount = depositAccountService.getById(userId);
         } catch (SQLException e) {
             log.error("Could not get deposit account", e);
@@ -67,8 +63,8 @@ public class DepositAccountFacade {
     public boolean transferMoneyToAccountBalance(DepositAccount depositAccount) {
         try (Connection connection = connectionFactory.getConnection()) {
             TransactionManager.setRepeatableRead(connection);
-            depositAccountService.setDepositAccountDAO(factory.getDepositAccountDAO(connection, DEPOSIT_ACCOUNT_JDBC));
-            userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
+            depositAccountService.setDefaultDepositAccountDAO(connection);
+            userAccountService.setDefaultUserAccountDAO(connection);
             UserAccount userAccount = userAccountService.getById(depositAccount.getUserId());
             DepositCalculator depositCalculator =
                     new DepositCalculator(depositAccount);
@@ -94,7 +90,7 @@ public class DepositAccountFacade {
 
     public boolean checkDeposit(int userId) {
         try (Connection connection = connectionFactory.getConnection()) {
-            userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
+            userAccountService.setDefaultUserAccountDAO(connection);
             if (userAccountService.getById(userId).isDeposit()) {
                 return false;
             }
@@ -107,9 +103,9 @@ public class DepositAccountFacade {
     public boolean openDeposit(int userId, double balance) {
         try (Connection connection = connectionFactory.getConnection()) {
             TransactionManager.setRepeatableRead(connection);
-            userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
-            depositAccountService.setDepositAccountDAO(factory.getDepositAccountDAO(connection, DEPOSIT_ACCOUNT_JDBC));
-            refillService.setRefillDAO(factory.getRefillDAO(connection, REFILL_JDBC));
+            userAccountService.setDefaultUserAccountDAO(connection);
+            depositAccountService.setDefaultDepositAccountDAO(connection);
+            refillService.setDefaultRefillDAO(connection);
             UserAccount userAccount = userAccountService.getById(userId);
             if (UserAccountValidity.userIdIsValid(userAccount) && userAccount.getBalance() >= balance && !userAccount.isDeposit() && depositCreator(userId, balance, userAccount, connection)) {
                 return true;
@@ -152,7 +148,7 @@ public class DepositAccountFacade {
     public List<DepositAccount> getAll() {
         List<DepositAccount> list = new ArrayList<>();
         try (Connection connection = connectionFactory.getConnection()) {
-            depositAccountService.setDepositAccountDAO(factory.getDepositAccountDAO(connection, DEPOSIT_ACCOUNT_JDBC));
+            depositAccountService.setDefaultDepositAccountDAO(connection);
             list = depositAccountService.getAll();
         } catch (SQLException e) {
             log.error("Could not get all deposit accounts", e);

@@ -1,6 +1,5 @@
 package facade;
 
-import factories.DaoFactory;
 import factories.JDBCConnectionFactory;
 import model.LimitRequestAdmin;
 import service.CreditAccountService;
@@ -10,19 +9,14 @@ import util.ConnectionClosure;
 import java.sql.Connection;
 import java.util.List;
 
-import static enums.DAOEnum.CREDIT_ACCOUNT_JDBC;
-import static enums.DAOEnum.LIMIT_JDBC;
-
 public class LimitRequestAdminFacade {
 
     private LimitRequestService limitRequestService;
     private CreditAccountService creditAccountService;
     private Connection connection;
-    private DaoFactory factory;
     private JDBCConnectionFactory connectionFactory;
 
     public LimitRequestAdminFacade() {
-        factory = DaoFactory.getInstance();
         connectionFactory = JDBCConnectionFactory.getInstance();
     }
 
@@ -36,7 +30,7 @@ public class LimitRequestAdminFacade {
 
     public List<LimitRequestAdmin> findAllByDecision(boolean decision) {
         connection = connectionFactory.getConnection();
-        limitRequestService.setLimitRequestDAO(factory.getLimitRequestDAO(connection, LIMIT_JDBC));
+        limitRequestService.setDefaultLimitRequestDAO(connection);
         List<LimitRequestAdmin> list = limitRequestService.findAllByDecision(decision);
         ConnectionClosure.close(connection);
         return list;
@@ -44,8 +38,8 @@ public class LimitRequestAdminFacade {
 
     public boolean updateLimit(int userId, double amount, boolean decision) {
         connection = connectionFactory.getConnection();
-        limitRequestService.setLimitRequestDAO(factory.getLimitRequestDAO(connection, LIMIT_JDBC));
-        creditAccountService.setCreditAccountDAO(factory.getCreditAccountDAO(connection, CREDIT_ACCOUNT_JDBC));
+        limitRequestService.setDefaultLimitRequestDAO(connection);
+        creditAccountService.setDefaultCreditAccountDAO(connection);
         boolean updated = creditAccountService.updateBalanceById(amount, userId);
         boolean updatedDecision = limitRequestService.updateDecision(decision, userId);
         deleteRequest(userId);
@@ -55,7 +49,7 @@ public class LimitRequestAdminFacade {
 
     public boolean deleteRequest(int userId) {
         connection = connectionFactory.getConnection();
-        limitRequestService.setLimitRequestDAO(factory.getLimitRequestDAO(connection, LIMIT_JDBC));
+        limitRequestService.setDefaultLimitRequestDAO(connection);
         boolean deleted = limitRequestService.deleteRequest(userId);
         ConnectionClosure.close(connection);
         return deleted;

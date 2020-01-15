@@ -1,6 +1,5 @@
 package facade;
 
-import factories.DaoFactory;
 import factories.JDBCConnectionFactory;
 import lombok.extern.log4j.Log4j;
 import model.ClientDetails;
@@ -13,19 +12,15 @@ import util.TransactionManager;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import static enums.DAOEnum.*;
-
 @Log4j
 public class RegistrationFacade {
 
     private ClientDetailsService clientDetailsService;
     private UserService userService;
     private UserAccountService userAccountService;
-    private DaoFactory factory;
     private JDBCConnectionFactory connectionFactory;
 
     public RegistrationFacade() {
-        factory = DaoFactory.getInstance();
         connectionFactory = JDBCConnectionFactory.getInstance();
     }
 
@@ -45,9 +40,9 @@ public class RegistrationFacade {
         int userId = -1;
         try (Connection connection = connectionFactory.getConnection()) {
             TransactionManager.setRepeatableRead(connection);
-            userService.setUserDAO(factory.getUserDAO(connection, USER_JDBC));
-            clientDetailsService.setClientDetailsDAO(factory.getClientDetailsDAO(connection, CLIENT_DETAILS_JDBC));
-            userAccountService.setUserAccountDAO(factory.getUserAccountDAO(connection, USER_ACCOUNT_JDBC));
+            userService.setDefaultUserDAO(connection);
+            clientDetailsService.setDefaultClientDetailsDAO(connection);
+            userAccountService.setDefaultUserAccountDAO(connection);
             if (!userService.isUserExist(clientDetails.getUsername())) {
                 try {
                     return addNewUser(clientDetails, connection);
