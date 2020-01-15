@@ -2,12 +2,12 @@ package util;
 
 import model.UserAccount;
 
-import java.time.ZoneId;
+import java.time.LocalDate;
 
 public class UserAccountValidity {
 
     public static boolean userIdAndValidityAreValid(UserAccount userAccount) {
-        return userAccount.getUserId() > 0 && userAccount.getValidity().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() > System.currentTimeMillis();
+        return userIdIsValid(userAccount) && userAccountIsValid(userAccount);
     }
 
     public static boolean userIdIsValid(UserAccount userAccount) {
@@ -15,6 +15,6 @@ public class UserAccountValidity {
     }
 
     public static boolean userAccountIsValid(UserAccount userAccount) {
-        return userAccount.getValidity().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() > System.currentTimeMillis();
+        return userAccount.getValidity().toEpochDay() > LocalDate.now().toEpochDay();
     }
 }

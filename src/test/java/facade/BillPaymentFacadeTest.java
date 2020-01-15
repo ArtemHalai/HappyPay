@@ -14,7 +14,8 @@ import service.UserAccountService;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
+import java.time.Duration;
+import java.time.LocalDate;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.verify;
@@ -26,7 +27,7 @@ public class BillPaymentFacadeTest {
     private static final int USER_ID = 1;
     private static final double AMOUNT = 100.99;
     private static final double USER_BALANCE = 1001.99;
-    private static final LocalDateTime DATE = LocalDateTime.now().plusHours(4);
+    private static final LocalDate DATE = LocalDate.now().plusDays(4);
 
     @Mock
     private BillPaymentService billPaymentService;
@@ -72,7 +73,7 @@ public class BillPaymentFacadeTest {
 
     @Test
     public void payBill_ReturnsFalse_WhenBillWasNotPayed() {
-        LocalDateTime invalidDate = LocalDateTime.now().minusHours(1);
+        LocalDate invalidDate = LocalDate.now().minusDays(1);
 
         when(userAccount.getValidity()).thenReturn(invalidDate);
 

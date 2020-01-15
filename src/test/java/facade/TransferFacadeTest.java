@@ -13,7 +13,8 @@ import service.TransferService;
 import service.UserAccountService;
 
 import java.sql.Connection;
-import java.time.LocalDateTime;
+import java.time.Duration;
+import java.time.LocalDate;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
@@ -25,7 +26,7 @@ public class TransferFacadeTest {
     private static final long RECIPIENT_ACCOUNT_NUMBER = 12345678;
     private static final double BALANCE = 1001.99;
     private static final double AMOUNT = 100.99;
-    private static final LocalDateTime DATE = LocalDateTime.now().plusHours(4);
+    private static final LocalDate DATE = LocalDate.now().plusDays(4);
 
     @Mock
     private TransferService transferService;

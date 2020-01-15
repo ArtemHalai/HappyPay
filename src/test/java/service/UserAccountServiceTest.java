@@ -9,8 +9,7 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.sql.Date;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -63,7 +62,7 @@ public class UserAccountServiceTest {
 
     @Test
     public void updateTerm() {
-        userAccount.setValidity(LocalDateTime.now().minusHours(1));
+        userAccount.setValidity(LocalDate.now().minusDays(1));
         when(dao.getById(1)).thenReturn(userAccount);
         when(dao.updateTerm(1)).thenReturn(false);
         boolean updatedTerm = service.updateTerm(1);
