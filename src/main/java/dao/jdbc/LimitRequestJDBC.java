@@ -1,8 +1,8 @@
 package dao.jdbc;
 
 import dao.intefaces.LimitRequestDAO;
-import dao.mappers.LimiRequestMapper;
 import dao.mappers.LimitRequestAdminMapper;
+import dao.mappers.LimitRequestMapper;
 import dao.mappers.Mapper;
 import lombok.extern.log4j.Log4j;
 import model.LimitRequest;
@@ -102,7 +102,7 @@ public class LimitRequestJDBC implements LimitRequestDAO {
 
     @Override
     public LimitRequest getById(int id) {
-        Mapper<LimitRequest> limitRequestMapper = new LimiRequestMapper();
+        Mapper<LimitRequest> limitRequestMapper = new LimitRequestMapper();
         LimitRequest limitRequest = new LimitRequest();
         limitRequest.setUserId(-1);
 

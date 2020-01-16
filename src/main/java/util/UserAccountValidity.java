@@ -6,15 +6,15 @@ import java.time.LocalDate;
 
 public class UserAccountValidity {
 
-    public static boolean userIdAndValidityAreValid(UserAccount userAccount) {
-        return userIdIsValid(userAccount) && userAccountIsValid(userAccount);
+    public static boolean checkUserIdAndValidityAreValid(UserAccount userAccount) {
+        return checkUserIdIsValid(userAccount) && checkUserAccountIsValid(userAccount);
     }
 
-    public static boolean userIdIsValid(UserAccount userAccount) {
+    public static boolean checkUserIdIsValid(UserAccount userAccount) {
         return userAccount.getUserId() > 0;
     }
 
-    public static boolean userAccountIsValid(UserAccount userAccount) {
+    public static boolean checkUserAccountIsValid(UserAccount userAccount) {
         return userAccount.getValidity().toEpochDay() > LocalDate.now().toEpochDay();
     }
 }

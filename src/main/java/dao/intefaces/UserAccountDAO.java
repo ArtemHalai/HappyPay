@@ -1,6 +1,5 @@
 package dao.intefaces;
 
-
 import model.UserAccount;
 
 public interface UserAccountDAO extends DAO<UserAccount> {

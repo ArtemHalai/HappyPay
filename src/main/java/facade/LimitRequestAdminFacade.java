@@ -1,19 +1,22 @@
 package facade;
 
 import factories.JDBCConnectionFactory;
+import lombok.extern.log4j.Log4j;
 import model.LimitRequestAdmin;
 import service.CreditAccountService;
 import service.LimitRequestService;
-import util.ConnectionClosure;
+import util.TransactionManager;
 
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
+@Log4j
 public class LimitRequestAdminFacade {
 
     private LimitRequestService limitRequestService;
     private CreditAccountService creditAccountService;
-    private Connection connection;
     private JDBCConnectionFactory connectionFactory;
 
     public LimitRequestAdminFacade() {
@@ -29,29 +32,52 @@ public class LimitRequestAdminFacade {
     }
 
     public List<LimitRequestAdmin> findAllByDecision(boolean decision) {
-        connection = connectionFactory.getConnection();
-        limitRequestService.setDefaultLimitRequestDAO(connection);
-        List<LimitRequestAdmin> list = limitRequestService.findAllByDecision(decision);
-        ConnectionClosure.close(connection);
+        List<LimitRequestAdmin> list = new ArrayList<>();
+        try (Connection connection = connectionFactory.getConnection()) {
+            limitRequestService.setDefaultLimitRequestDAO(connection);
+            list = limitRequestService.findAllByDecision(decision);
+        } catch (SQLException e) {
+            log.error(String.format("Could not find all limit requests by decision: %s", decision), e);
+        }
         return list;
     }
 
     public boolean updateLimit(int userId, double amount, boolean decision) {
-        connection = connectionFactory.getConnection();
-        limitRequestService.setDefaultLimitRequestDAO(connection);
-        creditAccountService.setDefaultCreditAccountDAO(connection);
-        boolean updated = creditAccountService.updateBalanceById(amount, userId);
-        boolean updatedDecision = limitRequestService.updateDecision(decision, userId);
-        deleteRequest(userId);
-        ConnectionClosure.close(connection);
-        return updated && updatedDecision;
+        boolean updated;
+        boolean updatedDecision;
+        boolean deleted;
+        try (Connection connection = connectionFactory.getConnection()) {
+            TransactionManager.setRepeatableRead(connection);
+            limitRequestService.setDefaultLimitRequestDAO(connection);
+            creditAccountService.setDefaultCreditAccountDAO(connection);
+            try {
+                updated = creditAccountService.updateBalanceById(amount, userId);
+                updatedDecision = limitRequestService.updateDecision(decision, userId);
+                deleted = deleteRequest(userId);
+            } catch (Exception e) {
+                connection.rollback();
+                log.error(String.format("Could not update limit for user with id: %d and decision: %s", userId, decision), e);
+                return false;
+            }
+            if (updated && updatedDecision && deleted) {
+                connection.commit();
+                return true;
+            }
+            connection.rollback();
+        } catch (SQLException e) {
+            log.error(String.format("Could not update limit for user with id: %d and decision: %s", userId, decision), e);
+        }
+        return false;
     }
 
     public boolean deleteRequest(int userId) {
-        connection = connectionFactory.getConnection();
-        limitRequestService.setDefaultLimitRequestDAO(connection);
-        boolean deleted = limitRequestService.deleteRequest(userId);
-        ConnectionClosure.close(connection);
+        boolean deleted = false;
+        try (Connection connection = connectionFactory.getConnection()) {
+            limitRequestService.setDefaultLimitRequestDAO(connection);
+            deleted = limitRequestService.deleteRequest(userId);
+        } catch (SQLException e) {
+            log.error(String.format("Could not delete limit request for user with id: %d", userId), e);
+        }
         return deleted;
     }
 }

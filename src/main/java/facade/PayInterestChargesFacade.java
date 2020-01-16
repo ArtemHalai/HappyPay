@@ -51,7 +51,7 @@ public class PayInterestChargesFacade {
             creditAccountService.setDefaultCreditAccountDAO(connection);
             UserAccount userAccount = userAccountService.getById(userId);
 
-            if (UserAccountValidity.userIdIsValid(userAccount) && userAccount.isCredit() && userAccount.getBalance() >= amount) {
+            if (UserAccountValidity.checkUserIdIsValid(userAccount) && userAccount.isCredit() && userAccount.getBalance() >= amount) {
                 userAccount.setBalance(userAccount.getBalance() - amount);
 
                 CreditAccount creditAccount = creditAccountService.getById(userId);

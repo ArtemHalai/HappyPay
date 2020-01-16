@@ -1,6 +1,5 @@
 package dao.mappers;
 
-
 import model.RefillOperation;
 
 import java.sql.ResultSet;

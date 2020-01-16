@@ -70,7 +70,7 @@ public class DepositAccountFacade {
                     new DepositCalculator(depositAccount);
             double amount = depositCalculator.calculate();
 
-            if (UserAccountValidity.userIdIsValid(userAccount)) {
+            if (UserAccountValidity.checkUserIdIsValid(userAccount)) {
                 boolean updatedAccountBalance =
                         userAccountService.updateBalanceById(userAccount.getBalance() + amount, depositAccount.getUserId());
                 boolean updatedDepositStatus = userAccountService.updateDepositStatusById(depositAccount.getUserId(), false);
@@ -107,7 +107,7 @@ public class DepositAccountFacade {
             depositAccountService.setDefaultDepositAccountDAO(connection);
             refillService.setDefaultRefillDAO(connection);
             UserAccount userAccount = userAccountService.getById(userId);
-            if (UserAccountValidity.userIdIsValid(userAccount) && userAccount.getBalance() >= balance && !userAccount.isDeposit() && depositCreator(userId, balance, userAccount, connection)) {
+            if (UserAccountValidity.checkUserIdIsValid(userAccount) && userAccount.getBalance() >= balance && !userAccount.isDeposit() && depositCreator(userId, balance, userAccount, connection)) {
                 return true;
             }
             connection.rollback();

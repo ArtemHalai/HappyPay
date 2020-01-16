@@ -1,7 +1,6 @@
 package dao.intefaces;
 
 import model.CreditAccount;
-import model.RefillOperation;
 
 import java.util.List;
 

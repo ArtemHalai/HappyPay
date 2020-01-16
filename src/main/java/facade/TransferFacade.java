@@ -54,7 +54,7 @@ public class TransferFacade {
     }
 
     private boolean checkAndUpdateBalance(TransferOperation transferOperation, UserAccount recipientAccount, UserAccount userAccount) {
-        if (UserAccountValidity.userIdAndValidityAreValid(userAccount) && recipientAccount.getUserId() > 0
+        if (UserAccountValidity.checkUserIdAndValidityAreValid(userAccount) && recipientAccount.getUserId() > 0
                 && userAccount.getBalance() >= transferOperation.getAmount()) {
             try {
                 userAccount.setBalance(userAccount.getBalance() - transferOperation.getAmount());

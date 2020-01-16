@@ -7,7 +7,7 @@ import java.sql.SQLException;
 
 import static enums.Fields.*;
 
-public class LimiRequestMapper implements Mapper<LimitRequest> {
+public class LimitRequestMapper implements Mapper<LimitRequest> {
 
     @Override
     public LimitRequest getEntity(ResultSet resultSet) throws SQLException {

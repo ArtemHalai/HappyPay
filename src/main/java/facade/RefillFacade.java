@@ -58,7 +58,7 @@ public class RefillFacade {
             userAccountService.setDefaultUserAccountDAO(connection);
             UserAccount userAccount = userAccountService.getById(refillOperation.getUserId());
             CreditAccount creditAccount = creditAccountService.getById(refillOperation.getUserId());
-            if (UserAccountValidity.userIdIsValid(userAccount) && userAccount.isCredit() && creditAccount.getLimit() >= refillOperation.getAmount()) {
+            if (UserAccountValidity.checkUserIdIsValid(userAccount) && userAccount.isCredit() && creditAccount.getLimit() >= refillOperation.getAmount()) {
                 boolean limitUpdated =
                         creditAccountService.updateBalanceById(creditAccount.getLimit() - refillOperation.getAmount(), refillOperation.getUserId());
                 boolean addArrears =

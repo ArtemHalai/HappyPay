@@ -52,7 +52,7 @@ public class BillPaymentFacade {
     }
 
     private boolean checkAndUpdateBalance(BillPaymentOperation billPaymentOperation, Connection connection, UserAccount userAccount) {
-        if (UserAccountValidity.userIdAndValidityAreValid(userAccount) && userAccount.getBalance() >= billPaymentOperation.getAmount()) {
+        if (UserAccountValidity.checkUserIdAndValidityAreValid(userAccount) && userAccount.getBalance() >= billPaymentOperation.getAmount()) {
             try {
                 userAccount.setBalance(userAccount.getBalance() - billPaymentOperation.getAmount());
                 boolean updated = userAccountService.updateBalanceById(userAccount.getBalance(), billPaymentOperation.getUserId());

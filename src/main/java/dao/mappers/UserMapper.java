@@ -7,7 +7,6 @@ import java.sql.SQLException;
 
 import static enums.Fields.*;
 
-
 public class UserMapper implements Mapper<User> {
 
     @Override

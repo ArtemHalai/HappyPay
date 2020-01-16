@@ -44,7 +44,7 @@ public class UserAccountService {
 
     public boolean updateTerm(int userId) {
         UserAccount userAccount = userAccountDAO.getById(userId);
-        if (UserAccountValidity.userAccountIsValid(userAccount)) {
+        if (UserAccountValidity.checkUserAccountIsValid(userAccount)) {
             return false;
         }
         return userAccountDAO.updateTerm(userId);

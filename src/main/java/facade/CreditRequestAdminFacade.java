@@ -1,26 +1,28 @@
 package facade;
 
 import factories.JDBCConnectionFactory;
+import lombok.extern.log4j.Log4j;
 import model.CreditAccount;
 import model.CreditRequestAdmin;
 import model.UserAccount;
 import service.CreditAccountService;
 import service.CreditApprovementService;
 import service.UserAccountService;
-import util.ConnectionClosure;
 import util.TransactionManager;
 
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static enums.AccountDetails.CREDIT_RATE;
 
+@Log4j
 public class CreditRequestAdminFacade {
 
     private CreditApprovementService creditApprovementService;
     private CreditAccountService creditAccountService;
     private UserAccountService userAccountService;
-    private Connection connection;
     private JDBCConnectionFactory connectionFactory;
 
     public CreditRequestAdminFacade() {
@@ -40,41 +42,59 @@ public class CreditRequestAdminFacade {
     }
 
     public List<CreditRequestAdmin> findAllByDecision(boolean decision) {
-        connection = connectionFactory.getConnection();
-        creditApprovementService.setDefaultCreditApprovementDAO(connection);
-        List<CreditRequestAdmin> list = creditApprovementService.findAllByDecision(decision);
-        ConnectionClosure.close(connection);
+        List<CreditRequestAdmin> list = new ArrayList<>();
+        try (Connection connection = connectionFactory.getConnection()) {
+            creditApprovementService.setDefaultCreditApprovementDAO(connection);
+            list = creditApprovementService.findAllByDecision(decision);
+        } catch (SQLException e) {
+            log.error(String.format("Could not find all credit requests by decision: %s", decision), e);
+        }
         return list;
     }
 
     public boolean updateCreditStatus(int userId, boolean decision, double amount) {
-        connection = connectionFactory.getConnection();
-        TransactionManager.setRepeatableRead(connection);
-        userAccountService.setDefaultUserAccountDAO(connection);
-        creditApprovementService.setDefaultCreditApprovementDAO(connection);
-        creditAccountService.setDefaultCreditAccountDAO(connection);
-        UserAccount userAccount = userAccountService.getById(userId);
-        CreditAccount creditAccount = new CreditAccount();
-        creditAccount.setUserId(userId);
-        creditAccount.setAccountNumber(userAccount.getAccountNumber());
-        creditAccount.setLimit(amount);
-        creditAccount.setRate(CREDIT_RATE.getDetails());
-        boolean added = creditAccountService.add(creditAccount);
-        boolean updated = userAccountService.updateCreditStatusById(userId, decision);
-        boolean updatedDecision = creditApprovementService.updateDecision(decision, userId);
-        if(updated && updatedDecision && added){
-            TransactionManager.commitTransaction(connection);
-            return true;
+        try (Connection connection = connectionFactory.getConnection()) {
+            TransactionManager.setRepeatableRead(connection);
+            userAccountService.setDefaultUserAccountDAO(connection);
+            creditApprovementService.setDefaultCreditApprovementDAO(connection);
+            creditAccountService.setDefaultCreditAccountDAO(connection);
+            UserAccount userAccount = userAccountService.getById(userId);
+            CreditAccount creditAccount = new CreditAccount();
+            creditAccount.setUserId(userId);
+            creditAccount.setAccountNumber(userAccount.getAccountNumber());
+            creditAccount.setLimit(amount);
+            creditAccount.setRate(CREDIT_RATE.getDetails());
+            boolean added;
+            boolean updated;
+            boolean updatedDecision;
+            try {
+                added = creditAccountService.add(creditAccount);
+                updated = userAccountService.updateCreditStatusById(userId, decision);
+                updatedDecision = creditApprovementService.updateDecision(decision, userId);
+            } catch (Exception e) {
+                connection.rollback();
+                log.error(String.format("Could not update credit status for user with id: %d and decision: %s", userId, decision), e);
+                return false;
+            }
+            if (updated && updatedDecision && added) {
+                connection.commit();
+                return true;
+            }
+            connection.rollback();
+        } catch (SQLException e) {
+            log.error(String.format("Could not update credit status for user with id: %d and decision: %s", userId, decision), e);
         }
-        TransactionManager.rollbackTransaction(connection);
         return false;
     }
 
     public boolean deleteRequest(int userId) {
-        connection = connectionFactory.getConnection();
-        creditApprovementService.setDefaultCreditApprovementDAO(connection);
-        boolean deleted = creditApprovementService.deleteRequest(userId);
-        ConnectionClosure.close(connection);
+        boolean deleted = false;
+        try (Connection connection = connectionFactory.getConnection()) {
+            creditApprovementService.setDefaultCreditApprovementDAO(connection);
+            deleted = creditApprovementService.deleteRequest(userId);
+        } catch (SQLException e) {
+            log.error(String.format("Could not delete request for user with id: %d", userId), e);
+        }
         return deleted;
     }
 }
