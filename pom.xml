@@ -12,7 +12,9 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jstl.version>1.2</jstl.version>
-        <junit.version>4.12</junit.version>
+        <junit.version>4.11</junit.version>
+        <powermock.version>1.5.6</powermock.version>
+        <powermock.api.version>1.5.6</powermock.api.version>
         <javax.servlet.version>3.0.1</javax.servlet.version>
         <javax.version>6.0</javax.version>
         <javax.servlet.jsp.version>2.0</javax.servlet.jsp.version>
@@ -65,6 +67,18 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+            <version>${powermock.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-mockito</artifactId>
+            <version>${powermock.api.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

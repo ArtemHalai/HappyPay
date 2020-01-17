@@ -9,8 +9,11 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import service.BillPaymentService;
 import service.UserAccountService;
+import util.UserAccountGetter;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -20,8 +23,10 @@ import java.time.LocalDate;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(UserAccountGetter.class)
 public class BillPaymentFacadeTest {
 
     private static final int USER_ID = 1;
@@ -90,5 +95,15 @@ public class BillPaymentFacadeTest {
 
         verify(connection).rollback();
         assertFalse(billPayed);
+    }
+
+    @Test
+    public void getUserAccount_ReturnsUserAccount_WhenAccountExistsForGivenUserId() {
+        mockStatic(UserAccountGetter.class);
+        when(UserAccountGetter.getUserAccount(USER_ID)).thenReturn(userAccount);
+
+        UserAccount actualUserAccount = billPaymentFacade.getUserAccount(USER_ID);
+
+        assertEquals(userAccount, actualUserAccount);
     }
 }
