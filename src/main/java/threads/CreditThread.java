@@ -10,27 +10,23 @@ import java.util.stream.Collectors;
 
 public class CreditThread {
 
-    private static volatile CreditThread creditThread = null;
+    private static CreditThread creditThread = null;
     private ScheduledExecutorService executorService;
 
     private CreditThread() {
         startTask();
     }
 
-    public static CreditThread getInstance() {
+    public static synchronized CreditThread getInstance() {
         if (creditThread == null) {
-            synchronized (CreditThread.class) {
-                if (creditThread == null) {
-                    creditThread = new CreditThread();
-                }
-            }
+            creditThread = new CreditThread();
         }
         return creditThread;
     }
 
     private void startTask() {
         CreditAccountFacade creditAccountFacade = new CreditAccountFacade();
-        creditAccountFacade.setCreditAccountService(ServiceFactory.getInstance().getCreditAccountService());
+        creditAccountFacade.setCreditAccountService(ServiceFactory.getCreditAccountService());
 
         executorService = Executors.newSingleThreadScheduledExecutor();
 

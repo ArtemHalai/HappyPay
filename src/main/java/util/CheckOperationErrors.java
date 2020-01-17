@@ -10,6 +10,10 @@ import static enums.Attributes.ERRORS;
 
 public class CheckOperationErrors {
 
+    private CheckOperationErrors() {
+
+    }
+
     public static Map<String, String> errorsEmpty(HttpServletRequest request, double amount) {
         Validator operationValidator = new OperationValidator(amount);
         Map<String, String> errors = operationValidator.validate();

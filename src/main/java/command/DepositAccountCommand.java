@@ -27,10 +27,10 @@ public class DepositAccountCommand implements Command {
         if (CheckRoleAndId.check(session)) {
             int userId = (int) session.getAttribute(USER_ID.getName());
             log.info("Client requests deposit account");
-            depositAccountFacade.setDepositAccountService(ServiceFactory.getInstance().getDepositAccountService());
+            depositAccountFacade.setDepositAccountService(ServiceFactory.getDepositAccountService());
             DepositAccount depositAccount = depositAccountFacade.getDepositAccount(userId);
 
-            depositAccountFacade.setUserAccountService(ServiceFactory.getInstance().getUserAccountService());
+            depositAccountFacade.setUserAccountService(ServiceFactory.getUserAccountService());
             UserAccount userAccount = depositAccountFacade.getUserAccount(userId);
             if (userAccount.getValidity() == null || !DateValidity.valid(userAccount.getValidity()))
                 return CLIENT_ACCOUNTS;

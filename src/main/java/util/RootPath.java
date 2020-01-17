@@ -3,6 +3,11 @@ package util;
 import javax.servlet.http.HttpServletRequest;
 
 public class RootPath {
+
+    private RootPath(){
+
+    }
+
     public static String getRoot(HttpServletRequest req) {
         String scheme = req.getScheme();
         String host = req.getServerName();

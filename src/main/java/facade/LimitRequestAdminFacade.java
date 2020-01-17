@@ -43,23 +43,12 @@ public class LimitRequestAdminFacade {
     }
 
     public boolean updateLimit(int userId, double amount, boolean decision) {
-        boolean updated;
-        boolean updatedDecision;
-        boolean deleted;
         try (Connection connection = connectionFactory.getConnection()) {
             TransactionManager.setRepeatableRead(connection);
             limitRequestService.setDefaultLimitRequestDAO(connection);
             creditAccountService.setDefaultCreditAccountDAO(connection);
-            try {
-                updated = creditAccountService.updateBalanceById(amount, userId);
-                updatedDecision = limitRequestService.updateDecision(decision, userId);
-                deleted = deleteRequest(userId);
-            } catch (Exception e) {
-                connection.rollback();
-                log.error(String.format("Could not update limit for user with id: %d and decision: %s", userId, decision), e);
-                return false;
-            }
-            if (updated && updatedDecision && deleted) {
+
+            if (updateBalanceDecisionAndDeleteRequest(amount, userId, decision)) {
                 connection.commit();
                 return true;
             }
@@ -68,6 +57,22 @@ public class LimitRequestAdminFacade {
             log.error(String.format("Could not update limit for user with id: %d and decision: %s", userId, decision), e);
         }
         return false;
+    }
+
+    private boolean updateBalanceDecisionAndDeleteRequest(double amount, int userId, boolean decision) {
+        boolean updated;
+        boolean updatedDecision;
+        boolean deleted;
+
+        try {
+            updated = creditAccountService.updateBalanceById(amount, userId);
+            updatedDecision = limitRequestService.updateDecision(decision, userId);
+            deleted = deleteRequest(userId);
+        } catch (Exception e) {
+            log.error(String.format("Could not update limit for user with id: %d and decision: %s", userId, decision), e);
+            return false;
+        }
+        return updated && updatedDecision && deleted;
     }
 
     public boolean deleteRequest(int userId) {

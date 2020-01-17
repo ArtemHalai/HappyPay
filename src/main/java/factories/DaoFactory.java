@@ -5,23 +5,20 @@ import dao.jdbc.*;
 import enums.DAOEnum;
 import exceptions.UnknownDaoImplementation;
 
-import java.rmi.activation.UnknownObjectException;
 import java.sql.Connection;
 
 public class DaoFactory {
-    private static volatile DaoFactory factory = null;
+
+    private static final String EXCEPTION = "Unknown dao implementation";
+    private static DaoFactory factory = null;
 
     private DaoFactory() {
 
     }
 
-    public static DaoFactory getInstance() {
+    public static synchronized DaoFactory getInstance() {
         if (factory == null) {
-            synchronized (DaoFactory.class) {
-                if (factory == null) {
                     factory = new DaoFactory();
-                }
-            }
         }
         return factory;
     }
@@ -31,7 +28,7 @@ public class DaoFactory {
             case BILL_PAYMENT_JDBC:
                 return new BillPaymentJDBC(connection);
             default:
-                throw new UnknownDaoImplementation("Unknown dao implementation");
+                throw new UnknownDaoImplementation(EXCEPTION);
         }
     }
 
@@ -40,7 +37,7 @@ public class DaoFactory {
             case LIMIT_JDBC:
                 return new LimitRequestJDBC(connection);
             default:
-                throw new UnknownDaoImplementation("Unknown dao implementation");
+                throw new UnknownDaoImplementation(EXCEPTION);
         }
     }
 
@@ -49,7 +46,7 @@ public class DaoFactory {
             case CLIENT_DETAILS_JDBC:
                 return new ClientDetailsJDBC(connection);
             default:
-                throw new UnknownDaoImplementation("Unknown dao implementation");
+                throw new UnknownDaoImplementation(EXCEPTION);
         }
     }
 
@@ -58,7 +55,7 @@ public class DaoFactory {
             case CREDIT_ACCOUNT_JDBC:
                 return new CreditAccountJDBC(connection);
             default:
-                throw new UnknownDaoImplementation("Unknown dao implementation");
+                throw new UnknownDaoImplementation(EXCEPTION);
         }
     }
 
@@ -67,7 +64,7 @@ public class DaoFactory {
             case CREDIT_APPROVEMENT_JDBC:
                 return new CreditApprovementJDBC(connection);
             default:
-                throw new UnknownDaoImplementation("Unknown dao implementation");
+                throw new UnknownDaoImplementation(EXCEPTION);
         }
     }
 
@@ -76,7 +73,7 @@ public class DaoFactory {
             case DEPOSIT_ACCOUNT_JDBC:
                 return new DepositAccountJDBC(connection);
             default:
-                throw new UnknownDaoImplementation("Unknown dao implementation");
+                throw new UnknownDaoImplementation(EXCEPTION);
         }
     }
 
@@ -85,7 +82,7 @@ public class DaoFactory {
             case REFILL_JDBC:
                 return new RefillJDBC(connection);
             default:
-                throw new UnknownDaoImplementation("Unknown dao implementation");
+                throw new UnknownDaoImplementation(EXCEPTION);
         }
     }
 
@@ -94,7 +91,7 @@ public class DaoFactory {
             case TRANSFER_JDBC:
                 return new TransferJDBC(connection);
             default:
-                throw new UnknownDaoImplementation("Unknown dao implementation");
+                throw new UnknownDaoImplementation(EXCEPTION);
         }
     }
 
@@ -103,7 +100,7 @@ public class DaoFactory {
             case USER_ACCOUNT_JDBC:
                 return new UserAccountJDBC(connection);
             default:
-                throw new UnknownDaoImplementation("Unknown dao implementation");
+                throw new UnknownDaoImplementation(EXCEPTION);
         }
     }
 
@@ -112,7 +109,7 @@ public class DaoFactory {
             case USER_JDBC:
                 return new UserJDBC(connection);
             default:
-                throw new UnknownDaoImplementation("Unknown dao implementation");
+                throw new UnknownDaoImplementation(EXCEPTION);
         }
     }
 }

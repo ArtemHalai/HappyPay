@@ -5,6 +5,10 @@ import java.time.LocalDate;
 
 public class SqlDateLocalDateConverter {
 
+    private SqlDateLocalDateConverter(){
+
+    }
+
     public static Date convertLocalDateToSqlDate(LocalDate localDate) {
         return Date.valueOf(localDate);
     }

@@ -28,7 +28,7 @@ public class CreditRequestAdminCommand implements Command {
         if (session.getAttribute(ADMIN_ID.getName()) == null)
             return LOGIN_VIEW;
         if (request.getParameter(DECISION.getName()) == null) {
-            creditRequestAdminFacade.setCreditApprovementService(ServiceFactory.getInstance().getCreditApprovementService());
+            creditRequestAdminFacade.setCreditApprovementService(ServiceFactory.getCreditApprovementService());
             List<CreditRequestAdmin> list = creditRequestAdminFacade.findAllByDecision(CREDIT_DECISION);
             if (list.isEmpty())
                 request.setAttribute(ERRORS.getName(), NO_REQUESTS_ERROR.getName());
@@ -40,13 +40,13 @@ public class CreditRequestAdminCommand implements Command {
         boolean decision = Boolean.parseBoolean(request.getParameter(DECISION.getName()));
         double amount = Double.parseDouble(request.getParameter(AMOUNT.getName()));
         if (!decision) {
-            creditRequestAdminFacade.setCreditApprovementService(ServiceFactory.getInstance().getCreditApprovementService());
+            creditRequestAdminFacade.setCreditApprovementService(ServiceFactory.getCreditApprovementService());
             creditRequestAdminFacade.deleteRequest(userId);
             return CREDIT_REQUEST_ADMIN_REDIRECT;
         }
-        creditRequestAdminFacade.setCreditAccountService(ServiceFactory.getInstance().getCreditAccountService());
-        creditRequestAdminFacade.setCreditApprovementService(ServiceFactory.getInstance().getCreditApprovementService());
-        creditRequestAdminFacade.setUserAccountService(ServiceFactory.getInstance().getUserAccountService());
+        creditRequestAdminFacade.setCreditAccountService(ServiceFactory.getCreditAccountService());
+        creditRequestAdminFacade.setCreditApprovementService(ServiceFactory.getCreditApprovementService());
+        creditRequestAdminFacade.setUserAccountService(ServiceFactory.getUserAccountService());
 
         if (!creditRequestAdminFacade.updateCreditStatus(userId, decision, amount))
             return HOME_ADMIN;

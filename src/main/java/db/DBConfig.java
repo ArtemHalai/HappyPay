@@ -1,18 +1,25 @@
 package db;
 
+import lombok.extern.log4j.Log4j;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+@Log4j
 public class DBConfig {
-    private static final String dbFileProperties = "src/main/resources/db.properties";
+    private static final String DB_FILE_PROPERTIES = "src/main/resources/db.properties";
     private static Properties properties = new Properties();
+
+    private DBConfig(){
+
+    }
 
     static {
         try {
-            properties.load(new FileInputStream(dbFileProperties));
+            properties.load(new FileInputStream(DB_FILE_PROPERTIES));
         } catch (IOException e) {
-            e.printStackTrace();
+           log.error("Could not load properties for database config", e);
         }
     }
 

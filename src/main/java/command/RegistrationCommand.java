@@ -53,9 +53,9 @@ public class RegistrationCommand implements Command {
             request.setAttribute(ERRORS.getName(), errors);
             return ERROR;
         } else {
-            registrationFacade.setClientDetailsService(ServiceFactory.getInstance().getClientDetailsService());
-            registrationFacade.setUserService(ServiceFactory.getInstance().getUserService());
-            registrationFacade.setUserAccountService(ServiceFactory.getInstance().getUserAccountService());
+            registrationFacade.setClientDetailsService(ServiceFactory.getClientDetailsService());
+            registrationFacade.setUserService(ServiceFactory.getUserService());
+            registrationFacade.setUserAccountService(ServiceFactory.getUserAccountService());
             int userId = registrationFacade.addClientDetails(clientDetails);
 
             if (userId > 0) {

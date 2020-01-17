@@ -17,7 +17,11 @@ public class UserAccountGetter {
 
     static {
         connectionFactory = JDBCConnectionFactory.getInstance();
-        userAccountService = ServiceFactory.getInstance().getUserAccountService();
+        userAccountService = ServiceFactory.getUserAccountService();
+    }
+
+    private UserAccountGetter(){
+
     }
 
     public static UserAccount getUserAccount(int userId) {

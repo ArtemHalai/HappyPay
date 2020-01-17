@@ -64,19 +64,8 @@ public class CreditRequestAdminFacade {
             creditAccount.setAccountNumber(userAccount.getAccountNumber());
             creditAccount.setLimit(amount);
             creditAccount.setRate(CREDIT_RATE.getDetails());
-            boolean added;
-            boolean updated;
-            boolean updatedDecision;
-            try {
-                added = creditAccountService.add(creditAccount);
-                updated = userAccountService.updateCreditStatusById(userId, decision);
-                updatedDecision = creditApprovementService.updateDecision(decision, userId);
-            } catch (Exception e) {
-                connection.rollback();
-                log.error(String.format("Could not update credit status for user with id: %d and decision: %s", userId, decision), e);
-                return false;
-            }
-            if (updated && updatedDecision && added) {
+
+            if (updateCreditStatusAndUpdateDecision(creditAccount, userId, decision)) {
                 connection.commit();
                 return true;
             }
@@ -85,6 +74,21 @@ public class CreditRequestAdminFacade {
             log.error(String.format("Could not update credit status for user with id: %d and decision: %s", userId, decision), e);
         }
         return false;
+    }
+
+    private boolean updateCreditStatusAndUpdateDecision(CreditAccount creditAccount, int userId, boolean decision) {
+        boolean added;
+        boolean updated;
+        boolean updatedDecision;
+        try {
+            added = creditAccountService.add(creditAccount);
+            updated = userAccountService.updateCreditStatusById(userId, decision);
+            updatedDecision = creditApprovementService.updateDecision(decision, userId);
+        } catch (Exception e) {
+            log.error(String.format("Could not update credit status for user with id: %d and decision: %s", userId, decision), e);
+            return false;
+        }
+        return added && updated && updatedDecision;
     }
 
     public boolean deleteRequest(int userId) {

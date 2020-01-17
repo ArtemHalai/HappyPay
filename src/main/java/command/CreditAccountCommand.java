@@ -27,7 +27,7 @@ public class CreditAccountCommand implements Command {
 
         if (CheckRoleAndId.check(session)) {
             int userId = (int) session.getAttribute(USER_ID.getName());
-            creditAccountFacade.setCreditAccountService(ServiceFactory.getInstance().getCreditAccountService());
+            creditAccountFacade.setCreditAccountService(ServiceFactory.getCreditAccountService());
             UserAccount userAccount = creditAccountFacade.getUserAccount(userId);
             if (userAccount.getValidity() == null || !DateValidity.valid(userAccount.getValidity())) {
                 return CLIENT_ACCOUNTS;

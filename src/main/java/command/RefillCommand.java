@@ -35,7 +35,7 @@ public class RefillCommand implements Command {
         }
 
         int userId = (int) session.getAttribute(USER_ID.getName());
-        refillFacade.setUserAccountService(ServiceFactory.getInstance().getUserAccountService());
+        refillFacade.setUserAccountService(ServiceFactory.getUserAccountService());
         UserAccount userAccount = refillFacade.getUserAccount(userId);
         if (userAccount.getValidity() == null || !DateValidity.valid(userAccount.getValidity())) {
             return CLIENT_ACCOUNTS;
@@ -50,7 +50,7 @@ public class RefillCommand implements Command {
         Map<String, String> errors = CheckOperationErrors.errorsEmpty(request, amount);
 
         if (errors.isEmpty()) {
-            if (refillOperation(session, amount)) {
+            if (refillOperation(amount, userId)) {
                 return SUCCESSFUL;
             }
             errors.put(NOT_ENOUGH_AMOUNT.getName(), NOT_ENOUGH_ERROR.getName());
@@ -58,15 +58,14 @@ public class RefillCommand implements Command {
         return ERROR;
     }
 
-    private boolean refillOperation(HttpSession session, double amount) {
-        int userId = (int) session.getAttribute(USER_ID.getName());
+    private boolean refillOperation(double amount, int userId) {
         log.info("Client refills his account with amount: " + amount);
         RefillOperation refillOperation = new RefillOperation();
         refillOperation.setAmount(amount);
         refillOperation.setUserId(userId);
         refillOperation.setSenderAccountType(CREDIT_TYPE.getName());
-        refillFacade.setRefillService(ServiceFactory.getInstance().getRefillService());
-        refillFacade.setCreditAccountService(ServiceFactory.getInstance().getCreditAccountService());
+        refillFacade.setRefillService(ServiceFactory.getRefillService());
+        refillFacade.setCreditAccountService(ServiceFactory.getCreditAccountService());
         return refillFacade.refill(refillOperation);
     }
 }

@@ -29,48 +29,55 @@ public class CreditRequestCommand implements Command {
 
     private CreditRequestFacade creditRequestFacade = new CreditRequestFacade();
 
-    private Map<String, String> errors = new HashMap<>();
-
     @Override
     public Mappings execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
-        if (!CheckRoleAndId.check(session))
+        if (!CheckRoleAndId.check(session)) {
             return LOGIN_VIEW;
+        }
         int userId = (int) session.getAttribute(USER_ID.getName());
-        creditRequestFacade.setUserAccountService(ServiceFactory.getInstance().getUserAccountService());
+        creditRequestFacade.setUserAccountService(ServiceFactory.getUserAccountService());
 
         UserAccount userAccount = creditRequestFacade.getUserAccount(userId);
-        if (userAccount.getValidity() == null || !DateValidity.valid(userAccount.getValidity()))
+        if (userAccount.getValidity() == null || !DateValidity.valid(userAccount.getValidity())) {
             return CLIENT_ACCOUNTS;
+        }
 
-        if (!creditRequestFacade.checkCredit(userId))
+        if (!creditRequestFacade.checkCredit(userId)) {
             return CREDIT;
-        if (request.getParameter(AMOUNT.getName()) == null)
+        }
+        if (request.getParameter(AMOUNT.getName()) == null) {
             return CREDIT_REQUEST;
+        }
         double amount = Double.parseDouble(request.getParameter(AMOUNT.getName()).trim());
+
+        Map<String, String> errors = new HashMap<>();
         if (amount <= 0) {
-            errors.clear();
             errors.put(AMOUNT.getName(), AMOUNT_ERROR.getName());
             request.setAttribute(ERRORS.getName(), errors);
             return CREDIT_REQUEST;
         }
         log.info("Client wants to open credit account");
-        return createCreditRequest(request, userId, amount);
+
+        boolean createCreditRequest = createCreditRequest(userId, amount);
+
+        if (createCreditRequest) {
+            return SUCCESSFUL;
+        }
+
+        errors.put(CREDIT.getName(), CREDIT_ERROR.getName());
+        request.setAttribute(ERRORS.getName(), errors);
+        return CREDIT_REQUEST;
     }
 
-    private Mappings createCreditRequest(HttpServletRequest request, int userId, double amount) {
-        creditRequestFacade.setCreditApprovementService(ServiceFactory.getInstance().getCreditApprovementService());
+    private boolean createCreditRequest(int userId, double amount) {
+        creditRequestFacade.setCreditApprovementService(ServiceFactory.getCreditApprovementService());
         CreditRequest creditRequest = new CreditRequest();
         creditRequest.setUserId(userId);
         creditRequest.setDecision(false);
         creditRequest.setAmount(amount);
         creditRequest.setOperationDate(new Date(System.currentTimeMillis()));
-        boolean createCreditRequest = creditRequestFacade.createCreditRequest(creditRequest);
-        if (createCreditRequest)
-            return SUCCESSFUL;
-        errors.clear();
-        errors.put(CREDIT.getName(), CREDIT_ERROR.getName());
-        request.setAttribute(ERRORS.getName(), errors);
-        return CREDIT_REQUEST;
+
+        return creditRequestFacade.createCreditRequest(creditRequest);
     }
 }

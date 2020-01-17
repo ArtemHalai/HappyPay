@@ -107,7 +107,8 @@ public class DepositAccountFacade {
             depositAccountService.setDefaultDepositAccountDAO(connection);
             refillService.setDefaultRefillDAO(connection);
             UserAccount userAccount = userAccountService.getById(userId);
-            if (UserAccountValidity.checkUserIdIsValid(userAccount) && userAccount.getBalance() >= balance && !userAccount.isDeposit() && depositCreator(userId, balance, userAccount, connection)) {
+            if (UserAccountValidity.checkUserIdIsValid(userAccount) && userAccount.getBalance() >= balance && !userAccount.isDeposit()
+                    && depositCreator(userId, balance, userAccount, connection)) {
                 return true;
             }
             connection.rollback();

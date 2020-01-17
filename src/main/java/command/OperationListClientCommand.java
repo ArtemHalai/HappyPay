@@ -32,7 +32,7 @@ public class OperationListClientCommand implements Command {
 
         int userId = (int) session.getAttribute(USER_ID.getName());
 
-        refillListClientFacade.setUserAccountService(ServiceFactory.getInstance().getUserAccountService());
+        refillListClientFacade.setUserAccountService(ServiceFactory.getUserAccountService());
         UserAccount userAccount = refillListClientFacade.getUserAccount(userId);
         if (userAccount.getValidity() == null || !DateValidity.valid(userAccount.getValidity())) {
             return CLIENT_ACCOUNTS;
@@ -41,9 +41,9 @@ public class OperationListClientCommand implements Command {
         AllOperationsDTO allOperationsDTO = new AllOperationsDTO();
         allOperationsDTO.setUserId(userId);
         log.info("Client wants to see list of all operations.");
-        refillListClientFacade.setRefillService(ServiceFactory.getInstance().getRefillService());
-        refillListClientFacade.setBillPaymentService(ServiceFactory.getInstance().getBillPaymentService());
-        refillListClientFacade.setTransferService(ServiceFactory.getInstance().getTransferService());
+        refillListClientFacade.setRefillService(ServiceFactory.getRefillService());
+        refillListClientFacade.setBillPaymentService(ServiceFactory.getBillPaymentService());
+        refillListClientFacade.setTransferService(ServiceFactory.getTransferService());
         AllOperationsDTO paginationDTO = refillListClientFacade.getAllOperations(allOperationsDTO);
         if (!paginationDTO.getList().isEmpty()) {
             request.setAttribute(OPERATION_LIST_CLIENT.getName(), paginationDTO.getList());

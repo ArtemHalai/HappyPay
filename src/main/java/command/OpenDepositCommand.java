@@ -25,39 +25,46 @@ public class OpenDepositCommand implements Command {
 
     private DepositAccountFacade depositAccountFacade = new DepositAccountFacade();
 
-    private Map<String, String> errors = new HashMap<>();
-
     @Override
     public Mappings execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
-        if (!CheckRoleAndId.check(session))
+        if (!CheckRoleAndId.check(session)) {
             return LOGIN_VIEW;
+        }
         int userId = (int) session.getAttribute(USER_ID.getName());
-        depositAccountFacade.setUserAccountService(ServiceFactory.getInstance().getUserAccountService());
+        depositAccountFacade.setUserAccountService(ServiceFactory.getUserAccountService());
         UserAccount userAccount = depositAccountFacade.getUserAccount(userId);
-        if (userAccount.getValidity() == null || !DateValidity.valid(userAccount.getValidity()))
-            return CLIENT_ACCOUNTS;
 
-        if (!depositAccountFacade.checkDeposit(userId))
+        if (userAccount.getValidity() == null || !DateValidity.valid(userAccount.getValidity())) {
+            return CLIENT_ACCOUNTS;
+        }
+
+        if (!depositAccountFacade.checkDeposit(userId)) {
             return DEPOSIT;
-        if (request.getParameter(AMOUNT.getName()) == null)
+        }
+
+        if (request.getParameter(AMOUNT.getName()) == null) {
             return OPEN_DEPOSIT;
+        }
+
         double amount = Double.parseDouble(request.getParameter(AMOUNT.getName()).trim());
 
+        Map<String, String> errors = new HashMap<>();
+
         if (amount <= 0) {
-            errors.clear();
             errors.put(AMOUNT.getName(), AMOUNT_ERROR.getName());
             request.setAttribute(ERRORS.getName(), errors);
             return OPEN_DEPOSIT;
         }
         log.info("Client wants to open deposit account");
-        depositAccountFacade.setDepositAccountService(ServiceFactory.getInstance().getDepositAccountService());
-        depositAccountFacade.setRefillService(ServiceFactory.getInstance().getRefillService());
+        depositAccountFacade.setDepositAccountService(ServiceFactory.getDepositAccountService());
+        depositAccountFacade.setRefillService(ServiceFactory.getRefillService());
 
         boolean openDeposit = depositAccountFacade.openDeposit(userId, amount);
-        if (openDeposit)
+        if (openDeposit) {
             return SUCCESSFUL;
-        errors.clear();
+        }
+
         errors.put(DEPOSIT.getName(), NOT_ENOUGH_ERROR.getName());
         request.setAttribute(ERRORS.getName(), errors);
         return OPEN_DEPOSIT;

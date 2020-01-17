@@ -29,7 +29,7 @@ public class UpdateTermCommand implements Command {
 
         int userId = (int) session.getAttribute(USER_ID.getName());
 
-        updateTermFacade.setUserAccountService(ServiceFactory.getInstance().getUserAccountService());
+        updateTermFacade.setUserAccountService(ServiceFactory.getUserAccountService());
         UserAccount userAccount = updateTermFacade.getUserAccount(userId);
         if (userAccount.getValidity() != null && DateValidity.valid(userAccount.getValidity())) {
             return CLIENT_ACCOUNTS;

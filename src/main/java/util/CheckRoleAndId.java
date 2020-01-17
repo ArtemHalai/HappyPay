@@ -10,6 +10,10 @@ import static enums.Role.CLIENT;
 
 public class CheckRoleAndId {
 
+    private CheckRoleAndId(){
+
+    }
+
     public static boolean check(HttpSession session) {
         Predicate<HttpSession> p = x -> session.getAttribute(ROLE.getName()) != null && session.getAttribute(USER_ID.getName()) != null;
         if (p.test(session)) {

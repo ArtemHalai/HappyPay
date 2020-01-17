@@ -61,7 +61,8 @@ public class TransferFacade {
                 boolean updated = userAccountService.updateBalanceById(userAccount.getBalance(), transferOperation.getUserId());
                 boolean updatedRecipient = userAccountService.updateByAccount(recipientAccount.getBalance() + transferOperation.getAmount(),
                         transferOperation.getRecipientAccountNumber());
-                if (isTransferSuccessful(transferOperation, updated, updatedRecipient)) {
+                boolean added = transferService.add(transferOperation);
+                if (updated && added && updatedRecipient) {
                     return true;
                 }
             } catch (Exception e) {
@@ -69,16 +70,6 @@ public class TransferFacade {
             }
         }
         return false;
-    }
-
-    private boolean isTransferSuccessful(TransferOperation transferOperation, boolean updated, boolean updatedRecipient) {
-        try {
-            boolean added = transferService.add(transferOperation);
-            return updated && added && updatedRecipient;
-        } catch (Exception e) {
-            log.error(String.format(ERROR, transferOperation.getUserId(), transferOperation.getRecipientAccountNumber()), e);
-            return false;
-        }
     }
 
     public UserAccount getUserAccount(int userId) {

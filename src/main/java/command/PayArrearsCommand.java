@@ -28,8 +28,6 @@ public class PayArrearsCommand implements Command {
 
     private PayArrearsFacade payArrearsFacade = new PayArrearsFacade();
 
-    private Map<String, String> errors = new HashMap<>();
-
     @Override
     public Mappings execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
@@ -39,13 +37,13 @@ public class PayArrearsCommand implements Command {
         }
 
         int userId = (int) session.getAttribute(USER_ID.getName());
-        payArrearsFacade.setUserAccountService(ServiceFactory.getInstance().getUserAccountService());
+        payArrearsFacade.setUserAccountService(ServiceFactory.getUserAccountService());
         UserAccount userAccount = payArrearsFacade.getUserAccount(userId);
         if (userAccount.getValidity() == null || !DateValidity.valid(userAccount.getValidity())) {
             return CLIENT_ACCOUNTS;
         }
 
-        payArrearsFacade.setCreditAccountService(ServiceFactory.getInstance().getCreditAccountService());
+        payArrearsFacade.setCreditAccountService(ServiceFactory.getCreditAccountService());
         if (!payArrearsFacade.checkArrears(userId)) {
             return CREDIT;
         }
@@ -55,8 +53,10 @@ public class PayArrearsCommand implements Command {
         }
 
         double amount = Double.parseDouble(request.getParameter(AMOUNT.getName()));
+
+        Map<String, String> errors = new HashMap<>();
+
         if (amount <= 0) {
-            errors.clear();
             errors.put(AMOUNT.getName(), AMOUNT_ERROR.getName());
             request.setAttribute(ERRORS.getName(), errors);
             return PAY_ARREARS;

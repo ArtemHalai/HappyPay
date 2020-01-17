@@ -31,7 +31,7 @@ public class RefillListClientCommand implements Command {
         }
 
         int userId = (int) session.getAttribute(USER_ID.getName());
-        refillListClientFacade.setUserAccountService(ServiceFactory.getInstance().getUserAccountService());
+        refillListClientFacade.setUserAccountService(ServiceFactory.getUserAccountService());
         UserAccount userAccount = refillListClientFacade.getUserAccount(userId);
         if (userAccount.getValidity() == null || !DateValidity.valid(userAccount.getValidity())) {
             return CLIENT_ACCOUNTS;
@@ -46,7 +46,7 @@ public class RefillListClientCommand implements Command {
         paginationDTO.setUserId(userId);
         paginationDTO.setPage(page);
         log.info("Client wants to see list of refill operations.");
-        refillListClientFacade.setRefillService(ServiceFactory.getInstance().getRefillService());
+        refillListClientFacade.setRefillService(ServiceFactory.getRefillService());
         RefillPaginationDTO refillPaginationDTO = refillListClientFacade.getRefillOperations(paginationDTO);
         if (!refillPaginationDTO.getList().isEmpty()) {
             request.setAttribute(REFILL_LIST_CLIENT.getName(), refillPaginationDTO.getList());

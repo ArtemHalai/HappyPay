@@ -28,7 +28,7 @@ public class UserAccountCommand implements Command {
         if (CheckRoleAndId.check(session)) {
             int userId = (int) session.getAttribute(USER_ID.getName());
             log.info("Client requests his accounts");
-            userAccountFacade.setUserAccountService(ServiceFactory.getInstance().getUserAccountService());
+            userAccountFacade.setUserAccountService(ServiceFactory.getUserAccountService());
             UserAccount userAccount = userAccountFacade.getUserAccount(userId);
             if (userAccount.getValidity() != null && DateValidity.valid(userAccount.getValidity())) {
                 session.setAttribute(CLIENT_ACCOUNTS.getName(), userAccount);

@@ -68,6 +68,7 @@ public class BillPaymentCommandTest {
         when(facade.getUserAccount(USER_TEST_ID)).thenReturn(userAccount);
 
         Mappings actualMapping = command.execute(request, response);
+
         assertEquals(CLIENT_ACCOUNTS, actualMapping);
     }
 
@@ -76,6 +77,7 @@ public class BillPaymentCommandTest {
         setValidityToUserAccount();
 
         Mappings actualMapping = command.execute(request, response);
+
         assertEquals(BILL_PAYMENT, actualMapping);
     }
 
@@ -93,6 +95,7 @@ public class BillPaymentCommandTest {
 
         when(request.getParameter(AMOUNT.getName())).thenReturn(amount);
         when(request.getParameter(BILL_NUMBER.getName())).thenReturn(negativeBillNumber);
+
         Mappings actualMapping = command.execute(request, response);
 
         assertEquals(ERROR, actualMapping);
@@ -105,6 +108,7 @@ public class BillPaymentCommandTest {
         when(facade.payBill(any(BillPaymentOperation.class))).thenReturn(true);
         when(request.getParameter(AMOUNT.getName())).thenReturn("10");
         when(request.getParameter(BILL_NUMBER.getName())).thenReturn("12345678");
+
         Mappings actualMapping = command.execute(request, response);
 
         assertEquals(SUCCESSFUL, actualMapping);
@@ -120,6 +124,7 @@ public class BillPaymentCommandTest {
         when(facade.payBill(any(BillPaymentOperation.class))).thenReturn(false);
         when(request.getParameter(AMOUNT.getName())).thenReturn(amount);
         when(request.getParameter(BILL_NUMBER.getName())).thenReturn(billNumber);
+
         Mappings actualMapping = command.execute(request, response);
 
         assertEquals(ERROR, actualMapping);

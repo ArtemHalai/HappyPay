@@ -14,6 +14,10 @@ public class CommandFactory {
 
     private static final Map<String, Command> commandMap;
 
+    private CommandFactory(){
+
+    }
+
     static {
         commandMap = new HashMap<>();
         commandMap.put(BILL_PAYMENT.getName(), new BillPaymentCommand());

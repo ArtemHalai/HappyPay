@@ -27,8 +27,6 @@ public class PayInterestChargesCommand implements Command {
 
     private PayInterestChargesFacade payInterestChargesFacade = new PayInterestChargesFacade();
 
-    private Map<String, String> errors = new HashMap<>();
-
     @Override
     public Mappings execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
@@ -38,13 +36,13 @@ public class PayInterestChargesCommand implements Command {
         }
 
         int userId = (int) session.getAttribute(USER_ID.getName());
-        payInterestChargesFacade.setUserAccountService(ServiceFactory.getInstance().getUserAccountService());
+        payInterestChargesFacade.setUserAccountService(ServiceFactory.getUserAccountService());
         UserAccount userAccount = payInterestChargesFacade.getUserAccount(userId);
         if (userAccount.getValidity() == null || !DateValidity.valid(userAccount.getValidity())) {
             return CLIENT_ACCOUNTS;
         }
 
-        payInterestChargesFacade.setCreditAccountService(ServiceFactory.getInstance().getCreditAccountService());
+        payInterestChargesFacade.setCreditAccountService(ServiceFactory.getCreditAccountService());
         if (!payInterestChargesFacade.checkInterestCharges(userId)) {
             return CREDIT;
         }
@@ -54,8 +52,10 @@ public class PayInterestChargesCommand implements Command {
         }
 
         double amount = Double.parseDouble(request.getParameter(AMOUNT.getName()));
+
+        Map<String, String> errors = new HashMap<>();
+
         if (amount <= 0) {
-            errors.clear();
             errors.put(AMOUNT.getName(), AMOUNT_ERROR.getName());
             request.setAttribute(ERRORS.getName(), errors);
             return PAY_INTEREST_CHARGES;

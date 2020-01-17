@@ -8,6 +8,10 @@ import java.sql.SQLException;
 @Log4j
 public class TransactionManager {
 
+    private TransactionManager(){
+
+    }
+
     public static void setRepeatableRead(Connection connection) {
         try {
             connection.setAutoCommit(false);

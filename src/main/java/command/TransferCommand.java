@@ -35,7 +35,7 @@ public class TransferCommand implements Command {
         }
 
         int userId = (int) session.getAttribute(USER_ID.getName());
-        transferFacade.setUserAccountService(ServiceFactory.getInstance().getUserAccountService());
+        transferFacade.setUserAccountService(ServiceFactory.getUserAccountService());
         UserAccount userAccount = transferFacade.getUserAccount(userId);
         if (userAccount.getValidity() == null || !DateValidity.valid(userAccount.getValidity())) {
             return CLIENT_ACCOUNTS;
@@ -69,8 +69,8 @@ public class TransferCommand implements Command {
         transferOperation.setAmount(amount);
         transferOperation.setRecipientAccountNumber(recipientAccountNumber);
         transferOperation.setUserId(userId);
-        transferFacade.setTransferService(ServiceFactory.getInstance().getTransferService());
-        transferFacade.setUserAccountService(ServiceFactory.getInstance().getUserAccountService());
+        transferFacade.setTransferService(ServiceFactory.getTransferService());
+        transferFacade.setUserAccountService(ServiceFactory.getUserAccountService());
         return transferFacade.transfer(transferOperation);
     }
 }

@@ -8,6 +8,10 @@ public class DateValidity {
     private static final long FIVE_YEARS = 5;
     private static final long ONE_YEAR = 31556952000L;
 
+    private DateValidity(){
+
+    }
+
     public static boolean valid(LocalDate date) {
        return date.toEpochDay() > LocalDate.now().toEpochDay();
     }

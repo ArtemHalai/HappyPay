@@ -27,7 +27,6 @@ public class UserService {
     }
 
     public User getUserByUsernameAndPassword(String username, String password) {
-
         User userExist = userDAO.isUserExist(username);
         if (userExist != null) {
             boolean exist = PasswordEncryption.checkPassword(password, userExist.getPassword());

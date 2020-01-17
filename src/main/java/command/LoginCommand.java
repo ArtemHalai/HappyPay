@@ -59,7 +59,7 @@ public class LoginCommand implements Command {
     }
 
     private Mappings loginUser(HttpServletRequest request, HttpSession session, User user) {
-        loginFacade.setUserService(ServiceFactory.getInstance().getUserService());
+        loginFacade.setUserService(ServiceFactory.getUserService());
         User exist = loginFacade.getUserByUsernameAndPassword(user.getUsername(), user.getPassword());
 
         if (exist != null) {

@@ -3,9 +3,8 @@ package factories;
 import service.*;
 
 public class ServiceFactory {
-    private static volatile ServiceFactory factory = null;
 
-    private static BillPaymentService billPaymentService = null;
+    private static BillPaymentService billPaymentService;
     private static ClientDetailsService clientDetailsService = null;
     private static CreditAccountService creditAccountService = null;
     private static CreditApprovementService creditApprovementService = null;
@@ -20,74 +19,61 @@ public class ServiceFactory {
 
     }
 
-    public static ServiceFactory getInstance() {
-        if (factory == null) {
-            synchronized (ServiceFactory.class) {
-                if (factory == null) {
-                    factory = new ServiceFactory();
-                }
-            }
-        }
-        return factory;
-    }
-
-    public BillPaymentService getBillPaymentService() {
+    public static BillPaymentService getBillPaymentService() {
         if (billPaymentService == null)
             billPaymentService = new BillPaymentService();
         return billPaymentService;
     }
 
-    public LimitRequestService getLimitRequestService() {
+    public static LimitRequestService getLimitRequestService() {
         if (limitRequestService == null)
             limitRequestService = new LimitRequestService();
         return limitRequestService;
     }
 
-    public ClientDetailsService getClientDetailsService() {
+    public static ClientDetailsService getClientDetailsService() {
         if (clientDetailsService == null)
             clientDetailsService = new ClientDetailsService();
         return clientDetailsService;
     }
 
-    public CreditAccountService getCreditAccountService() {
+    public static CreditAccountService getCreditAccountService() {
         if (creditAccountService == null)
             creditAccountService = new CreditAccountService();
         return creditAccountService;
     }
 
-    public CreditApprovementService getCreditApprovementService() {
+    public static CreditApprovementService getCreditApprovementService() {
         if (creditApprovementService == null)
             creditApprovementService = new CreditApprovementService();
         return creditApprovementService;
     }
 
-    public DepositAccountService getDepositAccountService() {
+    public static DepositAccountService getDepositAccountService() {
         if (depositAccountService == null)
             depositAccountService = new DepositAccountService();
         return depositAccountService;
     }
 
-    public RefillService getRefillService() {
+    public static RefillService getRefillService() {
         if (refillService == null)
             refillService = new RefillService();
         return refillService;
     }
 
-    public TransferService getTransferService() {
-
+    public static TransferService getTransferService() {
         if (transferService == null)
             transferService = new TransferService();
         return transferService;
     }
 
-    public UserAccountService getUserAccountService() {
-
+    public static UserAccountService getUserAccountService() {
         if (userAccountService == null)
             userAccountService = new UserAccountService();
         return userAccountService;
     }
 
-    public UserService getUserService() {
+    public static UserService getUserService() {
         if (userService == null)
             userService = new UserService();
         return userService;

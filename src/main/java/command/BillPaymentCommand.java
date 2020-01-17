@@ -37,7 +37,7 @@ public class BillPaymentCommand implements Command {
 
         int userId = (int) session.getAttribute(USER_ID.getName());
 
-        billPaymentFacade.setUserAccountService(ServiceFactory.getInstance().getUserAccountService());
+        billPaymentFacade.setUserAccountService(ServiceFactory.getUserAccountService());
         UserAccount userAccount = billPaymentFacade.getUserAccount(userId);
         if (userAccount.getValidity() == null || !DateValidity.valid(userAccount.getValidity())) {
             return CLIENT_ACCOUNTS;
@@ -79,7 +79,7 @@ public class BillPaymentCommand implements Command {
         billPaymentOperation.setBillNumber(billNumber);
         billPaymentOperation.setUserId(userId);
         billPaymentOperation.setPurpose(purpose);
-        billPaymentFacade.setBillPaymentService(ServiceFactory.getInstance().getBillPaymentService());
+        billPaymentFacade.setBillPaymentService(ServiceFactory.getBillPaymentService());
 
         return billPaymentFacade.payBill(billPaymentOperation);
     }

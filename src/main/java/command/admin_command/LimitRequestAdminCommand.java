@@ -29,7 +29,7 @@ public class LimitRequestAdminCommand implements Command {
             return LOGIN_VIEW;
         }
         if (request.getParameter(DECISION.getName()) == null) {
-            limitRequestAdminFacade.setLimitRequestService(ServiceFactory.getInstance().getLimitRequestService());
+            limitRequestAdminFacade.setLimitRequestService(ServiceFactory.getLimitRequestService());
             List<LimitRequestAdmin> list = limitRequestAdminFacade.findAllByDecision(LIMIT_DECISION);
             if (list.isEmpty())
                 request.setAttribute(ERRORS.getName(), NO_REQUESTS_ERROR.getName());
@@ -41,11 +41,11 @@ public class LimitRequestAdminCommand implements Command {
         boolean decision = Boolean.parseBoolean(request.getParameter(DECISION.getName()));
         double amount = Double.parseDouble(request.getParameter(AMOUNT.getName()));
         if (!decision) {
-            limitRequestAdminFacade.setLimitRequestService(ServiceFactory.getInstance().getLimitRequestService());
+            limitRequestAdminFacade.setLimitRequestService(ServiceFactory.getLimitRequestService());
             limitRequestAdminFacade.deleteRequest(userId);
             return LIMIT_REQUEST_ADMIN_REDIRECT;
         }
-        limitRequestAdminFacade.setCreditAccountService(ServiceFactory.getInstance().getCreditAccountService());
+        limitRequestAdminFacade.setCreditAccountService(ServiceFactory.getCreditAccountService());
         limitRequestAdminFacade.updateLimit(userId, amount, decision);
         return LIMIT_REQUEST_ADMIN_REDIRECT;
     }

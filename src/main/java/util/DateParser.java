@@ -1,14 +1,17 @@
 package util;
 
-import org.apache.log4j.Logger;
+import lombok.extern.log4j.Log4j;
 
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
+@Log4j
 public class DateParser {
 
-    private static final Logger log = Logger.getLogger(DateParser.class);
+    private DateParser() {
+
+    }
 
     public static Date parse(String date) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -16,7 +19,7 @@ public class DateParser {
         try {
             d = dateFormat.parse(date);
         } catch (ParseException e) {
-           log.error("Parse exception occurred in DateParser.class at parse() method");
+            log.error("Parse exception occurred in DateParser.class at parse() method", e);
         }
         return new Date(d.getTime());
     }

@@ -6,6 +6,10 @@ import java.time.LocalDate;
 
 public class UserAccountValidity {
 
+    private UserAccountValidity(){
+
+    }
+
     public static boolean checkUserIdAndValidityAreValid(UserAccount userAccount) {
         return checkUserIdIsValid(userAccount) && checkUserAccountIsValid(userAccount);
     }

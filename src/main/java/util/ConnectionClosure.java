@@ -8,6 +8,10 @@ import java.sql.SQLException;
 @Log4j
 public class ConnectionClosure {
 
+    private ConnectionClosure(){
+
+    }
+
     public static void close(Connection connection) {
         try {
             connection.close();
