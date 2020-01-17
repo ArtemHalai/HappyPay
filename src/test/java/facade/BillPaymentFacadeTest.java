@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import service.BillPaymentService;
@@ -17,7 +16,6 @@ import util.UserAccountGetter;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.time.Duration;
 import java.time.LocalDate;
 
 import static org.junit.Assert.*;
